@@ -1,50 +1,134 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# Inhuman Conditions Web App Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Legal Compliance (NON-NEGOTIABLE)
+All code licensed under **CC BY-NC-SA 4.0**. Attribution required to original designers (Tommy Maranges, Cory O'Brien). Art by Mac Schubert. Link to GitHub for issues. **No commercial use**. **No app store submissions without approval**.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Determinism (NON-NEGOTIABLE)
+All random behavior MUST be seeded. Same seed MUST produce identical game content. State transitions MUST be reproducible. No network randomness or time-based entropy.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Test-First Development (NON-NEGOTIABLE)
+TDD mandatory: Tests written → Tests fail → Then implement. All game logic MUST have unit tests. Core components MUST have integration tests. Minimum 80% coverage for components, **100% coverage for game logic**. All tests MUST pass before deployment.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Accessibility (NON-NEGOTIABLE)
+WCAG 2.1 Level AA compliance. Keyboard navigation support. Screen reader compatibility. Minimum contrast ratios (4.5:1 for normal text, 3:1 for large). ARIA labels for interactive elements.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. No Network Dependencies (NON-NEGOTIABLE)
+Zero server communication. Zero analytics tracking. Zero third-party API calls. **Fully offline-capable after initial load**.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### VI. Frequent Commits and Pushes (NON-NEGOTIABLE)
+**Commit often** (at least every significant change). **Push to remote regularly** (every 30 minutes or after completing a feature). Commit message format: `<type>: <description>`. Co-authored-by: `Claude Sonnet 4.5 <noreply@anthropic.com>`.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+## Architecture & Technology
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+### TypeScript Strict Mode
+- TypeScript strict mode required
+- No `any` types except in test mocks
+- Explicit return types for public APIs
+- Proper type definitions for all data structures
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### Component Architecture
+- Functional components with hooks (no class components)
+- Single responsibility principle
+- Props interface for every component
+- Controlled components for forms
+
+### Styling
+- CSS Modules for styling (no runtime CSS-in-JS)
+- Design tokens in `:root` variables
+- Mobile-first responsive design
+- Match robots.management aesthetic (bureaucratic, monochrome, halftone)
+
+### State Management
+- Zustand for global state
+- Local state with useState for component-specific state
+- Deterministic state updates
+- No side effects in reducers/setters
+
+### Testing Philosophy
+- Test-Driven Development (TDD)
+- Write tests BEFORE implementation
+- Test behavior, not implementation details
+- Integration tests for critical flows
+
+## Browser Support & Performance
+
+### Browser Support
+- Modern evergreen browsers (Chrome, Firefox, Safari, Edge)
+- Mobile responsive (iOS Safari, Chrome Android)
+- No IE11 support required
+
+### Performance Targets
+- Initial load < 3s on 3G
+- Time to Interactive < 5s
+- Lighthouse score > 90
+- Bundle size < 500KB (gzipped)
+
+## Prohibited Practices
+
+❌ **Never:**
+- Use `any` type in production code
+- Skip writing tests
+- Commit broken code
+- Use inline styles
+- Create network requests
+- Add analytics or tracking
+- Submit to app stores
+- Monetize the application
+- Use non-deterministic randomness
+- Ignore accessibility
+- Skip commit messages
+
+## Quality Gates
+
+### Before Commit
+- [ ] All tests pass
+- [ ] No TypeScript errors
+- [ ] No ESLint errors
+- [ ] Code follows style guide
+
+### Before Push
+- [ ] All tests pass
+- [ ] Coverage meets minimums
+- [ ] Build succeeds
+- [ ] No regressions
+
+### Before Deployment
+- [ ] All tests pass
+- [ ] Lighthouse score > 90
+- [ ] WCAG AA compliance
+- [ ] Works on all supported browsers
+- [ ] License and attribution present
+
+## Attribution Template
+
+Every HTML page must include in the footer:
+
+```html
+<footer>
+  <p>
+    <strong>Inhuman Conditions</strong> designed by Tommy Maranges and Cory O'Brien.
+    Illustrated by Mac Schubert.
+  </p>
+  <p>
+    Licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+      CC BY-NC-SA 4.0
+    </a>
+  </p>
+  <p>
+    This is a fan-made web implementation - not affiliated with the original creators.
+  </p>
+  <p>
+    <a href="https://github.com/AlonKellner/Inhuman-Conditions/issues">
+      Report issues on GitHub
+    </a>
+  </p>
+</footer>
+```
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution supersedes all other practices. All PRs/reviews must verify compliance. Amendments require documentation and approval. Complexity must be justified.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-02-21 | **Last Amended**: 2026-02-21
