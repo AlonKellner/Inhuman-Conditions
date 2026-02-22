@@ -18,10 +18,10 @@ import { test, expect } from '@playwright/test';
  * 1. Seed Entry
  * 2. Mode Selection (auto-advance for MVP)
  * 3. Role Selection (auto-advance for MVP)
- * 4. Penalty Calibration (3 practice attempts)
- * 5. Packet Display (auto-advance for MVP)
+ * 4. Penalty Calibration (3 practice attempts with cycling)
+ * 5. Packet Display (manual confirmation with cycling)
  * 6. Inducer Puzzle (auto-advance for MVP)
- * 7. Background Display (auto-advance for MVP)
+ * 7. Background Display (manual confirmation with cycling)
  * 8. Ready to Start (manual button click to start timer)
  * 9. Interview (5 minutes timed)
  * 10. Conclusion (terminal state)
@@ -106,11 +106,32 @@ test.describe('Complete Game Flow E2E', () => {
     await continueButton.click();
 
     // =================================================================
-    // STATES 5-7: Packet Display, Inducer Puzzle, Background Display (auto-advance)
+    // STATE 5: Packet Display (manual confirmation with cycling)
     // =================================================================
-    // These states auto-advance in MVP, may show loading screen briefly
-    // Wait for them to complete (max 2 seconds with 300ms each = 900ms + buffer)
-    await page.waitForTimeout(2000);
+    // Wait for packet display to load
+    await expect(page.getByRole('heading', { name: /question packet/i })).toBeVisible({ timeout: 5000 });
+
+    // Click Continue to advance (Investigator view has Continue button)
+    const packetContinueButton = page.getByRole('button', { name: /continue/i });
+    await expect(packetContinueButton).toBeEnabled();
+    await packetContinueButton.click();
+
+    // =================================================================
+    // STATE 6: Inducer Puzzle (auto-advance)
+    // =================================================================
+    // Wait for auto-advance (300ms delay)
+    await page.waitForTimeout(500);
+
+    // =================================================================
+    // STATE 7: Background Display (manual confirmation with cycling)
+    // =================================================================
+    // Wait for background display to load
+    await expect(page.getByRole('heading', { name: /your background/i })).toBeVisible({ timeout: 5000 });
+
+    // Click "I Understand" to advance (Suspect view has I Understand button)
+    const backgroundButton = page.getByText('I Understand');
+    await expect(backgroundButton).toBeVisible();
+    await backgroundButton.click();
 
     // =================================================================
     // STATE 8: Ready to Start (manual timer start)

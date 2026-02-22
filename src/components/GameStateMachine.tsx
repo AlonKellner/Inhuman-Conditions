@@ -3,6 +3,8 @@ import { useGameStore } from '../store/gameStore';
 import { GameState, GameMode } from '../types';
 import { SeedEntry } from './game/SeedEntry';
 import { PenaltyCalibration } from './game/PenaltyCalibration';
+import { PacketDisplay } from './game/PacketDisplay';
+import { BackgroundDisplay } from './game/BackgroundDisplay';
 import { ReadyToStart } from './game/ReadyToStart';
 import { InvestigatorView } from './game/Interview/InvestigatorView';
 import { SuspectView } from './game/Interview/SuspectView';
@@ -14,20 +16,20 @@ export const GameStateMachine: FC = () => {
     mode,
     playerRole,
     selectedPenalty,
+    // Note: selectedPacket and selectedBackground are accessed by
+    // PacketDisplay and BackgroundDisplay via their own useGameStore hooks
     penaltyCalibration,
     advanceState,
     startTimer,
   } = useGameStore();
 
   // Auto-advance through intermediate states ONLY for states not yet implemented
-  // PenaltyCalibration and ReadyToStart now have manual progression
+  // PenaltyCalibration, PacketDisplay, BackgroundDisplay, and ReadyToStart have manual progression
   useEffect(() => {
     const intermediateStates: GameState[] = [
       GameState.ModeSelection,
       GameState.RoleSelection,
-      GameState.PacketDisplay,
       GameState.InducerPuzzle,
-      GameState.BackgroundDisplay,
     ];
 
     if (intermediateStates.includes(gameState)) {
@@ -60,6 +62,32 @@ export const GameStateMachine: FC = () => {
           onComplete={advanceState}
         />
       );
+
+    case GameState.PacketDisplay: {
+      // In single-device mode, show Investigator view (they see full question list)
+      // In multi-device mode, use playerRole
+      const packetRole = mode === 'single-device' ? 'investigator' : (playerRole || 'spectator');
+
+      return (
+        <PacketDisplay
+          role={packetRole}
+          onContinue={advanceState}
+        />
+      );
+    }
+
+    case GameState.BackgroundDisplay: {
+      // In single-device mode, show Suspect view (they confirm background)
+      // In multi-device mode, use playerRole
+      const backgroundRole = mode === 'single-device' ? 'suspect' : (playerRole || 'spectator');
+
+      return (
+        <BackgroundDisplay
+          role={backgroundRole}
+          onContinue={advanceState}
+        />
+      );
+    }
 
     case GameState.ReadyToStart: {
       const handleStartInterview = () => {
@@ -106,9 +134,7 @@ export const GameStateMachine: FC = () => {
     // For MVP, auto-advance through intermediate states not yet implemented
     case GameState.ModeSelection:
     case GameState.RoleSelection:
-    case GameState.PacketDisplay:
     case GameState.InducerPuzzle:
-    case GameState.BackgroundDisplay:
       // Show loading state while auto-advancing
       return (
         <div style={{ textAlign: 'center', padding: '100px 20px' }}>
