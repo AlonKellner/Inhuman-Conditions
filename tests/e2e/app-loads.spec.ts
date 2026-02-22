@@ -99,13 +99,30 @@ test.describe('Game Flow', () => {
     await startButton.click();
 
     // The game should auto-advance through intermediate states
-    // Wait for the "Setting up your game..." loading screen
-    await expect(page.getByText(/setting up your game/i)).toBeVisible();
+    // Wait for penalty calibration to load
+    await expect(page.getByText(/penalty calibration/i)).toBeVisible({ timeout: 5000 });
 
-    // Wait for the interview state to appear (auto-advance should happen within a few seconds)
-    // Look for either "Question" text or "Pass device" text
-    const interviewContent = page.locator('text=/Question|Pass device/i').first();
-    await expect(interviewContent).toBeVisible({ timeout: 10000 });
+    // Complete penalty calibration (3 attempts required)
+    const practiceButton = page.getByRole('button', { name: /i practiced/i });
+    await practiceButton.click();
+    await practiceButton.click();
+    await practiceButton.click();
+
+    const continueButton = page.getByRole('button', { name: /continue/i });
+    await continueButton.click();
+
+    // Wait for auto-advance states to complete
+    await page.waitForTimeout(2000);
+
+    // Complete ready-to-start state
+    await expect(page.getByRole('heading', { name: /ready to begin/i })).toBeVisible({ timeout: 3000 });
+    const startInterviewButton = page.getByRole('button', { name: /start interview/i });
+    await startInterviewButton.click();
+
+    // Wait for the interview state to appear
+    // Look for "Questions:" heading
+    const interviewContent = page.getByRole('heading', { name: /questions:/i });
+    await expect(interviewContent).toBeVisible({ timeout: 5000 });
 
     // Verify we've reached the interview state
     // This verifies that all game data loads correctly (packets, penalties, backgrounds, roles)
