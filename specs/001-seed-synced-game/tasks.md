@@ -95,10 +95,10 @@ Project structure (from plan.md):
 
 ### Game Data Files
 
-- [ ] T031 [P] [US1] Create packets data file in src/data/packets.ts (11 themed question sets with roles)
-- [ ] T032 [P] [US1] Create penalties data file in src/data/penalties.ts (18 penalties)
-- [ ] T033 [P] [US1] Create backgrounds data file in src/data/backgrounds.ts (30 suspect backgrounds)
-- [ ] T034 [P] [US1] Create roles data file in src/data/roles.ts (Human, PatientRobot, ViolentRobot with faults)
+- [X] T031 [P] [US1] Create packets data file in src/data/packets.ts (11 themed question sets with roles)
+- [X] T032 [P] [US1] Create penalties data file in src/data/penalties.ts (18 penalties)
+- [X] T033 [P] [US1] Create backgrounds data file in src/data/backgrounds.ts (30 suspect backgrounds)
+- [X] T034 [P] [US1] Create roles data file in src/data/roles.ts (Human, PatientRobot, ViolentRobot with faults)
 
 ### Game State Components - Tests First
 
