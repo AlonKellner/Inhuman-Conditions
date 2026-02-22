@@ -111,8 +111,18 @@ test.describe('Game Flow', () => {
     const continueButton = page.getByRole('button', { name: /continue/i });
     await continueButton.click();
 
-    // Wait for auto-advance states to complete
-    await page.waitForTimeout(2000);
+    // STATE: Packet Display (manual confirmation)
+    await expect(page.getByRole('heading', { name: /question packet/i })).toBeVisible({ timeout: 5000 });
+    const packetContinueButton = page.getByRole('button', { name: /continue/i });
+    await packetContinueButton.click();
+
+    // STATE: Inducer Puzzle (auto-advance)
+    await page.waitForTimeout(500);
+
+    // STATE: Background Display (manual confirmation)
+    await expect(page.getByRole('heading', { name: /your background/i })).toBeVisible({ timeout: 5000 });
+    const backgroundButton = page.getByText('I Understand');
+    await backgroundButton.click();
 
     // Complete ready-to-start state
     await expect(page.getByRole('heading', { name: /ready to begin/i })).toBeVisible({ timeout: 3000 });

@@ -260,8 +260,18 @@ test.describe('Complete Game Flow E2E', () => {
     const continueButton = page.getByRole('button', { name: /continue/i });
     await continueButton.click();
 
-    // Wait for auto-advance states to complete
-    await page.waitForTimeout(2000);
+    // STATE 5: Packet Display (manual confirmation)
+    await expect(page.getByRole('heading', { name: /question packet/i })).toBeVisible({ timeout: 5000 });
+    const packetContinueButton = page.getByRole('button', { name: /continue/i });
+    await packetContinueButton.click();
+
+    // STATE 6: Inducer Puzzle (auto-advance)
+    await page.waitForTimeout(500);
+
+    // STATE 7: Background Display (manual confirmation)
+    await expect(page.getByRole('heading', { name: /your background/i })).toBeVisible({ timeout: 5000 });
+    const backgroundButton = page.getByText('I Understand');
+    await backgroundButton.click();
 
     // Reach Ready to Start state
     await expect(page.getByRole('heading', { name: /ready to begin/i })).toBeVisible({ timeout: 3000 });
@@ -310,8 +320,20 @@ test.describe('Complete Game Flow E2E', () => {
     const continueButton = page.getByRole('button', { name: /continue/i });
     await continueButton.click();
 
-    // Wait for auto-advance and start interview
-    await page.waitForTimeout(2000);
+    // STATE 5: Packet Display (manual confirmation)
+    await expect(page.getByRole('heading', { name: /question packet/i })).toBeVisible({ timeout: 5000 });
+    const packetContinueButton = page.getByRole('button', { name: /continue/i });
+    await packetContinueButton.click();
+
+    // STATE 6: Inducer Puzzle (auto-advance)
+    await page.waitForTimeout(500);
+
+    // STATE 7: Background Display (manual confirmation)
+    await expect(page.getByRole('heading', { name: /your background/i })).toBeVisible({ timeout: 5000 });
+    const backgroundButton = page.getByText('I Understand');
+    await backgroundButton.click();
+
+    // Reach Ready to Start and start interview
     await expect(page.getByRole('heading', { name: /ready to begin/i })).toBeVisible({ timeout: 3000 });
     const startInterviewButton = page.getByRole('button', { name: /start interview/i });
     await startInterviewButton.click();
@@ -365,8 +387,20 @@ test.describe('Game State Validation', () => {
     }
     await page.getByRole('button', { name: /continue/i }).click();
 
+    // STATE 5: Packet Display (manual confirmation)
+    await expect(page.getByRole('heading', { name: /question packet/i })).toBeVisible({ timeout: 5000 });
+    const packetContinueButton = page.getByRole('button', { name: /continue/i });
+    await packetContinueButton.click();
+
+    // STATE 6: Inducer Puzzle (auto-advance)
+    await page.waitForTimeout(500);
+
+    // STATE 7: Background Display (manual confirmation)
+    await expect(page.getByRole('heading', { name: /your background/i })).toBeVisible({ timeout: 5000 });
+    const backgroundButton = page.getByText('I Understand');
+    await backgroundButton.click();
+
     // Wait for ready to start
-    await page.waitForTimeout(2000);
     await expect(page.getByRole('heading', { name: /ready to begin/i })).toBeVisible({ timeout: 3000 });
 
     // Verify game state persisted through transitions

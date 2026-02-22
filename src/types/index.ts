@@ -11,6 +11,7 @@ export { RoleType, RobotFault } from './role';
 export type { RoleAssignment } from './role';
 export type { Penalty } from './penalty';
 export type { Background } from './background';
+export type { PenaltyCalibrationState } from './theme';
 export { Direction } from './inducer';
 export type { Cell, InducerPattern } from './inducer';
 export { Determination } from './outcome';

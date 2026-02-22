@@ -15,8 +15,7 @@ import type {
   ContentType,
   CycleDirection,
 } from './types';
-import type { GameState } from '../types';
-import { RoleType } from '../types';
+import { RoleType, GameMode, PlayerRole } from '../types';
 
 /**
  * GameEngine class

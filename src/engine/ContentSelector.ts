@@ -192,7 +192,7 @@ export class ContentSelector {
     }
 
     // Permute the 12 roles based on seed
-    const roleRNG = new GameRNG(this.seed + '-roles-' + packet.title);
+    const roleRNG = new GameRNG(this.seed + '-roles-' + packet.name);
     return roleRNG.permute(roles);
   }
 

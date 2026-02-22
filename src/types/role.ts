@@ -3,24 +3,38 @@
  * Human, Patient Robot, and Violent Robot variants
  */
 
-export enum RoleType {
-  Human = 'human',
-  PatientRobot = 'patient-robot',
-  ViolentRobot = 'violent-robot',
-}
+export type RoleType = 'human' | 'patient-robot' | 'violent-robot';
 
-export enum RobotFault {
-  LongTermMemory = 'long-term-memory',
-  Friendship = 'friendship',
-  Evaluation = 'evaluation',
-  Taste = 'taste',
-  Humor = 'humor',
-  Empathy = 'empathy',
-  SelfPreservation = 'self-preservation',
-  Curiosity = 'curiosity',
-  Pain = 'pain',
-  Deception = 'deception',
-}
+export const RoleType = {
+  Human: 'human' as const,
+  PatientRobot: 'patient-robot' as const,
+  ViolentRobot: 'violent-robot' as const,
+} as const;
+
+export type RobotFault =
+  | 'long-term-memory'
+  | 'friendship'
+  | 'evaluation'
+  | 'taste'
+  | 'humor'
+  | 'empathy'
+  | 'self-preservation'
+  | 'curiosity'
+  | 'pain'
+  | 'deception';
+
+export const RobotFault = {
+  LongTermMemory: 'long-term-memory' as const,
+  Friendship: 'friendship' as const,
+  Evaluation: 'evaluation' as const,
+  Taste: 'taste' as const,
+  Humor: 'humor' as const,
+  Empathy: 'empathy' as const,
+  SelfPreservation: 'self-preservation' as const,
+  Curiosity: 'curiosity' as const,
+  Pain: 'pain' as const,
+  Deception: 'deception' as const,
+} as const;
 
 export interface RoleAssignment {
   roleType: RoleType;

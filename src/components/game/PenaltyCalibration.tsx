@@ -25,7 +25,7 @@ export function PenaltyCalibration({
   penalty,
   role,
   onComplete,
-  currentAttempt = 0 // Deprecated: now using store's penaltyCalibration.practiceAttempts
+  currentAttempt: _currentAttempt = 0 // Deprecated: now using store's penaltyCalibration.practiceAttempts
 }: PenaltyCalibrationProps) {
   // Get cycling state and methods from store
   const {

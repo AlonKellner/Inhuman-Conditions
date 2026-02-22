@@ -20,7 +20,7 @@ import type {
  * Game Engine Configuration
  */
 export interface GameConfig {
-  seed: Seed;
+  seed: Seed | null;
   mode: 'single-device' | 'multi-device' | 'timer-only';
   playerRole?: 'investigator' | 'suspect' | 'spectator' | null;
 }
@@ -75,7 +75,7 @@ export interface GameEngineState {
   determination: 'human' | 'robot' | null;
   outcome: {
     determination: 'human' | 'robot';
-    actualRole: string;
+    actualRole: 'human' | 'patient-robot' | 'violent-robot';
     correct: boolean;
   } | null;
 }

@@ -209,16 +209,16 @@ describe('gameStore', () => {
     it('should increment calibration attempts', () => {
       const store = useGameStore.getState();
 
-      expect(store.calibrationAttempts).toBe(0);
+      expect(store.penaltyCalibration.practiceAttempts).toBe(0);
 
       store.incrementCalibration();
-      expect(store.calibrationAttempts).toBe(1);
+      expect(store.penaltyCalibration.practiceAttempts).toBe(1);
 
       store.incrementCalibration();
-      expect(store.calibrationAttempts).toBe(2);
+      expect(store.penaltyCalibration.practiceAttempts).toBe(2);
 
       store.incrementCalibration();
-      expect(store.calibrationAttempts).toBe(3);
+      expect(store.penaltyCalibration.practiceAttempts).toBe(3);
     });
 
     it('should not increment past 3', () => {
@@ -229,7 +229,7 @@ describe('gameStore', () => {
       store.incrementCalibration();
       store.incrementCalibration(); // 4th attempt
 
-      expect(store.calibrationAttempts).toBe(3);
+      expect(store.penaltyCalibration.practiceAttempts).toBe(3);
     });
   });
 
@@ -375,7 +375,7 @@ describe('gameStore', () => {
       expect(store.timerStarted).toBe(false);
       expect(store.timerElapsed).toBe(false);
       expect(store.roleVisible).toBe(false);
-      expect(store.calibrationAttempts).toBe(0);
+      expect(store.penaltyCalibration.practiceAttempts).toBe(0);
       expect(store.determination).toBeNull();
       expect(store.outcome).toBeNull();
     });
