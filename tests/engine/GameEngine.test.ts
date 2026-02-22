@@ -404,4 +404,243 @@ describe('GameEngine', () => {
       expect(events1).toEqual(events2);
     });
   });
+
+  describe('Content Cycling', () => {
+    beforeEach(() => {
+      engine.initialize({
+        seed: 'CYCLE',
+        mode: 'single-device',
+      });
+    });
+
+    describe('Penalty Cycling', () => {
+      it('should cycle to next penalty', () => {
+        const events: GameEngineEvent[] = [];
+        engine.subscribe((event) => events.push(event));
+
+        const initialState = engine.getState();
+        const initialPenalty = initialState.selectedPenalty;
+        const initialIndex = initialState.contentIndices.penaltyIndex;
+
+        engine.cycleContent('penalty', 'next');
+
+        const newState = engine.getState();
+        expect(newState.contentIndices.penaltyIndex).toBe(initialIndex + 1);
+        expect(newState.selectedPenalty?.id).not.toBe(initialPenalty?.id);
+
+        // Verify event was emitted
+        const cycledEvent = events.find((e) => e.type === 'CONTENT_CYCLED');
+        expect(cycledEvent).toBeDefined();
+        expect(cycledEvent).toMatchObject({
+          type: 'CONTENT_CYCLED',
+          contentType: 'penalty',
+          direction: 'next',
+          newIndex: initialIndex + 1,
+        });
+      });
+
+      it('should cycle to previous penalty', () => {
+        const initialState = engine.getState();
+        const totalPenalties = initialState.permutationSizes.penalties;
+
+        engine.cycleContent('penalty', 'previous');
+
+        const newState = engine.getState();
+        // Should wrap to last index (totalPenalties - 1)
+        expect(newState.contentIndices.penaltyIndex).toBe(totalPenalties - 1);
+      });
+
+      it('should wrap around when cycling forward past last penalty', () => {
+        const initialState = engine.getState();
+        const totalPenalties = initialState.permutationSizes.penalties;
+
+        // Cycle to last penalty
+        for (let i = 0; i < totalPenalties - 1; i++) {
+          engine.cycleContent('penalty', 'next');
+        }
+
+        const beforeWrap = engine.getState();
+        expect(beforeWrap.contentIndices.penaltyIndex).toBe(totalPenalties - 1);
+
+        // Cycle once more - should wrap to 0
+        engine.cycleContent('penalty', 'next');
+
+        const afterWrap = engine.getState();
+        expect(afterWrap.contentIndices.penaltyIndex).toBe(0);
+      });
+
+      it('should reset penalty calibration attempts when cycling penalty', () => {
+        // Make some practice attempts
+        engine.incrementCalibration();
+        engine.incrementCalibration();
+
+        const stateAfterPractice = engine.getState();
+        expect(stateAfterPractice.penaltyCalibration.practiceAttempts).toBe(2);
+
+        // Cycle penalty
+        engine.cycleContent('penalty', 'next');
+
+        const stateAfterCycle = engine.getState();
+        expect(stateAfterCycle.penaltyCalibration.practiceAttempts).toBe(0);
+        expect(stateAfterCycle.penaltyCalibration.isComplete).toBe(false);
+      });
+
+      it('should update penalty text when cycling', () => {
+        const initialState = engine.getState();
+        const initialText = initialState.penaltyCalibration.penaltyText;
+
+        engine.cycleContent('penalty', 'next');
+
+        const newState = engine.getState();
+        expect(newState.penaltyCalibration.penaltyText).not.toBe(initialText);
+        expect(newState.penaltyCalibration.penaltyText).toBe(newState.selectedPenalty?.text);
+      });
+    });
+
+    describe('Packet Cycling', () => {
+      it('should cycle to next packet', () => {
+        const initialState = engine.getState();
+        const initialPacket = initialState.selectedPacket;
+
+        engine.cycleContent('packet', 'next');
+
+        const newState = engine.getState();
+        expect(newState.selectedPacket?.id).not.toBe(initialPacket?.id);
+        expect(newState.contentIndices.packetIndex).toBe(1);
+      });
+
+      it('should cycle to previous packet', () => {
+        const initialState = engine.getState();
+        const totalPackets = initialState.permutationSizes.packets;
+
+        engine.cycleContent('packet', 'previous');
+
+        const newState = engine.getState();
+        expect(newState.contentIndices.packetIndex).toBe(totalPackets - 1);
+      });
+    });
+
+    describe('Background Cycling', () => {
+      it('should cycle to next background', () => {
+        const initialState = engine.getState();
+        const initialBackground = initialState.selectedBackground;
+
+        engine.cycleContent('background', 'next');
+
+        const newState = engine.getState();
+        expect(newState.selectedBackground?.id).not.toBe(initialBackground?.id);
+        expect(newState.contentIndices.backgroundIndex).toBe(1);
+      });
+
+      it('should cycle to previous background', () => {
+        const initialState = engine.getState();
+        const totalBackgrounds = initialState.permutationSizes.backgrounds;
+
+        engine.cycleContent('background', 'previous');
+
+        const newState = engine.getState();
+        expect(newState.contentIndices.backgroundIndex).toBe(totalBackgrounds - 1);
+      });
+    });
+
+    describe('Role Cycling', () => {
+      it('should cycle to next role', () => {
+        const initialState = engine.getState();
+        const initialRole = initialState.selectedRole;
+
+        engine.cycleContent('role', 'next');
+
+        const newState = engine.getState();
+        expect(newState.contentIndices.roleIndex).toBe(1);
+        // Role might be same type (e.g., both human) but different index
+      });
+
+      it('should cycle through 12 roles', () => {
+        const initialState = engine.getState();
+        expect(initialState.permutationSizes.roles).toBe(12);
+
+        // Cycle through all 12 roles
+        for (let i = 0; i < 12; i++) {
+          engine.cycleContent('role', 'next');
+        }
+
+        const afterFullCycle = engine.getState();
+        // Should wrap back to index 0
+        expect(afterFullCycle.contentIndices.roleIndex).toBe(0);
+      });
+    });
+
+    describe('Multiplayer Synchronization', () => {
+      it('should maintain determinism across multiple engines with same seed', () => {
+        const engine2 = new GameEngine();
+        engine2.initialize({
+          seed: 'CYCLE', // Same seed as engine in beforeEach
+          mode: 'single-device',
+        });
+
+        // Cycle both engines to same index
+        engine.cycleContent('penalty', 'next');
+        engine.cycleContent('penalty', 'next');
+
+        engine2.cycleContent('penalty', 'next');
+        engine2.cycleContent('penalty', 'next');
+
+        const state1 = engine.getState();
+        const state2 = engine2.getState();
+
+        // Should have same penalty
+        expect(state1.selectedPenalty?.id).toBe(state2.selectedPenalty?.id);
+        expect(state1.selectedPenalty?.text).toBe(state2.selectedPenalty?.text);
+        expect(state1.contentIndices.penaltyIndex).toBe(state2.contentIndices.penaltyIndex);
+      });
+    });
+
+    describe('Error Handling', () => {
+      it('should throw error when cycling before initialization', () => {
+        const uninitializedEngine = new GameEngine();
+
+        expect(() => {
+          uninitializedEngine.cycleContent('penalty', 'next');
+        }).toThrow('Game must be initialized before cycling content');
+      });
+    });
+
+    describe('Permutation Sizes', () => {
+      it('should initialize permutation sizes correctly', () => {
+        const state = engine.getState();
+
+        expect(state.permutationSizes.packets).toBeGreaterThan(0);
+        expect(state.permutationSizes.penalties).toBeGreaterThan(0);
+        expect(state.permutationSizes.backgrounds).toBeGreaterThan(0);
+        expect(state.permutationSizes.roles).toBe(12); // Always 12 roles
+      });
+    });
+
+    describe('Content Indices', () => {
+      it('should initialize all indices to 0', () => {
+        const state = engine.getState();
+
+        expect(state.contentIndices.packetIndex).toBe(0);
+        expect(state.contentIndices.penaltyIndex).toBe(0);
+        expect(state.contentIndices.backgroundIndex).toBe(0);
+        expect(state.contentIndices.roleIndex).toBe(0);
+      });
+
+      it('should only update the cycled content index', () => {
+        const initialState = engine.getState();
+
+        engine.cycleContent('penalty', 'next');
+
+        const newState = engine.getState();
+
+        // Penalty index should change
+        expect(newState.contentIndices.penaltyIndex).toBe(1);
+
+        // Other indices should remain 0
+        expect(newState.contentIndices.packetIndex).toBe(0);
+        expect(newState.contentIndices.backgroundIndex).toBe(0);
+        expect(newState.contentIndices.roleIndex).toBe(0);
+      });
+    });
+  });
 });

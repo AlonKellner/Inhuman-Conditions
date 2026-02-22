@@ -44,6 +44,20 @@ export interface GameEngineState {
   inducerPattern: InducerPattern | null;
   shuffledQuestions: Question[] | null;
 
+  // Content cycling (enables players to cycle through alternatives)
+  contentIndices: {
+    packetIndex: number;
+    penaltyIndex: number;
+    backgroundIndex: number;
+    roleIndex: number;
+  };
+  permutationSizes: {
+    packets: number;
+    penalties: number;
+    backgrounds: number;
+    roles: number;
+  };
+
   // Game progress
   penaltyCalibration: {
     penaltyText: string;
@@ -77,6 +91,16 @@ export interface StateTransition {
 }
 
 /**
+ * Content Type for Cycling
+ */
+export type ContentType = 'packet' | 'penalty' | 'background' | 'role';
+
+/**
+ * Cycle Direction
+ */
+export type CycleDirection = 'next' | 'previous';
+
+/**
  * Game Engine Events
  * Events that the engine can emit
  */
@@ -87,7 +111,8 @@ export type GameEngineEvent =
   | { type: 'TIMER_ELAPSED' }
   | { type: 'CALIBRATION_INCREMENTED'; attempts: number }
   | { type: 'DETERMINATION_MADE'; determination: 'human' | 'robot' }
-  | { type: 'GAME_RESET' };
+  | { type: 'GAME_RESET' }
+  | { type: 'CONTENT_CYCLED'; contentType: ContentType; direction: CycleDirection; newIndex: number };
 
 /**
  * Game Engine Interface
@@ -113,6 +138,9 @@ export interface IGameEngine {
   startTimer(): void;
   incrementCalibration(): void;
   makeDetermination(determination: 'human' | 'robot'): void;
+
+  // Content cycling
+  cycleContent(contentType: ContentType, direction: CycleDirection): void;
 
   // Event subscription
   subscribe(callback: (event: GameEngineEvent) => void): () => void;

@@ -12,6 +12,8 @@ import type {
   GameEngineState,
   StateTransition,
   GameEngineEvent,
+  ContentType,
+  CycleDirection,
 } from './types';
 import type { GameState } from '../types';
 import { RoleType } from '../types';
@@ -24,6 +26,7 @@ export class GameEngine implements IGameEngine {
   private state: GameEngineState;
   private validator: StateValidator;
   private subscribers: Set<(event: GameEngineEvent) => void>;
+  private contentSelector: ContentSelector | null = null;
 
   constructor() {
     this.validator = new StateValidator();
@@ -48,6 +51,18 @@ export class GameEngine implements IGameEngine {
       selectedBackground: null,
       inducerPattern: null,
       shuffledQuestions: null,
+      contentIndices: {
+        packetIndex: 0,
+        penaltyIndex: 0,
+        backgroundIndex: 0,
+        roleIndex: 0,
+      },
+      permutationSizes: {
+        packets: 0,
+        penalties: 0,
+        backgrounds: 0,
+        roles: 0,
+      },
       penaltyCalibration: {
         penaltyText: '',
         practiceAttempts: 0,
@@ -77,15 +92,28 @@ export class GameEngine implements IGameEngine {
       throw new Error('Seed is required to initialize game');
     }
 
-    // Select all game content deterministically
-    const selector = new ContentSelector(config.seed);
-    const content = selector.selectContent();
+    // Create ContentSelector instance for cycling
+    this.contentSelector = new ContentSelector(config.seed);
+
+    // Generate permutations to get sizes
+    const permutations = this.contentSelector.generatePermutations();
+
+    // Initialize indices to 0 (first item in each permutation)
+    const initialIndices = {
+      packetIndex: 0,
+      penaltyIndex: 0,
+      backgroundIndex: 0,
+      roleIndex: 0,
+    };
+
+    // Select content at initial indices
+    const content = this.contentSelector.selectContentAtIndices(initialIndices);
 
     // Set default player role for single-device mode
     const playerRole =
       config.playerRole || (config.mode === 'single-device' ? 'investigator' : null);
 
-    // Update state with selected content
+    // Update state with selected content and permutation sizes
     this.state = {
       ...this.state,
       config: {
@@ -98,6 +126,13 @@ export class GameEngine implements IGameEngine {
       selectedBackground: content.background,
       inducerPattern: content.inducerPattern,
       shuffledQuestions: content.shuffledQuestions,
+      contentIndices: initialIndices,
+      permutationSizes: {
+        packets: permutations.packets.length,
+        penalties: permutations.penalties.length,
+        backgrounds: permutations.backgrounds.length,
+        roles: 12, // Always 12 roles (4 human, 6 patient, 2 violent)
+      },
       penaltyCalibration: {
         penaltyText: content.penalty.text,
         practiceAttempts: 0,
@@ -122,6 +157,7 @@ export class GameEngine implements IGameEngine {
     if (previousSeed) {
       this.state.config.seed = previousSeed;
     }
+    this.contentSelector = null;
 
     this.emit({ type: 'GAME_RESET' });
   }
@@ -273,6 +309,101 @@ export class GameEngine implements IGameEngine {
     this.emit({
       type: 'DETERMINATION_MADE',
       determination,
+    });
+  }
+
+  /**
+   * Cycle through content alternatives (penalties, packets, backgrounds, roles)
+   * Enables players to explore all options while maintaining determinism
+   */
+  cycleContent(contentType: ContentType, direction: CycleDirection): void {
+    if (!this.contentSelector) {
+      throw new Error('Game must be initialized before cycling content');
+    }
+
+    // Get current indices and sizes
+    const currentIndices = { ...this.state.contentIndices };
+    const sizes = this.state.permutationSizes;
+
+    // Calculate new index based on content type and direction
+    let currentIndex: number;
+    let size: number;
+
+    switch (contentType) {
+      case 'packet':
+        currentIndex = currentIndices.packetIndex;
+        size = sizes.packets;
+        break;
+      case 'penalty':
+        currentIndex = currentIndices.penaltyIndex;
+        size = sizes.penalties;
+        break;
+      case 'background':
+        currentIndex = currentIndices.backgroundIndex;
+        size = sizes.backgrounds;
+        break;
+      case 'role':
+        currentIndex = currentIndices.roleIndex;
+        size = sizes.roles;
+        break;
+      default:
+        throw new Error(`Unknown content type: ${contentType}`);
+    }
+
+    // Calculate new index with wraparound
+    const newIndex =
+      direction === 'next'
+        ? (currentIndex + 1) % size
+        : (currentIndex - 1 + size) % size;
+
+    // Update indices
+    switch (contentType) {
+      case 'packet':
+        currentIndices.packetIndex = newIndex;
+        break;
+      case 'penalty':
+        currentIndices.penaltyIndex = newIndex;
+        break;
+      case 'background':
+        currentIndices.backgroundIndex = newIndex;
+        break;
+      case 'role':
+        currentIndices.roleIndex = newIndex;
+        break;
+    }
+
+    // Select new content with updated indices
+    const newContent = this.contentSelector.selectContentAtIndices(currentIndices);
+
+    // Update state with new content and indices
+    this.state = {
+      ...this.state,
+      contentIndices: currentIndices,
+      selectedPacket: newContent.packet,
+      selectedPenalty: newContent.penalty,
+      selectedRole: newContent.role,
+      selectedBackground: newContent.background,
+      inducerPattern: newContent.inducerPattern,
+      shuffledQuestions: newContent.shuffledQuestions,
+    };
+
+    // Update penalty calibration text if penalty changed
+    if (contentType === 'penalty') {
+      this.state.penaltyCalibration = {
+        ...this.state.penaltyCalibration,
+        penaltyText: newContent.penalty.text,
+        // Reset practice attempts when penalty changes
+        practiceAttempts: 0,
+        isComplete: false,
+      };
+    }
+
+    // Emit content cycled event
+    this.emit({
+      type: 'CONTENT_CYCLED',
+      contentType,
+      direction,
+      newIndex,
     });
   }
 
