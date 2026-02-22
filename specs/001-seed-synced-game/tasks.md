@@ -30,12 +30,12 @@ Project structure (from plan.md):
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create directory structure: src/{components,data,hooks,lib,store,styles,types}, tests/{unit,integration}
-- [ ] T002 Configure TypeScript with strict mode in tsconfig.json
-- [ ] T003 [P] Configure Vitest in vitest.config.ts with React plugin and jsdom environment
-- [ ] T004 [P] Create test setup file in src/test/setup.ts with @testing-library/react
-- [ ] T005 [P] Create design tokens in src/styles/tokens.css (colors, typography, spacing from robots.management)
-- [ ] T006 [P] Create global styles in src/styles/global.css (CSS reset, bureaucratic aesthetic)
+- [X] T001 Create directory structure: src/{components,data,hooks,lib,store,styles,types}, tests/{unit,integration}
+- [X] T002 Configure TypeScript with strict mode in tsconfig.json
+- [X] T003 [P] Configure Vitest in vitest.config.ts with React plugin and jsdom environment
+- [X] T004 [P] Create test setup file in src/test/setup.ts with @testing-library/react
+- [X] T005 [P] Create design tokens in src/styles/tokens.css (colors, typography, spacing from robots.management)
+- [X] T006 [P] Create global styles in src/styles/global.css (CSS reset, bureaucratic aesthetic)
 
 ---
 
