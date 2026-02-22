@@ -47,27 +47,27 @@ Project structure (from plan.md):
 
 ### TypeScript Type Definitions
 
-- [ ] T007 [P] Create Seed types in src/types/seed.ts (Seed, SeedValidation)
-- [ ] T008 [P] Create GameMode and PlayerRole enums in src/types/game-mode.ts
-- [ ] T009 [P] Create GameState enum in src/types/game-state.ts (10 states)
-- [ ] T010 [P] Create Packet types in src/types/packet.ts (Packet, Question, PacketRole)
-- [ ] T011 [P] Create Role types in src/types/role.ts (RoleType, RoleAssignment, RobotFault)
-- [ ] T012 [P] Create Penalty type in src/types/penalty.ts
-- [ ] T013 [P] Create Background type in src/types/background.ts
-- [ ] T014 [P] Create InducerPattern types in src/types/inducer.ts (Direction, Cell, InducerPattern)
-- [ ] T015 [P] Create Determination types in src/types/outcome.ts (Determination, GameOutcome)
-- [ ] T016 Create index barrel export in src/types/index.ts
+- [X] T007 [P] Create Seed types in src/types/seed.ts (Seed, SeedValidation)
+- [X] T008 [P] Create GameMode and PlayerRole enums in src/types/game-mode.ts
+- [X] T009 [P] Create GameState enum in src/types/game-state.ts (10 states)
+- [X] T010 [P] Create Packet types in src/types/packet.ts (Packet, Question, PacketRole)
+- [X] T011 [P] Create Role types in src/types/role.ts (RoleType, RoleAssignment, RobotFault)
+- [X] T012 [P] Create Penalty type in src/types/penalty.ts
+- [X] T013 [P] Create Background type in src/types/background.ts
+- [X] T014 [P] Create InducerPattern types in src/types/inducer.ts (Direction, Cell, InducerPattern)
+- [X] T015 [P] Create Determination types in src/types/outcome.ts (Determination, GameOutcome)
+- [X] T016 Create index barrel export in src/types/index.ts
 
 ### Core Game Logic (100% Coverage Required)
 
 > **TDD CRITICAL**: Write tests FIRST for each module, ensure they FAIL, then implement
 
-- [ ] T017 [P] Write GameRNG tests in src/lib/GameRNG.test.ts (determinism, range, shuffle, choice, edge cases)
-- [ ] T018 Implement GameRNG class in src/lib/GameRNG.ts using seedrandom (verify tests pass)
-- [ ] T019 [P] Write seed generation tests in src/lib/seedGeneration.test.ts (UTC rounding, validation, random generation)
-- [ ] T020 Implement seed generation utilities in src/lib/seedGeneration.ts (verify tests pass)
-- [ ] T021 [P] Write inducer pattern tests in src/lib/inducerPattern.test.ts (5x5 grid generation, connections, determinism)
-- [ ] T022 Implement inducer pattern generation in src/lib/inducerPattern.ts (verify tests pass)
+- [X] T017 [P] Write GameRNG tests in src/lib/GameRNG.test.ts (determinism, range, shuffle, choice, edge cases)
+- [X] T018 Implement GameRNG class in src/lib/GameRNG.ts using seedrandom (verify tests pass)
+- [X] T019 [P] Write seed generation tests in src/lib/seedGeneration.test.ts (UTC rounding, validation, random generation)
+- [X] T020 Implement seed generation utilities in src/lib/seedGeneration.ts (verify tests pass)
+- [X] T021 [P] Write inducer pattern tests in src/lib/inducerPattern.test.ts (5x5 grid generation, connections, determinism)
+- [X] T022 Implement inducer pattern generation in src/lib/inducerPattern.ts (verify tests pass)
 
 ### Zustand Store Foundation
 
