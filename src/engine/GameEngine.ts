@@ -127,6 +127,20 @@ export class GameEngine implements IGameEngine {
   }
 
   /**
+   * Update player role
+   */
+  setPlayerRole(role: PlayerRole | null): void {
+    this.state.config.playerRole = role;
+  }
+
+  /**
+   * Update game mode
+   */
+  setMode(mode: GameMode): void {
+    this.state.config.mode = mode;
+  }
+
+  /**
    * Advance to next state in the game flow
    */
   advanceState(): StateTransition {

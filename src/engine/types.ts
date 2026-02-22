@@ -6,6 +6,8 @@
 import type {
   Seed,
   GameState,
+  GameMode,
+  PlayerRole,
   Packet,
   Penalty,
   Background,
@@ -98,6 +100,10 @@ export interface IGameEngine {
   // Initialization
   initialize(config: GameConfig): void;
   reset(): void;
+
+  // Configuration
+  setPlayerRole(role: PlayerRole | null): void;
+  setMode(mode: GameMode): void;
 
   // State transitions
   advanceState(): StateTransition;

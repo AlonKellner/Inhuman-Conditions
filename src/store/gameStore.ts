@@ -1,20 +1,17 @@
 /**
- * Zustand Game Store
- * Centralized state management for Inhuman Conditions game
+ * Zustand Game Store (GameEngine Integration)
+ * UI state management layer that delegates game logic to GameEngine
+ * Implements Constitution Principle VII: Separation of Game Logic from UI
  * Implements the API contract from contracts/game-state-api.md
  */
 
 import { create } from 'zustand';
-import { GameRNG } from '../lib/GameRNG';
+import { GameEngine } from '../engine/GameEngine';
 import {
   validateSeed as validateSeedUtil,
   generateDefaultSeed as generateDefaultSeedUtil,
   generateRandomSeed as generateRandomSeedUtil,
 } from '../lib/seedGeneration';
-import { generateInducerPattern } from '../lib/inducerPattern';
-import { packets } from '../data/packets';
-import { penalties } from '../data/penalties';
-import { backgrounds } from '../data/backgrounds';
 import type {
   Seed,
   SeedValidation,
@@ -31,28 +28,30 @@ import type {
   GameOutcome,
   PenaltyCalibrationState,
 } from '../types';
-import { RoleType } from '../types';
 
 interface GameStore {
-  // Seed & Initialization
+  // === Game Engine (Pure Logic) ===
+  _engine: GameEngine;
+
+  // === Seed & Initialization ===
   seed: Seed | null;
   setSeed: (seed: Seed) => void;
   generateDefaultSeed: () => Seed;
   generateRandomSeed: () => Seed;
   validateSeed: (seed: Seed) => SeedValidation;
 
-  // Game Mode & Role
+  // === Game Mode & Role ===
   mode: GameMode;
   setMode: (mode: GameMode) => void;
   playerRole: PlayerRole | null;
   setPlayerRole: (role: PlayerRole) => void;
 
-  // Game State Machine
+  // === Game State Machine ===
   gameState: GameState;
   advanceState: () => void;
   resetGame: () => void;
 
-  // Selected Game Content (initialized by seed)
+  // === Selected Game Content ===
   selectedPacket: Packet | null;
   selectedPenalty: Penalty | null;
   selectedRole: RoleAssignment | null;
@@ -60,308 +59,233 @@ interface GameStore {
   inducerPattern: InducerPattern | null;
   shuffledQuestions: Question[] | null;
 
-  // Game Initialization
+  // === Game Initialization ===
   initializeGame: () => void;
 
-  // Interview State
+  // === Interview State ===
   timerStarted: boolean;
   timerElapsed: boolean;
   startTimer: () => void;
   onTimerElapsed: () => void;
 
-  // Penalty Calibration
+  // === Penalty Calibration ===
   penaltyCalibration: PenaltyCalibrationState;
   incrementCalibration: () => void;
   resetCalibration: () => void;
 
-  // Conclusion
+  // === Conclusion ===
   determination: Determination | null;
   setDetermination: (determination: Determination) => void;
   outcome: GameOutcome | null;
 
-  // UI State
+  // === UI State ===
   roleVisible: boolean;
   toggleRoleVisibility: () => void;
 
-  // Sync Check
+  // === Sync Check ===
   getStateHash: () => string;
+
+  // === Internal Sync Method ===
+  _syncFromEngine: () => void;
 }
 
-export const useGameStore = create<GameStore>((set, get) => ({
-  // === Initial State ===
-  seed: null,
-  mode: 'single-device' as GameMode,
-  playerRole: null,
-  gameState: 'seed-entry' as GameState,
-  selectedPacket: null,
-  selectedPenalty: null,
-  selectedRole: null,
-  selectedBackground: null,
-  inducerPattern: null,
-  shuffledQuestions: null,
-  timerStarted: false,
-  timerElapsed: false,
-  penaltyCalibration: {
-    penaltyText: '',
-    practiceAttempts: 0,
-    maxAttempts: 3,
-    isComplete: false,
-    lastAttemptTimestamp: null,
-  },
-  determination: null,
-  outcome: null,
-  roleVisible: false,
+export const useGameStore = create<GameStore>((set, get) => {
+  // Create game engine instance
+  const engine = new GameEngine();
 
-  // === Seed Management ===
-  setSeed: (seed: Seed) => {
-    const validation = validateSeedUtil(seed);
-    if (!validation.isValid) {
-      throw new Error(validation.error || 'Invalid seed');
-    }
-
-    set({ seed });
-    get().initializeGame();
-  },
-
-  generateDefaultSeed: (): Seed => {
-    return generateDefaultSeedUtil();
-  },
-
-  generateRandomSeed: (): Seed => {
-    return generateRandomSeedUtil();
-  },
-
-  validateSeed: (seed: Seed): SeedValidation => {
-    return validateSeedUtil(seed);
-  },
-
-  // === Game Mode & Role ===
-  setMode: (mode: GameMode) => {
-    set({ mode, playerRole: null });
-  },
-
-  setPlayerRole: (role: PlayerRole) => {
-    set({ playerRole: role });
-  },
-
-  // === State Machine ===
-  advanceState: () => {
-    const { gameState } = get();
-    const states: GameState[] = [
-      'seed-entry',
-      'mode-selection',
-      'role-selection',
-      'penalty-calibration',
-      'packet-display',
-      'inducer-puzzle',
-      'background-display',
-      'ready-to-start',
-      'interview',
-      'conclusion',
-    ];
-
-    const currentIndex = states.indexOf(gameState);
-    if (currentIndex < states.length - 1) {
-      set({ gameState: states[currentIndex + 1] });
-    }
-  },
-
-  resetGame: () => {
-    const { seed } = get();
-    set({
-      gameState: 'seed-entry',
-      selectedPacket: null,
-      selectedPenalty: null,
-      selectedRole: null,
-      selectedBackground: null,
-      inducerPattern: null,
-      shuffledQuestions: null,
-      timerStarted: false,
-      timerElapsed: false,
-      penaltyCalibration: {
-        penaltyText: '',
-        practiceAttempts: 0,
-        maxAttempts: 3,
-        isComplete: false,
-        lastAttemptTimestamp: null,
-      },
-      determination: null,
-      outcome: null,
-      roleVisible: false,
-      seed, // Preserve seed
+  // Subscribe to engine events and sync to Zustand
+  engine.subscribe((event) => {
+    console.log('[GameEngine Event]', event);
+    // Use requestAnimationFrame to batch state updates and prevent event loop issues
+    requestAnimationFrame(() => {
+      get()._syncFromEngine();
     });
-  },
+  });
 
-  // === Game Initialization ===
-  initializeGame: () => {
-    const { seed } = get();
-    if (!seed) return;
+  return {
+    // === Engine Instance ===
+    _engine: engine,
 
-    const rng = new GameRNG(seed);
+    // === Initial State ===
+    seed: null,
+    mode: 'single-device' as GameMode,
+    playerRole: null,
+    gameState: 'seed-entry' as GameState,
+    selectedPacket: null,
+    selectedPenalty: null,
+    selectedRole: null,
+    selectedBackground: null,
+    inducerPattern: null,
+    shuffledQuestions: null,
+    timerStarted: false,
+    timerElapsed: false,
+    penaltyCalibration: {
+      penaltyText: '',
+      practiceAttempts: 0,
+      maxAttempts: 3,
+      isComplete: false,
+      lastAttemptTimestamp: null,
+    },
+    determination: null,
+    outcome: null,
+    roleVisible: false,
 
-    // Select packet
-    const packet = rng.choice(packets);
+    // === Seed Management ===
+    setSeed: (seed: Seed) => {
+      const validation = validateSeedUtil(seed);
+      if (!validation.isValid) {
+        throw new Error(validation.error || 'Invalid seed');
+      }
 
-    // Select penalty
-    const penalty = rng.choice(penalties);
+      set({ seed });
+      get().initializeGame();
+    },
 
-    // Select background
-    const background = rng.choice(backgrounds);
+    generateDefaultSeed: (): Seed => {
+      return generateDefaultSeedUtil();
+    },
 
-    // Assign role (Human 33%, Patient Robot 50%, Violent Robot 17%)
-    const roleRoll = rng.nextInt(1, 13); // 1-12 like d12
-    let selectedRole: RoleAssignment;
+    generateRandomSeed: (): Seed => {
+      return generateRandomSeedUtil();
+    },
 
-    if (roleRoll <= 4) {
-      // Human (1-4)
-      const humanRole = packet.roles.find((r) => r.roleType === RoleType.Human);
-      selectedRole = {
-        roleType: RoleType.Human,
-        description: humanRole?.description || 'A normal human being',
-        traits: humanRole?.traits || ['Honest', 'Relaxed'],
-      };
-    } else if (roleRoll <= 10) {
-      // Patient Robot (5-10)
-      const patientRoles = packet.roles.filter((r) => r.roleType === RoleType.PatientRobot);
-      const patientRole = rng.choice(patientRoles);
-      selectedRole = {
-        roleType: RoleType.PatientRobot,
-        fault: patientRole.fault as any,
-        description: patientRole.description,
-        traits: patientRole.traits,
-        restrictions: ['Cannot mention certain topics'], // Placeholder
-      };
-    } else {
-      // Violent Robot (11-12)
-      const violentRoles = packet.roles.filter((r) => r.roleType === RoleType.ViolentRobot);
-      const violentRole = rng.choice(violentRoles);
-      selectedRole = {
-        roleType: RoleType.ViolentRobot,
-        fault: violentRole.fault as any,
-        description: violentRole.description,
-        traits: violentRole.traits,
-        tasks: violentRole.tasks || ['Complete assigned tasks'],
-      };
-    }
+    validateSeed: (seed: Seed): SeedValidation => {
+      return validateSeedUtil(seed);
+    },
 
-    // Generate inducer pattern
-    const pattern = generateInducerPattern(rng);
+    // === Game Mode & Role ===
+    setMode: (mode: GameMode) => {
+      const { _engine } = get();
+      _engine.setMode(mode);
+      set({ mode, playerRole: null });
+    },
 
-    // Shuffle questions
-    const questions = rng.shuffle([...packet.questions]);
+    setPlayerRole: (role: PlayerRole) => {
+      const { _engine } = get();
+      _engine.setPlayerRole(role);
+      set({ playerRole: role });
+    },
 
-    // Set default playerRole for MVP single-device mode
-    // In single-device mode, default to 'investigator' since they control game flow
-    const { mode, playerRole } = get();
-    const defaultPlayerRole = playerRole || (mode === 'single-device' ? 'investigator' : null);
+    // === State Machine (Delegates to Engine) ===
+    advanceState: () => {
+      const { _engine } = get();
+      _engine.advanceState();
+      get()._syncFromEngine();
+    },
 
-    set({
-      selectedPacket: packet,
-      selectedPenalty: penalty,
-      selectedRole,
-      selectedBackground: background,
-      inducerPattern: pattern,
-      shuffledQuestions: questions,
-      playerRole: defaultPlayerRole,
-      penaltyCalibration: {
-        penaltyText: penalty.text,
-        practiceAttempts: 0,
-        maxAttempts: 3,
-        isComplete: false,
-        lastAttemptTimestamp: null,
-      },
-    });
-  },
+    resetGame: () => {
+      const { _engine, seed } = get();
+      _engine.reset();
 
-  // === Interview Timer ===
-  startTimer: () => {
-    set({ timerStarted: true });
-  },
+      set({
+        gameState: 'seed-entry',
+        selectedPacket: null,
+        selectedPenalty: null,
+        selectedRole: null,
+        selectedBackground: null,
+        inducerPattern: null,
+        shuffledQuestions: null,
+        timerStarted: false,
+        timerElapsed: false,
+        penaltyCalibration: {
+          penaltyText: '',
+          practiceAttempts: 0,
+          maxAttempts: 3,
+          isComplete: false,
+          lastAttemptTimestamp: null,
+        },
+        determination: null,
+        outcome: null,
+        roleVisible: false,
+        seed, // Preserve seed
+      });
+    },
 
-  onTimerElapsed: () => {
-    set({ timerElapsed: true });
-  },
+    // === Game Initialization (Delegates to Engine) ===
+    initializeGame: () => {
+      const { seed, mode, playerRole, _engine } = get();
+      if (!seed) return;
 
-  // === Penalty Calibration ===
-  incrementCalibration: () => {
-    const { penaltyCalibration } = get();
-    if (penaltyCalibration.practiceAttempts < penaltyCalibration.maxAttempts) {
-      const newAttempts = penaltyCalibration.practiceAttempts + 1;
+      _engine.initialize({
+        seed,
+        mode,
+        playerRole,
+      });
+
+      get()._syncFromEngine();
+    },
+
+    // === Interview Timer (Delegates to Engine) ===
+    startTimer: () => {
+      const { _engine } = get();
+      _engine.startTimer();
+      get()._syncFromEngine();
+    },
+
+    onTimerElapsed: () => {
+      const { _engine } = get();
+      _engine.onTimerElapsed();
+      get()._syncFromEngine();
+    },
+
+    // === Penalty Calibration (Delegates to Engine) ===
+    incrementCalibration: () => {
+      const { _engine } = get();
+      _engine.incrementCalibration();
+      get()._syncFromEngine();
+    },
+
+    resetCalibration: () => {
+      const { penaltyCalibration } = get();
       set({
         penaltyCalibration: {
           ...penaltyCalibration,
-          practiceAttempts: newAttempts,
-          isComplete: newAttempts >= penaltyCalibration.maxAttempts,
-          lastAttemptTimestamp: Date.now(),
+          practiceAttempts: 0,
+          isComplete: false,
+          lastAttemptTimestamp: null,
         },
       });
-    }
-  },
+    },
 
-  resetCalibration: () => {
-    const { penaltyCalibration } = get();
-    set({
-      penaltyCalibration: {
-        ...penaltyCalibration,
-        practiceAttempts: 0,
-        isComplete: false,
-        lastAttemptTimestamp: null,
-      },
-    });
-  },
+    // === Determination & Outcome (Delegates to Engine) ===
+    setDetermination: (determination: Determination) => {
+      const { _engine } = get();
+      _engine.makeDetermination(determination);
+      get()._syncFromEngine();
+    },
 
-  // === Determination & Outcome ===
-  setDetermination: (determination: Determination) => {
-    const { selectedRole } = get();
-    if (!selectedRole) return;
+    // === UI State ===
+    toggleRoleVisibility: () => {
+      set((state) => ({ roleVisible: !state.roleVisible }));
+    },
 
-    const actualRole = selectedRole.roleType;
+    // === Sync Check ===
+    getStateHash: (): string => {
+      const { seed, gameState, selectedPacket, selectedPenalty, selectedRole } = get();
+      const hash = `${seed}-${gameState}-${selectedPacket?.id}-${selectedPenalty?.id}-${selectedRole?.roleType}`;
+      return btoa(hash);
+    },
 
-    // Calculate correctness
-    let correct = false;
-    if (determination === 'human' && actualRole === RoleType.Human) {
-      correct = true;
-    } else if (
-      determination === 'robot' &&
-      (actualRole === RoleType.PatientRobot || actualRole === RoleType.ViolentRobot)
-    ) {
-      correct = true;
-    }
+    // === Internal: Sync Zustand from Engine ===
+    _syncFromEngine: () => {
+      const { _engine } = get();
+      const engineState = _engine.getState();
 
-    set({
-      determination,
-      outcome: {
-        determination,
-        actualRole,
-        correct,
-      },
-    });
-  },
-
-  // === UI State ===
-  toggleRoleVisibility: () => {
-    set((state) => ({ roleVisible: !state.roleVisible }));
-  },
-
-  // === Sync Check ===
-  getStateHash: (): string => {
-    const { seed, gameState, selectedPacket, selectedPenalty, selectedRole, selectedBackground } =
-      get();
-
-    const stateData = {
-      seed,
-      gameState,
-      packetId: selectedPacket?.id,
-      penaltyId: selectedPenalty?.id,
-      roleType: selectedRole?.roleType,
-      backgroundId: selectedBackground?.id,
-    };
-
-    // Simple hash (first 8 chars of hex hash)
-    const hash = JSON.stringify(stateData)
-      .split('')
-      .reduce((acc, char) => ((acc << 5) - acc + char.charCodeAt(0)) | 0, 0);
-
-    return Math.abs(hash).toString(16).substring(0, 8);
-  },
-}));
+      set({
+        gameState: engineState.currentState,
+        selectedPacket: engineState.selectedPacket,
+        selectedPenalty: engineState.selectedPenalty,
+        selectedRole: engineState.selectedRole,
+        selectedBackground: engineState.selectedBackground,
+        inducerPattern: engineState.inducerPattern,
+        shuffledQuestions: engineState.shuffledQuestions,
+        penaltyCalibration: engineState.penaltyCalibration,
+        timerStarted: engineState.timerStarted,
+        timerElapsed: engineState.timerElapsed,
+        determination: engineState.determination,
+        outcome: engineState.outcome,
+        playerRole: engineState.config.playerRole,
+      });
+    },
+  };
+});
