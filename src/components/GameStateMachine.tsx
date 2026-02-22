@@ -48,10 +48,14 @@ export const GameStateMachine: FC = () => {
       return <SeedEntry />;
 
     case GameState.PenaltyCalibration:
+      // In single-device mode, always show Suspect view during penalty calibration
+      // (Suspect needs to click "I Practiced" button 3 times)
+      const calibrationRole = mode === 'single-device' ? 'suspect' : (playerRole || 'spectator');
+
       return (
         <PenaltyCalibration
           penalty={selectedPenalty?.text || ''}
-          role={playerRole || 'spectator'}
+          role={calibrationRole}
           currentAttempt={penaltyCalibration.practiceAttempts}
           onComplete={advanceState}
         />
