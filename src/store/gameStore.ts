@@ -29,6 +29,7 @@ import type {
   InducerPattern,
   Determination,
   GameOutcome,
+  PenaltyCalibrationState,
 } from '../types';
 import { RoleType } from '../types';
 
@@ -69,8 +70,9 @@ interface GameStore {
   onTimerElapsed: () => void;
 
   // Penalty Calibration
-  calibrationAttempts: number;
+  penaltyCalibration: PenaltyCalibrationState;
   incrementCalibration: () => void;
+  resetCalibration: () => void;
 
   // Conclusion
   determination: Determination | null;
@@ -99,7 +101,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
   shuffledQuestions: null,
   timerStarted: false,
   timerElapsed: false,
-  calibrationAttempts: 0,
+  penaltyCalibration: {
+    penaltyText: '',
+    practiceAttempts: 0,
+    maxAttempts: 3,
+    isComplete: false,
+    lastAttemptTimestamp: null,
+  },
   determination: null,
   outcome: null,
   roleVisible: false,
@@ -170,7 +178,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
       shuffledQuestions: null,
       timerStarted: false,
       timerElapsed: false,
-      calibrationAttempts: 0,
+      penaltyCalibration: {
+        penaltyText: '',
+        practiceAttempts: 0,
+        maxAttempts: 3,
+        isComplete: false,
+        lastAttemptTimestamp: null,
+      },
       determination: null,
       outcome: null,
       roleVisible: false,
@@ -236,6 +250,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
     // Shuffle questions
     const questions = rng.shuffle([...packet.questions]);
 
+    // Set default playerRole for MVP single-device mode
+    // In single-device mode, default to 'investigator' since they control game flow
+    const { mode, playerRole } = get();
+    const defaultPlayerRole = playerRole || (mode === 'single-device' ? 'investigator' : null);
+
     set({
       selectedPacket: packet,
       selectedPenalty: penalty,
@@ -243,6 +262,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
       selectedBackground: background,
       inducerPattern: pattern,
       shuffledQuestions: questions,
+      playerRole: defaultPlayerRole,
+      penaltyCalibration: {
+        penaltyText: penalty.text,
+        practiceAttempts: 0,
+        maxAttempts: 3,
+        isComplete: false,
+        lastAttemptTimestamp: null,
+      },
     });
   },
 
@@ -257,10 +284,30 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   // === Penalty Calibration ===
   incrementCalibration: () => {
-    const { calibrationAttempts } = get();
-    if (calibrationAttempts < 3) {
-      set({ calibrationAttempts: calibrationAttempts + 1 });
+    const { penaltyCalibration } = get();
+    if (penaltyCalibration.practiceAttempts < penaltyCalibration.maxAttempts) {
+      const newAttempts = penaltyCalibration.practiceAttempts + 1;
+      set({
+        penaltyCalibration: {
+          ...penaltyCalibration,
+          practiceAttempts: newAttempts,
+          isComplete: newAttempts >= penaltyCalibration.maxAttempts,
+          lastAttemptTimestamp: Date.now(),
+        },
+      });
     }
+  },
+
+  resetCalibration: () => {
+    const { penaltyCalibration } = get();
+    set({
+      penaltyCalibration: {
+        ...penaltyCalibration,
+        practiceAttempts: 0,
+        isComplete: false,
+        lastAttemptTimestamp: null,
+      },
+    });
   },
 
   // === Determination & Outcome ===

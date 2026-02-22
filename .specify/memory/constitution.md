@@ -20,6 +20,9 @@ Zero server communication. Zero analytics tracking. Zero third-party API calls. 
 ### VI. Frequent Commits and Pushes (NON-NEGOTIABLE)
 **Commit often** (at least every significant change). **Push to remote regularly** (every 30 minutes or after completing a feature). Commit message format: `<type>: <description>`. Co-authored-by: `Claude Sonnet 4.5 <noreply@anthropic.com>`.
 
+### VII. Separation of Game Logic from UI (NON-NEGOTIABLE)
+**Game process logic MUST be independently testable** without React dependencies. Core game engine (state transitions, rule validation, content selection) MUST be implemented as pure TypeScript classes/modules in `src/engine/`. React components are **pure views** that render engine state. This enables **100% test coverage of game logic** (Principle III) by testing game rules without mounting components. Integration layer (`src/hooks/`) bridges engine to React.
+
 ## Architecture & Technology
 
 ### TypeScript Strict Mode
@@ -131,4 +134,4 @@ Every HTML page must include in the footer:
 
 This constitution supersedes all other practices. All PRs/reviews must verify compliance. Amendments require documentation and approval. Complexity must be justified.
 
-**Version**: 1.0.0 | **Ratified**: 2026-02-21 | **Last Amended**: 2026-02-21
+**Version**: 1.1.0 | **Ratified**: 2026-02-21 | **Last Amended**: 2026-02-22

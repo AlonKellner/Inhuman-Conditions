@@ -2,32 +2,35 @@ import { type FC, useEffect } from 'react';
 import { useGameStore } from '../store/gameStore';
 import { GameState, GameMode } from '../types';
 import { SeedEntry } from './game/SeedEntry';
+import { PenaltyCalibration } from './game/PenaltyCalibration';
+import { ReadyToStart } from './game/ReadyToStart';
 import { InvestigatorView } from './game/Interview/InvestigatorView';
 import { SuspectView } from './game/Interview/SuspectView';
 import { Conclusion } from './game/Conclusion';
 
 export const GameStateMachine: FC = () => {
-  const { gameState, mode, advanceState, startTimer } = useGameStore();
+  const {
+    gameState,
+    mode,
+    playerRole,
+    selectedPenalty,
+    penaltyCalibration,
+    advanceState,
+    startTimer,
+  } = useGameStore();
 
-  // Auto-advance through intermediate states for MVP
-  // These states will have full implementations in later phases
+  // Auto-advance through intermediate states ONLY for states not yet implemented
+  // PenaltyCalibration and ReadyToStart now have manual progression
   useEffect(() => {
     const intermediateStates: GameState[] = [
       GameState.ModeSelection,
       GameState.RoleSelection,
-      GameState.PenaltyCalibration,
       GameState.PacketDisplay,
       GameState.InducerPuzzle,
       GameState.BackgroundDisplay,
-      GameState.ReadyToStart,
     ];
 
     if (intermediateStates.includes(gameState)) {
-      // Start timer before advancing from ReadyToStart
-      if (gameState === GameState.ReadyToStart) {
-        startTimer();
-      }
-
       // Auto-advance after a short delay to show loading state
       const timer = setTimeout(() => {
         advanceState();
@@ -35,7 +38,7 @@ export const GameStateMachine: FC = () => {
 
       return () => clearTimeout(timer);
     }
-  }, [gameState, advanceState, startTimer]);
+  }, [gameState, advanceState]);
 
   // For MVP, we'll implement only the essential states
   // Additional states (ModeSelection, RoleSelection, etc.) can be added in later phases
@@ -43,6 +46,32 @@ export const GameStateMachine: FC = () => {
   switch (gameState) {
     case GameState.SeedEntry:
       return <SeedEntry />;
+
+    case GameState.PenaltyCalibration:
+      return (
+        <PenaltyCalibration
+          penalty={selectedPenalty?.text || ''}
+          role={playerRole || 'spectator'}
+          currentAttempt={penaltyCalibration.practiceAttempts}
+          onComplete={advanceState}
+        />
+      );
+
+    case GameState.ReadyToStart: {
+      const handleStartInterview = () => {
+        // CRITICAL: Start timer FIRST, then advance to interview
+        startTimer();
+        advanceState();
+      };
+
+      return (
+        <ReadyToStart
+          role={playerRole || 'spectator'}
+          onStartInterview={handleStartInterview}
+          isMultiDevice={mode === GameMode.MultiDevice}
+        />
+      );
+    }
 
     case GameState.Interview:
       // In single-device mode, default to Investigator view
@@ -66,14 +95,12 @@ export const GameStateMachine: FC = () => {
     case GameState.Conclusion:
       return <Conclusion />;
 
-    // For MVP, auto-advance through intermediate states
+    // For MVP, auto-advance through intermediate states not yet implemented
     case GameState.ModeSelection:
     case GameState.RoleSelection:
-    case GameState.PenaltyCalibration:
     case GameState.PacketDisplay:
     case GameState.InducerPuzzle:
     case GameState.BackgroundDisplay:
-    case GameState.ReadyToStart:
       // Show loading state while auto-advancing
       return (
         <div style={{ textAlign: 'center', padding: '100px 20px' }}>

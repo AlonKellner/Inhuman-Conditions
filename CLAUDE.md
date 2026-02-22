@@ -23,6 +23,7 @@ npm test && npm run lint
 TypeScript 5.3+ with strict mode enabled: Follow standard conventions
 
 ## Recent Changes
+- 002-official-design-polish: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 
 - 001-seed-synced-game: Added TypeScript 5.3+ with strict mode enabled
 

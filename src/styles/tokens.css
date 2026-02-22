@@ -97,4 +97,26 @@
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
+
+  /* === Halftone Patterns (T014-T016) === */
+  /* Pattern gradients for bureaucratic aesthetic */
+  --halftone-subtle: radial-gradient(circle, rgba(0, 0, 0, 0.15) 1px, transparent 1px);
+  --halftone-medium: radial-gradient(circle, rgba(0, 0, 0, 0.25) 1.2px, transparent 1.2px);
+  --halftone-dense: radial-gradient(circle, rgba(0, 0, 0, 0.35) 1.5px, transparent 1.5px);
+
+  /* Halftone spacing (background-size) */
+  --halftone-spacing-tight: 3px;
+  --halftone-spacing-normal: 5px;
+  --halftone-spacing-loose: 8px;
+
+  /* Halftone opacity (WCAG AA compliant - maintains 4.5:1 contrast) */
+  --halftone-opacity-subtle: 0.12;
+  --halftone-opacity-medium: 0.25;
+  --halftone-opacity-dense: 0.30;
+
+  /* === Icon Sizes (T017) === */
+  --icon-sm: 16px;
+  --icon-md: 24px;
+  --icon-lg: 32px;
+  --icon-xl: 48px;
 }
