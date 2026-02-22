@@ -7,6 +7,7 @@
 
 import { create } from 'zustand';
 import { GameEngine } from '../engine/GameEngine';
+import type { ContentType, CycleDirection } from '../engine/types';
 import {
   validateSeed as validateSeedUtil,
   generateDefaultSeed as generateDefaultSeedUtil,
@@ -58,6 +59,21 @@ interface GameStore {
   selectedBackground: Background | null;
   inducerPattern: InducerPattern | null;
   shuffledQuestions: Question[] | null;
+
+  // === Content Cycling ===
+  contentIndices: {
+    packetIndex: number;
+    penaltyIndex: number;
+    backgroundIndex: number;
+    roleIndex: number;
+  };
+  permutationSizes: {
+    packets: number;
+    penalties: number;
+    backgrounds: number;
+    roles: number;
+  };
+  cycleContent: (contentType: ContentType, direction: CycleDirection) => void;
 
   // === Game Initialization ===
   initializeGame: () => void;
@@ -117,6 +133,18 @@ export const useGameStore = create<GameStore>((set, get) => {
     selectedBackground: null,
     inducerPattern: null,
     shuffledQuestions: null,
+    contentIndices: {
+      packetIndex: 0,
+      penaltyIndex: 0,
+      backgroundIndex: 0,
+      roleIndex: 0,
+    },
+    permutationSizes: {
+      packets: 0,
+      penalties: 0,
+      backgrounds: 0,
+      roles: 0,
+    },
     timerStarted: false,
     timerElapsed: false,
     penaltyCalibration: {
@@ -185,6 +213,18 @@ export const useGameStore = create<GameStore>((set, get) => {
         selectedBackground: null,
         inducerPattern: null,
         shuffledQuestions: null,
+        contentIndices: {
+          packetIndex: 0,
+          penaltyIndex: 0,
+          backgroundIndex: 0,
+          roleIndex: 0,
+        },
+        permutationSizes: {
+          packets: 0,
+          penalties: 0,
+          backgrounds: 0,
+          roles: 0,
+        },
         timerStarted: false,
         timerElapsed: false,
         penaltyCalibration: {
@@ -254,6 +294,13 @@ export const useGameStore = create<GameStore>((set, get) => {
       get()._syncFromEngine();
     },
 
+    // === Content Cycling (Delegates to Engine) ===
+    cycleContent: (contentType: ContentType, direction: CycleDirection) => {
+      const { _engine } = get();
+      _engine.cycleContent(contentType, direction);
+      get()._syncFromEngine();
+    },
+
     // === UI State ===
     toggleRoleVisibility: () => {
       set((state) => ({ roleVisible: !state.roleVisible }));
@@ -279,6 +326,8 @@ export const useGameStore = create<GameStore>((set, get) => {
         selectedBackground: engineState.selectedBackground,
         inducerPattern: engineState.inducerPattern,
         shuffledQuestions: engineState.shuffledQuestions,
+        contentIndices: engineState.contentIndices,
+        permutationSizes: engineState.permutationSizes,
         penaltyCalibration: engineState.penaltyCalibration,
         timerStarted: engineState.timerStarted,
         timerElapsed: engineState.timerElapsed,

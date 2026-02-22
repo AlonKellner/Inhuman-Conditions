@@ -380,4 +380,184 @@ describe('gameStore', () => {
       expect(store.outcome).toBeNull();
     });
   });
+
+  describe('content cycling', () => {
+    beforeEach(() => {
+      const store = useGameStore.getState();
+      store.setSeed('CYCLE');
+    });
+
+    describe('initialization', () => {
+      it('should initialize content indices to 0', () => {
+        const store = useGameStore.getState();
+
+        expect(store.contentIndices.packetIndex).toBe(0);
+        expect(store.contentIndices.penaltyIndex).toBe(0);
+        expect(store.contentIndices.backgroundIndex).toBe(0);
+        expect(store.contentIndices.roleIndex).toBe(0);
+      });
+
+      it('should initialize permutation sizes', () => {
+        const store = useGameStore.getState();
+
+        expect(store.permutationSizes.packets).toBeGreaterThan(0);
+        expect(store.permutationSizes.penalties).toBeGreaterThan(0);
+        expect(store.permutationSizes.backgrounds).toBeGreaterThan(0);
+        expect(store.permutationSizes.roles).toBe(12); // Always 12 roles
+      });
+    });
+
+    describe('penalty cycling', () => {
+      it('should cycle to next penalty', () => {
+        const store = useGameStore.getState();
+        const initialPenalty = store.selectedPenalty;
+        const initialIndex = store.contentIndices.penaltyIndex;
+
+        store.cycleContent('penalty', 'next');
+
+        expect(store.contentIndices.penaltyIndex).toBe(initialIndex + 1);
+        expect(store.selectedPenalty?.id).not.toBe(initialPenalty?.id);
+      });
+
+      it('should cycle to previous penalty', () => {
+        const store = useGameStore.getState();
+        const totalPenalties = store.permutationSizes.penalties;
+
+        store.cycleContent('penalty', 'previous');
+
+        // Should wrap to last index
+        expect(store.contentIndices.penaltyIndex).toBe(totalPenalties - 1);
+      });
+
+      it('should reset penalty calibration attempts when cycling penalty', () => {
+        const store = useGameStore.getState();
+
+        // Make some practice attempts
+        store.incrementCalibration();
+        store.incrementCalibration();
+        expect(store.penaltyCalibration.practiceAttempts).toBe(2);
+
+        // Cycle penalty
+        store.cycleContent('penalty', 'next');
+
+        expect(store.penaltyCalibration.practiceAttempts).toBe(0);
+        expect(store.penaltyCalibration.isComplete).toBe(false);
+      });
+
+      it('should update penalty text when cycling', () => {
+        const store = useGameStore.getState();
+        const initialText = store.penaltyCalibration.penaltyText;
+
+        store.cycleContent('penalty', 'next');
+
+        expect(store.penaltyCalibration.penaltyText).not.toBe(initialText);
+        expect(store.penaltyCalibration.penaltyText).toBe(store.selectedPenalty?.text);
+      });
+    });
+
+    describe('packet cycling', () => {
+      it('should cycle to next packet', () => {
+        const store = useGameStore.getState();
+        const initialPacket = store.selectedPacket;
+
+        store.cycleContent('packet', 'next');
+
+        expect(store.contentIndices.packetIndex).toBe(1);
+        expect(store.selectedPacket?.id).not.toBe(initialPacket?.id);
+      });
+
+      it('should cycle to previous packet', () => {
+        const store = useGameStore.getState();
+        const totalPackets = store.permutationSizes.packets;
+
+        store.cycleContent('packet', 'previous');
+
+        expect(store.contentIndices.packetIndex).toBe(totalPackets - 1);
+      });
+    });
+
+    describe('background cycling', () => {
+      it('should cycle to next background', () => {
+        const store = useGameStore.getState();
+        const initialBackground = store.selectedBackground;
+
+        store.cycleContent('background', 'next');
+
+        expect(store.contentIndices.backgroundIndex).toBe(1);
+        expect(store.selectedBackground?.id).not.toBe(initialBackground?.id);
+      });
+
+      it('should cycle to previous background', () => {
+        const store = useGameStore.getState();
+        const totalBackgrounds = store.permutationSizes.backgrounds;
+
+        store.cycleContent('background', 'previous');
+
+        expect(store.contentIndices.backgroundIndex).toBe(totalBackgrounds - 1);
+      });
+    });
+
+    describe('role cycling', () => {
+      it('should cycle to next role', () => {
+        const store = useGameStore.getState();
+
+        store.cycleContent('role', 'next');
+
+        expect(store.contentIndices.roleIndex).toBe(1);
+      });
+
+      it('should cycle through 12 roles and wrap', () => {
+        const store = useGameStore.getState();
+
+        // Cycle through all 12 roles
+        for (let i = 0; i < 12; i++) {
+          store.cycleContent('role', 'next');
+        }
+
+        // Should wrap back to 0
+        expect(store.contentIndices.roleIndex).toBe(0);
+      });
+    });
+
+    describe('index independence', () => {
+      it('should only update the cycled content index', () => {
+        const store = useGameStore.getState();
+
+        store.cycleContent('penalty', 'next');
+
+        // Penalty index should change
+        expect(store.contentIndices.penaltyIndex).toBe(1);
+
+        // Other indices should remain 0
+        expect(store.contentIndices.packetIndex).toBe(0);
+        expect(store.contentIndices.backgroundIndex).toBe(0);
+        expect(store.contentIndices.roleIndex).toBe(0);
+      });
+    });
+
+    describe('determinism', () => {
+      it('should maintain determinism when cycling', () => {
+        const store1 = useGameStore.getState();
+        store1.setSeed('DETER');
+        store1.cycleContent('penalty', 'next');
+        store1.cycleContent('penalty', 'next');
+
+        const penalty1Id = store1.selectedPenalty?.id;
+        const index1 = store1.contentIndices.penaltyIndex;
+
+        // Reset and repeat with same seed
+        store1.resetGame();
+        store1.setSeed('DETER');
+        store1.cycleContent('penalty', 'next');
+        store1.cycleContent('penalty', 'next');
+
+        const penalty2Id = store1.selectedPenalty?.id;
+        const index2 = store1.contentIndices.penaltyIndex;
+
+        // Same seed + same cycling = same result
+        expect(penalty1Id).toBe(penalty2Id);
+        expect(index1).toBe(index2);
+      });
+    });
+  });
 });
