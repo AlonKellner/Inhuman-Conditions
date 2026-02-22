@@ -68,9 +68,13 @@ export const GameStateMachine: FC = () => {
         advanceState();
       };
 
+      // In single-device mode, always show Investigator view at ready-to-start
+      // (Investigator needs to click "Start Interview" button)
+      const readyRole = mode === 'single-device' ? 'investigator' : (playerRole || 'spectator');
+
       return (
         <ReadyToStart
-          role={playerRole || 'spectator'}
+          role={readyRole}
           onStartInterview={handleStartInterview}
           isMultiDevice={mode === GameMode.MultiDevice}
         />
