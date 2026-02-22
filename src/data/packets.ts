@@ -154,7 +154,7 @@ export const packets: Packet[] = [
     name: 'Imagination',
     difficulty: 'easy',
     icon: '🦄',
-    prompt: 'Test the suspect's creative thinking',
+    prompt: "Test the suspect's creative thinking",
     questions: [
       {
         id: 'img-1',
