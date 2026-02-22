@@ -74,6 +74,7 @@ Players who don't want to manually coordinate a seed can use auto-generated seed
 2. **Given** two players load game at 14:31 and 14:34, **When** both accept default seed, **Then** both get identical game content
 3. **Given** player loads game at 14:36, **When** default seed is displayed, **Then** it corresponds to 14:35-14:40 interval (different from 14:30-14:35)
 4. **Given** default seed is shown, **When** player manually enters different seed, **Then** manual seed overrides default
+5. **Given** player is on seed entry screen, **When** they click "Randomize Seed" button, **Then** system generates completely random 4-letter seed (not time-based)
 
 ---
 
@@ -128,71 +129,72 @@ Additional players want to follow along with an ongoing game without seeing secr
 
 - **FR-001**: System MUST accept 4-letter seeds composed only of uppercase letters A-Z
 - **FR-002**: System MUST generate default seed based on current UTC time rounded to nearest 5-minute interval
-- **FR-003**: System MUST produce identical game content (packet, penalty, role, background, question order) for same seed across all devices
-- **FR-004**: System MUST validate seed format and display error for invalid seeds (not 4 letters, contains lowercase/numbers/special characters)
+- **FR-003**: System MUST provide "Randomize Seed" button that generates completely random 4-letter seed using cryptographically secure randomness
+- **FR-004**: System MUST produce identical game content (packet, penalty, role, background, question order) for same seed across all devices
+- **FR-005**: System MUST validate seed format and display error for invalid seeds (not 4 letters, contains lowercase/numbers/special characters)
 
 #### Game Content Selection
 
-- **FR-005**: System MUST select one of 11 question packets deterministically based on seed
-- **FR-006**: System MUST select one of 18 penalties deterministically based on seed
-- **FR-007**: System MUST select one of 30 suspect backgrounds deterministically based on seed
-- **FR-008**: System MUST assign role (Human 33%, Patient Robot 50%, Violent Robot 17%) deterministically based on seed
-- **FR-009**: System MUST generate interference pattern (inducer puzzle) deterministically based on seed
-- **FR-010**: System MUST shuffle question order within packet deterministically based on seed
+- **FR-006**: System MUST select one of 11 question packets deterministically based on seed
+- **FR-007**: System MUST select one of 18 penalties deterministically based on seed
+- **FR-008**: System MUST select one of 30 suspect backgrounds deterministically based on seed
+- **FR-009**: System MUST assign role (Human 33%, Patient Robot 50%, Violent Robot 17%) deterministically based on seed
+- **FR-010**: System MUST generate interference pattern (inducer puzzle) deterministically based on seed
+- **FR-011**: System MUST shuffle question order within packet deterministically based on seed
 
 #### Play Modes
 
-- **FR-011**: System MUST support single-device mode where device is passed between players
-- **FR-012**: System MUST support multi-device mode where each device has independent role
-- **FR-013**: System MUST support timer-only mode showing only countdown without game content
-- **FR-014**: System MUST allow role selection (Investigator, Suspect, Spectator) in multi-device mode
+- **FR-012**: System MUST support single-device mode where device is passed between players
+- **FR-013**: System MUST support multi-device mode where each device has independent role
+- **FR-014**: System MUST support timer-only mode showing only countdown without game content
+- **FR-015**: System MUST allow role selection (Investigator, Suspect, Spectator) in multi-device mode
 
 #### Game Flow
 
-- **FR-015**: System MUST present states in order: Seed Entry → Mode Selection → Role Selection → Penalty Calibration → Packet Display → Inducer Puzzle → Background Display → Ready to Start → Interview → Conclusion
-- **FR-016**: System MUST allow manual advancement through each state (no auto-progression)
-- **FR-017**: System MUST track penalty calibration progress (3 attempts)
-- **FR-018**: System MUST display appropriate instructions for current player at each state
+- **FR-016**: System MUST present states in order: Seed Entry → Mode Selection → Role Selection → Penalty Calibration → Packet Display → Inducer Puzzle → Background Display → Ready to Start → Interview → Conclusion
+- **FR-017**: System MUST allow manual advancement through each state (no auto-progression)
+- **FR-018**: System MUST track penalty calibration progress (3 attempts)
+- **FR-019**: System MUST display appropriate instructions for current player at each state
 
 #### Interview Phase
 
-- **FR-019**: System MUST run 5-minute (300 second) countdown timer during interview
-- **FR-020**: System MUST display questions to Investigator with primary/secondary indicators
-- **FR-021**: System MUST display role, traits, tasks, and background to Suspect
-- **FR-022**: System MUST hide Suspect role from Investigator view
-- **FR-023**: System MUST enable determination buttons only when timer expires or early robot determination
-- **FR-024**: System MUST reveal actual role and show outcome (correct/incorrect) after determination
+- **FR-020**: System MUST run 5-minute (300 second) countdown timer during interview
+- **FR-021**: System MUST display questions to Investigator with primary/secondary indicators
+- **FR-022**: System MUST display role, traits, tasks, and background to Suspect
+- **FR-023**: System MUST hide Suspect role from Investigator view
+- **FR-024**: System MUST enable determination buttons only when timer expires or early robot determination
+- **FR-025**: System MUST reveal actual role and show outcome (correct/incorrect) after determination
 
 #### Secret Information Management
 
-- **FR-025**: In single-device mode, system MUST hide Suspect role by default
-- **FR-026**: In single-device mode, system MUST provide "Show Role" / "Hide Role" toggle for Suspect
-- **FR-027**: In multi-device mode, system MUST show role only to player who selected Suspect
-- **FR-028**: System MUST never reveal Suspect role to Investigator or Spectators before conclusion
+- **FR-026**: In single-device mode, system MUST hide Suspect role by default
+- **FR-027**: In single-device mode, system MUST provide "Show Role" / "Hide Role" toggle for Suspect
+- **FR-028**: In multi-device mode, system MUST show role only to player who selected Suspect
+- **FR-029**: System MUST never reveal Suspect role to Investigator or Spectators before conclusion
 
 #### Synchronization & State Management
 
-- **FR-029**: System MUST display current state indicator (e.g., "Step 3 of 8")
-- **FR-030**: System MUST provide "Sync Check" feature displaying state hash for debugging desyncs
-- **FR-031**: System MUST provide "Reset Game" option to return to seed entry
-- **FR-032**: System MUST save no data to server (fully client-side)
+- **FR-030**: System MUST display current state indicator (e.g., "Step 3 of 8")
+- **FR-031**: System MUST provide "Sync Check" feature displaying state hash for debugging desyncs
+- **FR-032**: System MUST provide "Reset Game" option to return to seed entry
+- **FR-033**: System MUST save no data to server (fully client-side)
 
 #### Tutorial
 
-- **FR-033**: System MUST auto-display tutorial on first visit (no tutorial cookie present)
-- **FR-034**: System MUST save tutorial completion status in browser cookie (365 day expiry)
-- **FR-035**: System MUST provide manual tutorial re-enable option in settings
-- **FR-036**: Tutorial MUST use shortened timer (30 seconds) instead of full 5 minutes
-- **FR-037**: Tutorial MUST use fixed demo seed to ensure consistent experience
+- **FR-034**: System MUST auto-display tutorial on first visit (no tutorial cookie present)
+- **FR-035**: System MUST save tutorial completion status in browser cookie (365 day expiry)
+- **FR-036**: System MUST provide manual tutorial re-enable option in settings
+- **FR-037**: Tutorial MUST use shortened timer (30 seconds) instead of full 5 minutes
+- **FR-038**: Tutorial MUST use fixed demo seed to ensure consistent experience
 
 #### Accessibility & Compliance
 
-- **FR-038**: System MUST display attribution to original creators (Tommy Maranges, Cory O'Brien, Mac Schubert)
-- **FR-039**: System MUST display CC BY-NC-SA 4.0 license notice in footer
-- **FR-040**: System MUST provide link to GitHub repository for issue reporting
-- **FR-041**: System MUST work offline after initial load (no network requests during gameplay)
-- **FR-042**: System MUST support keyboard navigation for all interactive elements
-- **FR-043**: System MUST maintain minimum 4.5:1 color contrast for text
+- **FR-039**: System MUST display attribution to original creators (Tommy Maranges, Cory O'Brien, Mac Schubert)
+- **FR-040**: System MUST display CC BY-NC-SA 4.0 license notice in footer
+- **FR-041**: System MUST provide link to GitHub repository for issue reporting
+- **FR-042**: System MUST work offline after initial load (no network requests during gameplay)
+- **FR-043**: System MUST support keyboard navigation for all interactive elements
+- **FR-044**: System MUST maintain minimum 4.5:1 color contrast for text
 
 ### Key Entities
 
