@@ -71,17 +71,17 @@ Project structure (from plan.md):
 
 ### Zustand Store Foundation
 
-- [ ] T023 [P] Write game store tests in src/store/gameStore.test.ts (seed initialization, state transitions, deterministic content selection)
-- [ ] T024 Create Zustand game store in src/store/gameStore.ts with complete API from contracts/game-state-api.md (verify tests pass)
+- [X] T023 [P] Write game store tests in src/store/gameStore.test.ts (seed initialization, state transitions, deterministic content selection)
+- [X] T024 Create Zustand game store in src/store/gameStore.ts with complete API from contracts/game-state-api.md (verify tests pass)
 
 ### Base UI Components
 
-- [ ] T025 [P] Write Button component tests in src/components/ui/Button.test.tsx
-- [ ] T026 [P] Implement Button component in src/components/ui/Button.tsx with CSS Module src/components/ui/Button.module.css
-- [ ] T027 [P] Write Card component tests in src/components/ui/Card.test.tsx
-- [ ] T028 [P] Implement Card component in src/components/ui/Card.tsx with CSS Module src/components/ui/Card.module.css
-- [ ] T029 [P] Write ProgressIndicator component tests in src/components/ui/ProgressIndicator.test.tsx
-- [ ] T030 [P] Implement ProgressIndicator component in src/components/ui/ProgressIndicator.tsx with CSS Module
+- [X] T025 [P] Write Button component tests in src/components/ui/Button.test.tsx
+- [X] T026 [P] Implement Button component in src/components/ui/Button.tsx with CSS Module src/components/ui/Button.module.css
+- [X] T027 [P] Write Card component tests in src/components/ui/Card.test.tsx
+- [X] T028 [P] Implement Card component in src/components/ui/Card.tsx with CSS Module src/components/ui/Card.module.css
+- [X] T029 [P] Write ProgressIndicator component tests in src/components/ui/ProgressIndicator.test.tsx
+- [X] T030 [P] Implement ProgressIndicator component in src/components/ui/ProgressIndicator.tsx with CSS Module
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 

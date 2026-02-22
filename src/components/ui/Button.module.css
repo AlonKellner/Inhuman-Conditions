@@ -1,0 +1,74 @@
+/**
+ * Button Component Styles
+ * Matches robots.management bureaucratic aesthetic
+ */
+
+.button {
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-medium);
+  border: none;
+  border-radius: var(--button-border-radius);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+/* Variants */
+.primary {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+}
+
+.primary:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+}
+
+.primary:active:not(:disabled) {
+  background-color: var(--color-primary-active);
+}
+
+.secondary {
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+}
+
+.secondary:hover:not(:disabled) {
+  background-color: var(--color-bg-secondary);
+}
+
+.danger {
+  background-color: var(--color-error);
+  color: var(--color-bg);
+}
+
+.danger:hover:not(:disabled) {
+  background-color: #aa0000;
+}
+
+/* Sizes */
+.small {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-sm);
+}
+
+.medium {
+  padding: var(--button-padding-y) var(--button-padding-x);
+  font-size: var(--font-size-base);
+}
+
+.large {
+  padding: var(--space-5) var(--space-8);
+  font-size: var(--font-size-lg);
+}
+
+/* States */
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}

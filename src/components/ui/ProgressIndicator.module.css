@@ -1,0 +1,38 @@
+/**
+ * Progress Indicator Component Styles
+ * Shows current game state progress
+ */
+
+.container {
+  text-align: center;
+  margin-bottom: var(--space-5);
+}
+
+.text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-3);
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-fast);
+}
+
+.dot.active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  transform: scale(1.3);
+}
