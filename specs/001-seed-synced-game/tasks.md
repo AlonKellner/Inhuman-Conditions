@@ -104,42 +104,42 @@ Project structure (from plan.md):
 
 > **TDD**: Write ALL component tests FIRST, see them FAIL
 
-- [ ] T035 [P] [US1] Write SeedEntry component tests in src/components/game/SeedEntry.test.tsx (validation, generate seed, start game)
-- [ ] T036 [P] [US1] Write PenaltyCalibration component tests in src/components/game/PenaltyCalibration.test.tsx (3 attempts, continue)
-- [ ] T037 [P] [US1] Write PacketDisplay component tests in src/components/game/PacketDisplay.test.tsx (show packet, questions, continue)
-- [ ] T038 [P] [US1] Write InducerPuzzle component tests in src/components/game/InducerPuzzle.test.tsx (5x5 grid, connections, solution)
-- [ ] T039 [P] [US1] Write BackgroundDisplay component tests in src/components/game/BackgroundDisplay.test.tsx (show background, continue)
-- [ ] T040 [P] [US1] Write ReadyToStart component tests in src/components/game/ReadyToStart.test.tsx (ready button, start timer)
-- [ ] T041 [P] [US1] Write CountdownTimer component tests in src/components/ui/CountdownTimer.test.tsx (300s countdown, MM:SS format, onElapsed)
-- [ ] T042 [P] [US1] Write InvestigatorView component tests in src/components/game/Interview/InvestigatorView.test.tsx (questions, timer, determination)
-- [ ] T043 [P] [US1] Write SuspectView component tests in src/components/game/Interview/SuspectView.test.tsx (role, traits, background, timer, hide/show)
-- [ ] T044 [P] [US1] Write Conclusion component tests in src/components/game/Conclusion.test.tsx (determination, actual role, outcome, play again)
+- [X] T035 [P] [US1] Write SeedEntry component tests in src/components/game/SeedEntry.test.tsx (validation, generate seed, start game)
+- [X] T036 [P] [US1] Write PenaltyCalibration component tests in src/components/game/PenaltyCalibration.test.tsx (3 attempts, continue)
+- [X] T037 [P] [US1] Write PacketDisplay component tests in src/components/game/PacketDisplay.test.tsx (show packet, questions, continue)
+- [X] T038 [P] [US1] Write InducerPuzzle component tests in src/components/game/InducerPuzzle.test.tsx (5x5 grid, connections, solution)
+- [X] T039 [P] [US1] Write BackgroundDisplay component tests in src/components/game/BackgroundDisplay.test.tsx (show background, continue)
+- [X] T040 [P] [US1] Write ReadyToStart component tests in src/components/game/ReadyToStart.test.tsx (ready button, start timer)
+- [X] T041 [P] [US1] Write CountdownTimer component tests in src/components/ui/CountdownTimer.test.tsx (300s countdown, MM:SS format, onElapsed)
+- [X] T042 [P] [US1] Write InvestigatorView component tests in src/components/game/Interview/InvestigatorView.test.tsx (questions, timer, determination)
+- [X] T043 [P] [US1] Write SuspectView component tests in src/components/game/Interview/SuspectView.test.tsx (role, traits, background, timer, hide/show)
+- [X] T044 [P] [US1] Write Conclusion component tests in src/components/game/Conclusion.test.tsx (determination, actual role, outcome, play again)
 
 ### Game State Components - Implementation
 
 > **TDD**: Implement to make tests pass
 
-- [ ] T045 [P] [US1] Implement SeedEntry component in src/components/game/SeedEntry.tsx with CSS Module (verify tests pass)
-- [ ] T046 [P] [US1] Implement PenaltyCalibration component in src/components/game/PenaltyCalibration.tsx with CSS Module (verify tests pass)
-- [ ] T047 [P] [US1] Implement PacketDisplay component in src/components/game/PacketDisplay.tsx with CSS Module (verify tests pass)
-- [ ] T048 [US1] Implement InducerPuzzle component in src/components/game/InducerPuzzle.tsx with CSS Module (depends on T022, verify tests pass)
-- [ ] T049 [P] [US1] Implement BackgroundDisplay component in src/components/game/BackgroundDisplay.tsx with CSS Module (verify tests pass)
-- [ ] T050 [P] [US1] Implement ReadyToStart component in src/components/game/ReadyToStart.tsx with CSS Module (verify tests pass)
-- [ ] T051 [P] [US1] Implement CountdownTimer component in src/components/ui/CountdownTimer.tsx with CSS Module (verify tests pass)
-- [ ] T052 [US1] Implement InvestigatorView component in src/components/game/Interview/InvestigatorView.tsx with CSS Module (depends on T051, verify tests pass)
-- [ ] T053 [US1] Implement SuspectView component in src/components/game/Interview/SuspectView.tsx with CSS Module (depends on T051, verify tests pass)
-- [ ] T054 [P] [US1] Implement Conclusion component in src/components/game/Conclusion.tsx with CSS Module (verify tests pass)
+- [X] T045 [P] [US1] Implement SeedEntry component in src/components/game/SeedEntry.tsx with CSS Module (verify tests pass)
+- [X] T046 [P] [US1] Implement PenaltyCalibration component in src/components/game/PenaltyCalibration.tsx with CSS Module (verify tests pass)
+- [X] T047 [P] [US1] Implement PacketDisplay component in src/components/game/PacketDisplay.tsx with CSS Module (verify tests pass)
+- [X] T048 [US1] Implement InducerPuzzle component in src/components/game/InducerPuzzle.tsx with CSS Module (depends on T022, verify tests pass)
+- [X] T049 [P] [US1] Implement BackgroundDisplay component in src/components/game/BackgroundDisplay.tsx with CSS Module (verify tests pass)
+- [X] T050 [P] [US1] Implement ReadyToStart component in src/components/game/ReadyToStart.tsx with CSS Module (verify tests pass)
+- [X] T051 [P] [US1] Implement CountdownTimer component in src/components/ui/CountdownTimer.tsx with CSS Module (verify tests pass)
+- [X] T052 [US1] Implement InvestigatorView component in src/components/game/Interview/InvestigatorView.tsx with CSS Module (depends on T051, verify tests pass)
+- [X] T053 [US1] Implement SuspectView component in src/components/game/Interview/SuspectView.tsx with CSS Module (depends on T051, verify tests pass)
+- [X] T054 [P] [US1] Implement Conclusion component in src/components/game/Conclusion.tsx with CSS Module (verify tests pass)
 
 ### Game State Machine
 
-- [ ] T055 [US1] Write GameStateMachine component tests in src/components/GameStateMachine.test.tsx (state rendering, transitions, role-based views)
-- [ ] T056 [US1] Implement GameStateMachine component in src/components/GameStateMachine.tsx (verify tests pass)
+- [X] T055 [US1] Write GameStateMachine component tests in src/components/GameStateMachine.test.tsx (state rendering, transitions, role-based views)
+- [X] T056 [US1] Implement GameStateMachine component in src/components/GameStateMachine.tsx (verify tests pass)
 
 ### App Integration
 
-- [ ] T057 [US1] Update App.tsx to render GameStateMachine component
-- [ ] T058 [US1] Write integration test for complete game flow in tests/integration/test_complete_game_flow.test.tsx (seed → conclusion)
-- [ ] T059 [US1] Run integration test and verify User Story 1 is fully functional
+- [X] T057 [US1] Update App.tsx to render GameStateMachine component
+- [X] T058 [US1] Write integration test for complete game flow in tests/integration/test_complete_game_flow.test.tsx (seed → conclusion)
+- [X] T059 [US1] Run integration test and verify User Story 1 is fully functional
 
 **Checkpoint**: At this point, User Story 1 (single-device gameplay) should be fully functional and testable independently
 
