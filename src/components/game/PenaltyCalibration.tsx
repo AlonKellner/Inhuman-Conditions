@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { useGameStore } from '../../store/gameStore';
+import { CyclingButtons } from './CyclingButtons';
 import styles from './PenaltyCalibration.module.css';
 
 export interface PenaltyCalibrationProps {
@@ -23,16 +25,35 @@ export function PenaltyCalibration({
   penalty,
   role,
   onComplete,
-  currentAttempt = 0
+  currentAttempt = 0 // Deprecated: now using store's penaltyCalibration.practiceAttempts
 }: PenaltyCalibrationProps) {
-  const [attempts, setAttempts] = useState(currentAttempt);
-  const maxAttempts = 3;
-  const isComplete = attempts >= maxAttempts;
+  // Get cycling state and methods from store
+  const {
+    contentIndices,
+    permutationSizes,
+    penaltyCalibration,
+    cycleContent,
+    incrementCalibration,
+  } = useGameStore();
+
+  // Use store's practice attempts (synced with engine)
+  const attempts = penaltyCalibration.practiceAttempts;
+  const maxAttempts = penaltyCalibration.maxAttempts;
+  const isComplete = penaltyCalibration.isComplete;
+
+  // Track previous penalty to detect changes
+  const prevPenaltyRef = useRef(penalty);
+
+  // Reset local UI state when penalty changes (engine already handles this)
+  useEffect(() => {
+    if (prevPenaltyRef.current !== penalty) {
+      prevPenaltyRef.current = penalty;
+      // Attempts reset is handled by engine when cycling penalties
+    }
+  }, [penalty]);
 
   const handlePractice = () => {
-    if (attempts < maxAttempts) {
-      setAttempts(prev => prev + 1);
-    }
+    incrementCalibration();
   };
 
   const handleContinue = () => {
@@ -41,12 +62,29 @@ export function PenaltyCalibration({
     }
   };
 
+  const handleCyclePrevious = () => {
+    cycleContent('penalty', 'previous');
+  };
+
+  const handleCycleNext = () => {
+    cycleContent('penalty', 'next');
+  };
+
   // Spectator view - read-only
   if (role === 'spectator') {
     return (
       <div className={styles.container}>
         <div className={styles.card}>
           <h2 className={styles.heading}>Penalty Calibration</h2>
+
+          <CyclingButtons
+            label="Penalty"
+            currentIndex={contentIndices.penaltyIndex}
+            totalItems={permutationSizes.penalties}
+            onPrevious={handleCyclePrevious}
+            onNext={handleCycleNext}
+          />
+
           <div className={styles.penaltyBox}>
             <p className={styles.penaltyText}>{penalty}</p>
           </div>
@@ -70,6 +108,14 @@ export function PenaltyCalibration({
               <strong>Read this aloud to the Suspect:</strong>
             </p>
           </div>
+
+          <CyclingButtons
+            label="Penalty"
+            currentIndex={contentIndices.penaltyIndex}
+            totalItems={permutationSizes.penalties}
+            onPrevious={handleCyclePrevious}
+            onNext={handleCycleNext}
+          />
 
           <div className={styles.penaltyBox}>
             <p className={styles.penaltyText}>{penalty}</p>
@@ -95,6 +141,14 @@ export function PenaltyCalibration({
             Practice performing it <strong>3 times</strong> to calibrate.
           </p>
         </div>
+
+        <CyclingButtons
+          label="Penalty"
+          currentIndex={contentIndices.penaltyIndex}
+          totalItems={permutationSizes.penalties}
+          onPrevious={handleCyclePrevious}
+          onNext={handleCycleNext}
+        />
 
         <div className={styles.penaltyBox}>
           <p className={styles.penaltyText}>{penalty}</p>
