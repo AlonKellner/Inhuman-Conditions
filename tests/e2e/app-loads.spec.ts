@@ -98,30 +98,14 @@ test.describe('Game Flow', () => {
     await expect(startButton).toBeEnabled();
     await startButton.click();
 
-    // The game advances through intermediate states (ModeSelection, RoleSelection, etc.)
-    // These show a "Continue" button in the MVP implementation
-    // Keep clicking Continue until we reach the Interview state
-    const maxClicks = 10; // Safety limit
-    for (let i = 0; i < maxClicks; i++) {
-      // Check if we've reached the interview state
-      const interviewContent = page.locator('text=/Investigator|Question|Pass device/i').first();
-      const isInterviewVisible = await interviewContent.isVisible().catch(() => false);
+    // The game should auto-advance through intermediate states
+    // Wait for the "Setting up your game..." loading screen
+    await expect(page.getByText(/setting up your game/i)).toBeVisible();
 
-      if (isInterviewVisible) {
-        break;
-      }
-
-      // Otherwise, look for a Continue button and click it
-      const continueButton = page.getByRole('button', { name: /continue/i });
-      const isContinueVisible = await continueButton.isVisible().catch(() => false);
-
-      if (isContinueVisible) {
-        await continueButton.click();
-        await page.waitForTimeout(200); // Wait for state transition
-      } else {
-        break;
-      }
-    }
+    // Wait for the interview state to appear (auto-advance should happen within a few seconds)
+    // Look for either "Question" text or "Pass device" text
+    const interviewContent = page.locator('text=/Question|Pass device/i').first();
+    await expect(interviewContent).toBeVisible({ timeout: 10000 });
 
     // Verify we've reached the interview state
     // This verifies that all game data loads correctly (packets, penalties, backgrounds, roles)

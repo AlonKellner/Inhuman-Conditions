@@ -1,4 +1,4 @@
-import { type FC } from 'react';
+import { type FC, useEffect } from 'react';
 import { useGameStore } from '../store/gameStore';
 import { GameState, GameMode } from '../types';
 import { SeedEntry } from './game/SeedEntry';
@@ -7,7 +7,35 @@ import { SuspectView } from './game/Interview/SuspectView';
 import { Conclusion } from './game/Conclusion';
 
 export const GameStateMachine: FC = () => {
-  const { gameState, mode } = useGameStore();
+  const { gameState, mode, advanceState, startTimer } = useGameStore();
+
+  // Auto-advance through intermediate states for MVP
+  // These states will have full implementations in later phases
+  useEffect(() => {
+    const intermediateStates: GameState[] = [
+      GameState.ModeSelection,
+      GameState.RoleSelection,
+      GameState.PenaltyCalibration,
+      GameState.PacketDisplay,
+      GameState.InducerPuzzle,
+      GameState.BackgroundDisplay,
+      GameState.ReadyToStart,
+    ];
+
+    if (intermediateStates.includes(gameState)) {
+      // Start timer before advancing from ReadyToStart
+      if (gameState === GameState.ReadyToStart) {
+        startTimer();
+      }
+
+      // Auto-advance after a short delay to show loading state
+      const timer = setTimeout(() => {
+        advanceState();
+      }, 300);
+
+      return () => clearTimeout(timer);
+    }
+  }, [gameState, advanceState, startTimer]);
 
   // For MVP, we'll implement only the essential states
   // Additional states (ModeSelection, RoleSelection, etc.) can be added in later phases
@@ -38,7 +66,7 @@ export const GameStateMachine: FC = () => {
     case GameState.Conclusion:
       return <Conclusion />;
 
-    // For MVP, skip intermediate states and jump straight to interview
+    // For MVP, auto-advance through intermediate states
     case GameState.ModeSelection:
     case GameState.RoleSelection:
     case GameState.PenaltyCalibration:
@@ -46,30 +74,13 @@ export const GameStateMachine: FC = () => {
     case GameState.InducerPuzzle:
     case GameState.BackgroundDisplay:
     case GameState.ReadyToStart:
-      // Auto-advance through these states for MVP
+      // Show loading state while auto-advancing
       return (
         <div style={{ textAlign: 'center', padding: '100px 20px' }}>
           <h2>Setting up your game...</h2>
-          <p>
-            Game State: <strong>{gameState}</strong>
-          </p>
-          <button
-            onClick={() => {
-              const store = useGameStore.getState();
-              if (gameState === GameState.ReadyToStart) {
-                store.startTimer();
-              }
-              store.advanceState();
-            }}
-            style={{
-              padding: '15px 30px',
-              fontSize: '18px',
-              marginTop: '20px',
-              cursor: 'pointer',
-            }}
-          >
-            Continue
-          </button>
+          <div style={{ marginTop: '20px', fontSize: '14px', color: '#666' }}>
+            <div className="loading-spinner" />
+          </div>
         </div>
       );
 
