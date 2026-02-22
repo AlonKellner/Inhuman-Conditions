@@ -29,14 +29,31 @@ export interface SelectedContent {
   shuffledQuestions: Question[];
 }
 
+export interface ContentPermutations {
+  packets: Packet[];
+  penalties: Penalty[];
+  backgrounds: Background[];
+  roles: RoleAssignment[]; // Depends on selected packet
+}
+
+export interface ContentIndices {
+  packetIndex: number;
+  penaltyIndex: number;
+  backgroundIndex: number;
+  roleIndex: number;
+}
+
 /**
  * ContentSelector class
  * Handles all deterministic content selection based on seed
  */
 export class ContentSelector {
   private rng: GameRNG;
+  private seed: Seed;
+  private permutations: ContentPermutations | null = null;
 
   constructor(seed: Seed) {
+    this.seed = seed;
     this.rng = new GameRNG(seed);
   }
 
@@ -71,6 +88,112 @@ export class ContentSelector {
       inducerPattern,
       shuffledQuestions,
     };
+  }
+
+  /**
+   * Generate full permutations of all content types
+   * Enables content cycling by providing deterministic ordered lists
+   */
+  generatePermutations(): ContentPermutations {
+    if (this.permutations) {
+      return this.permutations;
+    }
+
+    // Create separate RNG instances for each content type to ensure independence
+    // This allows changing one index without affecting others
+    const packetRNG = new GameRNG(this.seed + '-packets');
+    const penaltyRNG = new GameRNG(this.seed + '-penalties');
+    const backgroundRNG = new GameRNG(this.seed + '-backgrounds');
+
+    this.permutations = {
+      packets: packetRNG.permute(packets),
+      penalties: penaltyRNG.permute(penalties),
+      backgrounds: backgroundRNG.permute(backgrounds),
+      roles: [], // Generated on demand based on selected packet
+    };
+
+    return this.permutations;
+  }
+
+  /**
+   * Select content at specific indices from permutations
+   * Enables content cycling while maintaining determinism
+   */
+  selectContentAtIndices(indices: ContentIndices): SelectedContent {
+    const perms = this.generatePermutations();
+
+    // Wrap indices to handle cycling (e.g., index 18 wraps to 0 for 18-item array)
+    const packetIndex = indices.packetIndex % perms.packets.length;
+    const penaltyIndex = indices.penaltyIndex % perms.penalties.length;
+    const backgroundIndex = indices.backgroundIndex % perms.backgrounds.length;
+
+    const packet = perms.packets[packetIndex];
+    const penalty = perms.penalties[penaltyIndex];
+    const background = perms.backgrounds[backgroundIndex];
+
+    // Generate role permutation for this specific packet
+    const rolePermutation = this.generateRolePermutation(packet);
+    const roleIndex = indices.roleIndex % rolePermutation.length;
+    const role = rolePermutation[roleIndex];
+
+    // Generate inducer pattern (non-cycling, deterministic per seed)
+    const inducerPattern = generateInducerPattern(this.rng);
+
+    // Shuffle questions based on packet
+    const shuffledQuestions = this.rng.shuffle([...packet.questions]);
+
+    return {
+      packet,
+      penalty,
+      role,
+      background,
+      inducerPattern,
+      shuffledQuestions,
+    };
+  }
+
+  /**
+   * Generate permutation of all possible roles for a given packet
+   * Returns array of 12 roles: 4 human, 6 patient robot, 2 violent robot
+   */
+  private generateRolePermutation(packet: Packet): RoleAssignment[] {
+    const roles: RoleAssignment[] = [];
+
+    // Create human role (4 copies, 33% probability matches d12 rolls 1-4)
+    const humanRole = this.selectHumanRole(packet);
+    for (let i = 0; i < 4; i++) {
+      roles.push(humanRole);
+    }
+
+    // Create patient robot roles (6 copies, 50% probability matches d12 rolls 5-10)
+    const patientRoles = packet.roles.filter((r) => r.roleType === RoleType.PatientRobot);
+    for (let i = 0; i < 6; i++) {
+      const patientRole = patientRoles[i % patientRoles.length];
+      roles.push({
+        roleType: RoleType.PatientRobot,
+        fault: patientRole.fault as any,
+        description: patientRole.description,
+        traits: patientRole.traits,
+        restrictions: ['Cannot mention certain topics'],
+      });
+    }
+
+    // Create violent robot roles (2 copies, 17% probability matches d12 rolls 11-12)
+    const violentRoles = packet.roles.filter((r) => r.roleType === RoleType.ViolentRobot);
+    for (let i = 0; i < 2; i++) {
+      const violentRole = violentRoles[i % violentRoles.length];
+      roles.push({
+        roleType: RoleType.ViolentRobot,
+        fault: violentRole.fault as any,
+        description: violentRole.description,
+        traits: violentRole.traits,
+        tasks: violentRole.tasks || ['Complete assigned tasks'],
+      });
+    }
+
+    // Permute the 12 roles based on seed
+    const roleRNG = new GameRNG(this.seed + '-roles-' + packet.title);
+    return roleRNG.permute(roles);
   }
 
   /**

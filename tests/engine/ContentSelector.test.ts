@@ -6,6 +6,9 @@
 import { describe, it, expect } from 'vitest';
 import { ContentSelector } from '../../src/engine/ContentSelector';
 import { RoleType } from '../../src/types';
+import { packets } from '../../src/data/packets';
+import { penalties } from '../../src/data/penalties';
+import { backgrounds } from '../../src/data/backgrounds';
 
 describe('ContentSelector', () => {
   describe('Deterministic Selection', () => {
@@ -242,6 +245,242 @@ describe('ContentSelector', () => {
       const order2 = content2.shuffledQuestions.map((q) => q.text);
 
       expect(order1).toEqual(order2);
+    });
+  });
+
+  describe('Content Permutations (Cycling)', () => {
+    describe('generatePermutations', () => {
+      it('should generate permutations for all content types', () => {
+        const selector = new ContentSelector('PERM');
+        const perms = selector.generatePermutations();
+
+        expect(perms.packets).toBeDefined();
+        expect(perms.packets.length).toBeGreaterThan(0);
+
+        expect(perms.penalties).toBeDefined();
+        expect(perms.penalties.length).toBeGreaterThan(0);
+
+        expect(perms.backgrounds).toBeDefined();
+        expect(perms.backgrounds.length).toBeGreaterThan(0);
+
+        expect(perms.roles).toBeDefined();
+      });
+
+      it('should produce same permutations for same seed', () => {
+        const selector1 = new ContentSelector('SAME');
+        const selector2 = new ContentSelector('SAME');
+
+        const perms1 = selector1.generatePermutations();
+        const perms2 = selector2.generatePermutations();
+
+        // Packets permuted in same order
+        expect(perms1.packets.map(p => p.id)).toEqual(perms2.packets.map(p => p.id));
+
+        // Penalties permuted in same order
+        expect(perms1.penalties.map(p => p.id)).toEqual(perms2.penalties.map(p => p.id));
+
+        // Backgrounds permuted in same order
+        expect(perms1.backgrounds.map(b => b.id)).toEqual(perms2.backgrounds.map(b => b.id));
+      });
+
+      it('should produce different permutations for different seeds', () => {
+        const selector1 = new ContentSelector('AAAA');
+        const selector2 = new ContentSelector('ZZZZ');
+
+        const perms1 = selector1.generatePermutations();
+        const perms2 = selector2.generatePermutations();
+
+        // At least one permutation should be different
+        const packetsDifferent = perms1.packets.map(p => p.id).join(',') !== perms2.packets.map(p => p.id).join(',');
+        const penaltiesDifferent = perms1.penalties.map(p => p.id).join(',') !== perms2.penalties.map(p => p.id).join(',');
+        const backgroundsDifferent = perms1.backgrounds.map(b => b.id).join(',') !== perms2.backgrounds.map(b => b.id).join(',');
+
+        expect(packetsDifferent || penaltiesDifferent || backgroundsDifferent).toBe(true);
+      });
+
+      it('should cache permutations after first generation', () => {
+        const selector = new ContentSelector('CACHE');
+
+        const perms1 = selector.generatePermutations();
+        const perms2 = selector.generatePermutations();
+
+        // Should return same object reference (cached)
+        expect(perms1).toBe(perms2);
+      });
+
+      it('should contain all original content items', () => {
+        const selector = new ContentSelector('FULL');
+        const perms = selector.generatePermutations();
+
+        // All packets present in permutation
+        const allPacketIds = packets.map(p => p.id).sort();
+        const permPacketIds = perms.packets.map(p => p.id).sort();
+        expect(permPacketIds).toEqual(allPacketIds);
+
+        // All penalties present in permutation
+        const allPenaltyIds = penalties.map(p => p.id).sort();
+        const permPenaltyIds = perms.penalties.map(p => p.id).sort();
+        expect(permPenaltyIds).toEqual(allPenaltyIds);
+
+        // All backgrounds present in permutation
+        const allBackgroundIds = backgrounds.map(b => b.id).sort();
+        const permBackgroundIds = perms.backgrounds.map(b => b.id).sort();
+        expect(permBackgroundIds).toEqual(allBackgroundIds);
+      });
+    });
+
+    describe('selectContentAtIndices', () => {
+      it('should select content at specific indices', () => {
+        const selector = new ContentSelector('INDEX');
+        const perms = selector.generatePermutations();
+
+        const content = selector.selectContentAtIndices({
+          packetIndex: 0,
+          penaltyIndex: 0,
+          backgroundIndex: 0,
+          roleIndex: 0,
+        });
+
+        // Should select first items from permutations
+        expect(content.packet.id).toBe(perms.packets[0].id);
+        expect(content.penalty.id).toBe(perms.penalties[0].id);
+        expect(content.background.id).toBe(perms.backgrounds[0].id);
+      });
+
+      it('should support cycling through indices', () => {
+        const selector = new ContentSelector('CYCLE');
+
+        const content0 = selector.selectContentAtIndices({
+          packetIndex: 0,
+          penaltyIndex: 0,
+          backgroundIndex: 0,
+          roleIndex: 0,
+        });
+
+        const content1 = selector.selectContentAtIndices({
+          packetIndex: 0,
+          penaltyIndex: 1,
+          backgroundIndex: 0,
+          roleIndex: 0,
+        });
+
+        const content2 = selector.selectContentAtIndices({
+          packetIndex: 0,
+          penaltyIndex: 2,
+          backgroundIndex: 0,
+          roleIndex: 0,
+        });
+
+        // Penalties should be different
+        expect(content0.penalty.id).not.toBe(content1.penalty.id);
+        expect(content1.penalty.id).not.toBe(content2.penalty.id);
+
+        // Packet and background should remain same
+        expect(content0.packet.id).toBe(content1.packet.id);
+        expect(content0.background.id).toBe(content1.background.id);
+      });
+
+      it('should wrap indices at boundary (modulo behavior)', () => {
+        const selector = new ContentSelector('WRAP');
+        const perms = selector.generatePermutations();
+
+        const packetCount = perms.packets.length;
+
+        const content0 = selector.selectContentAtIndices({
+          packetIndex: 0,
+          penaltyIndex: 0,
+          backgroundIndex: 0,
+          roleIndex: 0,
+        });
+
+        const contentWrapped = selector.selectContentAtIndices({
+          packetIndex: packetCount, // Should wrap to 0
+          penaltyIndex: 0,
+          backgroundIndex: 0,
+          roleIndex: 0,
+        });
+
+        // Should select same packet (wrapped around)
+        expect(contentWrapped.packet.id).toBe(content0.packet.id);
+      });
+
+      it('should maintain determinism for same seed and indices', () => {
+        const selector1 = new ContentSelector('DETER');
+        const selector2 = new ContentSelector('DETER');
+
+        const indices = {
+          packetIndex: 2,
+          penaltyIndex: 3,
+          backgroundIndex: 5,
+          roleIndex: 1,
+        };
+
+        const content1 = selector1.selectContentAtIndices(indices);
+        const content2 = selector2.selectContentAtIndices(indices);
+
+        expect(content1.packet.id).toBe(content2.packet.id);
+        expect(content1.penalty.id).toBe(content2.penalty.id);
+        expect(content1.background.id).toBe(content2.background.id);
+        expect(content1.role.roleType).toBe(content2.role.roleType);
+      });
+
+      it('should enable multiplayer sync through index-based selection', () => {
+        // Player 1 and Player 2 use same seed
+        const player1Selector = new ContentSelector('MULTI');
+        const player2Selector = new ContentSelector('MULTI');
+
+        // Both players cycle to penalty index 5
+        const player1Content = player1Selector.selectContentAtIndices({
+          packetIndex: 0,
+          penaltyIndex: 5,
+          backgroundIndex: 0,
+          roleIndex: 0,
+        });
+
+        const player2Content = player2Selector.selectContentAtIndices({
+          packetIndex: 0,
+          penaltyIndex: 5,
+          backgroundIndex: 0,
+          roleIndex: 0,
+        });
+
+        // Both see same penalty (synchronized through seed + index)
+        expect(player1Content.penalty.id).toBe(player2Content.penalty.id);
+        expect(player1Content.penalty.text).toBe(player2Content.penalty.text);
+      });
+
+      it('should generate role permutation with correct distribution', () => {
+        const selector = new ContentSelector('ROLES');
+
+        // Select a packet and generate its role permutation
+        const perms = selector.generatePermutations();
+        const packet = perms.packets[0];
+
+        // Generate role permutation by selecting multiple role indices
+        const roles: RoleType[] = [];
+        for (let i = 0; i < 12; i++) {
+          const content = selector.selectContentAtIndices({
+            packetIndex: 0,
+            penaltyIndex: 0,
+            backgroundIndex: 0,
+            roleIndex: i,
+          });
+          roles.push(content.role.roleType);
+        }
+
+        // Should have 12 roles total
+        expect(roles.length).toBe(12);
+
+        // Count role types
+        const humanCount = roles.filter(r => r === RoleType.Human).length;
+        const patientCount = roles.filter(r => r === RoleType.PatientRobot).length;
+        const violentCount = roles.filter(r => r === RoleType.ViolentRobot).length;
+
+        // Expected: 4 human, 6 patient, 2 violent (matches d12 probabilities)
+        expect(humanCount).toBe(4);
+        expect(patientCount).toBe(6);
+        expect(violentCount).toBe(2);
+      });
     });
   });
 });
