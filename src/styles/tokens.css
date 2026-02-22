@@ -1,0 +1,100 @@
+/**
+ * Design Tokens - Inhuman Conditions
+ * Visual style inspired by robots.management
+ * Bureaucratic, institutional aesthetic
+ */
+
+:root {
+  /* === Colors === */
+  /* Primary - Muted grays for bureaucratic feel */
+  --color-primary: #6f6b6b;
+  --color-primary-hover: #646060;
+  --color-primary-active: #5a5757;
+
+  /* Background */
+  --color-bg: #ffffff;
+  --color-bg-secondary: #f5f5f5;
+  --color-bg-tertiary: #ebebeb;
+
+  /* Text */
+  --color-text-primary: #000000;
+  --color-text-secondary: #333333;
+  --color-text-muted: #666666;
+
+  /* Borders */
+  --color-border: #cccccc;
+  --color-border-dark: #999999;
+
+  /* Semantic colors */
+  --color-success: #2d7a2d;
+  --color-error: #cc0000;
+  --color-warning: #cc8800;
+  --color-info: #0066cc;
+
+  /* === Typography === */
+  --font-family: Arial, sans-serif;
+  --font-family-mono: 'Courier New', Courier, monospace;
+
+  /* Font sizes */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 18px;
+  --font-size-lg: 22px;
+  --font-size-xl: 28px;
+  --font-size-2xl: 36px;
+
+  /* Font weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  /* Line heights */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* === Spacing === */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* === Border Radius === */
+  --radius-none: 0;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 23px; /* From robots.management buttons */
+  --radius-full: 9999px;
+
+  /* === Shadows === */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+  /* === Z-Index === */
+  --z-dropdown: 1000;
+  --z-modal: 2000;
+  --z-tooltip: 3000;
+  --z-toast: 4000;
+
+  /* === Transitions === */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 350ms ease;
+
+  /* === Button Specific (from robots.management) === */
+  --button-padding-y: 17px;
+  --button-padding-x: 77px;
+  --button-border-radius: var(--radius-lg);
+
+  /* === Breakpoints (for reference in media queries) === */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+}

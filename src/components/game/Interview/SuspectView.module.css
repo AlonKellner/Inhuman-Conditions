@@ -1,0 +1,105 @@
+.container {
+  max-width: 700px;
+  margin: var(--space-8) auto;
+  padding: var(--space-4);
+  padding-top: 100px; /* Space for fixed timer */
+}
+
+.background,
+.penalty {
+  padding: var(--space-4);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+}
+
+.examples {
+  margin-top: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.roleSection {
+  margin-top: var(--space-5);
+  padding: var(--space-5);
+  background: var(--color-bg-tertiary);
+  border: 2px solid var(--color-border-dark);
+  border-radius: var(--radius-md);
+}
+
+.roleHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.roleHeader h3 {
+  margin: 0;
+}
+
+.roleContent {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.roleType {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin-bottom: var(--space-4);
+  padding: var(--space-3);
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+}
+
+.description,
+.traits,
+.restrictions,
+.tasks {
+  margin-bottom: var(--space-4);
+}
+
+.description strong,
+.traits strong,
+.restrictions strong,
+.tasks strong {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--color-text-primary);
+}
+
+.description p {
+  line-height: var(--line-height-relaxed);
+}
+
+.traits ul,
+.restrictions ul,
+.tasks ul {
+  margin-left: var(--space-5);
+}
+
+.traits li,
+.restrictions li,
+.tasks li {
+  margin-bottom: var(--space-2);
+  line-height: var(--line-height-relaxed);
+}
+
+.penaltyReminder {
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-warning);
+  color: var(--color-bg);
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-bold);
+  text-align: center;
+}

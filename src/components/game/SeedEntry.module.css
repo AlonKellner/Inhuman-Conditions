@@ -1,0 +1,52 @@
+.container {
+  max-width: 500px;
+  margin: var(--space-8) auto;
+  padding: var(--space-4);
+}
+
+.description {
+  margin-bottom: var(--space-5);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+}
+
+.inputGroup {
+  margin-bottom: var(--space-5);
+}
+
+.label {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-weight: var(--font-weight-medium);
+}
+
+.input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-lg);
+  text-align: center;
+  letter-spacing: 0.3em;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  font-family: var(--font-family-mono);
+}
+
+.error {
+  margin-top: var(--space-2);
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+}
+
+.buttons {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.buttons button {
+  flex: 1;
+}
+
+.submit {
+  width: 100%;
+}
