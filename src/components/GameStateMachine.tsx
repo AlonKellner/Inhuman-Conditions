@@ -11,6 +11,7 @@ import { InvestigatorView } from './game/Interview/InvestigatorView';
 import { SuspectView } from './game/Interview/SuspectView';
 import { Conclusion } from './game/Conclusion';
 import { InducerPuzzleDisplay } from './game/InducerPuzzleDisplay';
+import { InvestigatorFormInterface } from './form/InvestigatorFormInterface';
 
 export const GameStateMachine: FC = () => {
   const {
@@ -145,7 +146,18 @@ export const GameStateMachine: FC = () => {
       if (mode === GameMode.SingleDevice) {
         return (
           <div>
-            <InvestigatorView />
+            {/* VK-82(e) Form Interface for Investigator */}
+            <div style={{ marginBottom: '40px' }}>
+              <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>VK-82(e) Investigator Form</h2>
+              <InvestigatorFormInterface />
+            </div>
+
+            {/* Original Investigator View (for comparison/testing) */}
+            <div style={{ marginTop: '40px', borderTop: '3px solid #333', paddingTop: '40px' }}>
+              <h3 style={{ textAlign: 'center', color: '#666' }}>Legacy Investigator View (for testing)</h3>
+              <InvestigatorView />
+            </div>
+
             <div style={{ marginTop: '40px', borderTop: '3px dashed #ccc', paddingTop: '40px' }}>
               <p style={{ textAlign: 'center', color: '#666', marginBottom: '20px' }}>
                 <strong>Pass device to Suspect to view their role ↓</strong>
@@ -154,6 +166,10 @@ export const GameStateMachine: FC = () => {
             </div>
           </div>
         );
+      }
+      // For multi-device mode, show form for investigator role
+      if (playerRole === 'investigator') {
+        return <InvestigatorFormInterface />;
       }
       return <InvestigatorView />;
 
