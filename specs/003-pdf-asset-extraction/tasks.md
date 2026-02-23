@@ -21,14 +21,14 @@
 
 **Purpose**: Initialize Python extraction tool project
 
-- [ ] T001 Create extraction/ directory structure per plan.md
-- [ ] T002 Create extraction/requirements.txt with dependencies (pymupdf>=1.27.1, pillow>=12.1.1, opencv-python>=4.13, paddleocr, jinja2>=3.0, matplotlib>=3.0, pytest)
-- [ ] T003 [P] Create extraction/pyproject.toml with Python 3.11+ configuration
-- [ ] T004 [P] Create extraction/README.md with tool documentation
-- [ ] T005 [P] Create extraction/data/ directory structure (pdfs/, labels/, output/)
-- [ ] T006 [P] Create extraction/tests/fixtures/ with sample PDFs for testing
-- [ ] T007 [P] Create extraction/.gitignore for data/ and reports/ directories
-- [ ] T008 Install dependencies with `pip install -r extraction/requirements.txt`
+- [X] T001 Create extraction/ directory structure per plan.md
+- [X] T002 Create extraction/requirements.txt with dependencies (pymupdf>=1.27.1, pillow>=12.1.1, opencv-python>=4.13, paddleocr, jinja2>=3.0, matplotlib>=3.0, pytest)
+- [X] T003 [P] Create extraction/pyproject.toml with Python 3.11+ configuration
+- [X] T004 [P] Create extraction/README.md with tool documentation
+- [X] T005 [P] Create extraction/data/ directory structure (pdfs/, labels/, output/)
+- [X] T006 [P] Create extraction/tests/fixtures/ with sample PDFs for testing
+- [X] T007 [P] Create extraction/.gitignore for data/ and reports/ directories
+- [X] T008 Install dependencies with `pip install -r extraction/requirements.txt`
 
 ---
 
@@ -38,16 +38,16 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T009 Create extraction/src/__init__.py as package marker
-- [ ] T010 [P] Create extraction/src/models/ directory with __init__.py
-- [ ] T011 [P] Create extraction/src/utils/ directory with __init__.py
-- [ ] T012 [P] Implement extraction/src/models/pdf_document.py with PDFDocument dataclass (from data-model.md)
-- [ ] T013 [P] Implement extraction/src/models/label.py with Label dataclass (from data-model.md)
-- [ ] T014 [P] Implement extraction/src/models/extracted_asset.py with ExtractedAsset dataclass (from data-model.md)
-- [ ] T015 [P] Implement extraction/src/models/catalyzer_mapping.py with CatalyzerCardMapping dataclass (from data-model.md)
-- [ ] T016 [P] Implement extraction/src/utils/json_handler.py with JSON serialization/deserialization utilities
-- [ ] T017 [P] Implement extraction/src/utils/logger.py with logging configuration
-- [ ] T018 Create extraction/src/main.py with CLI entry point skeleton using argparse
+- [X] T009 Create extraction/src/__init__.py as package marker
+- [X] T010 [P] Create extraction/src/models/ directory with __init__.py
+- [X] T011 [P] Create extraction/src/utils/ directory with __init__.py
+- [X] T012 [P] Implement extraction/src/models/pdf_document.py with PDFDocument dataclass (from data-model.md)
+- [X] T013 [P] Implement extraction/src/models/label.py with Label dataclass (from data-model.md)
+- [X] T014 [P] Implement extraction/src/models/extracted_asset.py with ExtractedAsset dataclass (from data-model.md)
+- [X] T015 [P] Implement extraction/src/models/catalyzer_mapping.py with CatalyzerCardMapping dataclass (from data-model.md)
+- [X] T016 [P] Implement extraction/src/utils/json_handler.py with JSON serialization/deserialization utilities
+- [X] T017 [P] Implement extraction/src/utils/logger.py with logging configuration
+- [X] T018 Create extraction/src/main.py with CLI entry point skeleton using argparse
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -63,21 +63,21 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T019 [P] [US1] Contract test for download command in extraction/tests/contract/test_download_cli.py
-- [ ] T020 [P] [US1] Unit test for pdf_downloader in extraction/tests/unit/test_pdf_downloader.py
-- [ ] T021 [P] [US1] Unit test for catalog generation in extraction/tests/unit/test_catalog.py
-- [ ] T022 [P] [US1] Integration test for full download pipeline in extraction/tests/integration/test_download_pipeline.py
-- [ ] T023 [P] [US1] Test for resume functionality in extraction/tests/unit/test_pdf_downloader_resume.py
+- [X] T019 [P] [US1] Contract test for download command in extraction/tests/contract/test_download_cli.py
+- [X] T020 [P] [US1] Unit test for pdf_downloader in extraction/tests/unit/test_pdf_downloader.py
+- [X] T021 [P] [US1] Unit test for catalog generation in extraction/tests/unit/test_catalog.py
+- [X] T022 [P] [US1] Integration test for full download pipeline in extraction/tests/integration/test_download_pipeline.py
+- [X] T023 [P] [US1] Test for resume functionality in extraction/tests/unit/test_pdf_downloader_resume.py
 
 ### Implementation for User Story 1
 
-- [ ] T024 [P] [US1] Create extraction/src/download/__init__.py
-- [ ] T025 [US1] Implement extraction/src/download/pdf_downloader.py with download_pdfs() function using requests library
-- [ ] T026 [US1] Implement extraction/src/download/catalog.py with generate_catalog() function
-- [ ] T027 [US1] Add download command to extraction/src/main.py with options (--output-dir, --base-url, --resume, --verify, --catalog-path)
-- [ ] T028 [US1] Add error handling for network failures and invalid URLs
-- [ ] T029 [US1] Add logging for download progress (per-file and overall)
-- [ ] T030 [US1] Verify all tests pass (T019-T023)
+- [X] T024 [P] [US1] Create extraction/src/download/__init__.py
+- [X] T025 [US1] Implement extraction/src/download/pdf_downloader.py with download_pdfs() function using requests library
+- [X] T026 [US1] Implement extraction/src/download/catalog.py with generate_catalog() function
+- [X] T027 [US1] Add download command to extraction/src/main.py with options (--output-dir, --base-url, --resume, --verify, --catalog-path)
+- [X] T028 [US1] Add error handling for network failures and invalid URLs
+- [X] T029 [US1] Add logging for download progress (per-file and overall)
+- [X] T030 [US1] Verify all tests pass (T019-T023)
 
 **Checkpoint**: At this point, User Story 1 should be fully functional - download command works independently
 
