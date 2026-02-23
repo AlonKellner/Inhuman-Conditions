@@ -1,0 +1,79 @@
+.selectorContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 4px;
+  box-sizing: border-box;
+  border-radius: 2px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cycleButton {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  min-width: 28px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.cycleButton:hover:not(:disabled) {
+  background-color: #f0f0f0;
+}
+
+.cycleButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dropdown {
+  flex: 1;
+  min-width: 120px;
+  height: 24px;
+  font-size: 11px;
+  font-family: 'Courier New', monospace;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background-color: #fff;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.dropdown:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  color: #333;
+}
+
+.selectedName {
+  font-weight: bold;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.counter {
+  color: #666;
+  margin-left: 8px;
+}

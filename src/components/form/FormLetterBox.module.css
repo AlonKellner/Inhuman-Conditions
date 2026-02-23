@@ -1,0 +1,16 @@
+.letterBoxContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+}
+
+.letter {
+  font-size: 14px;
+  line-height: 1;
+  text-align: center;
+  color: #000;
+  user-select: none;
+}
