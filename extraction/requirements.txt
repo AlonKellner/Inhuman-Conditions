@@ -1,0 +1,32 @@
+# PDF Asset Extraction Tool Dependencies
+# Python 3.11+ required
+
+# PDF Parsing and Rendering
+pymupdf>=1.27.1
+
+# Image Processing
+Pillow>=12.1.1
+
+# Pattern Matching
+opencv-python>=4.13.0
+
+# OCR (Fallback for non-embedded text)
+paddleocr>=2.7.0
+
+# HTML Report Generation
+Jinja2>=3.0.0
+
+# Interactive Labeling Interface
+matplotlib>=3.0.0
+
+# Testing Framework
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# CLI Argument Parsing (stdlib argparse is sufficient, but included for completeness)
+# argparse is built-in to Python 3.11+
+
+# Optional: Type checking and linting (development dependencies)
+mypy>=1.5.0
+black>=23.0.0
+flake8>=6.0.0

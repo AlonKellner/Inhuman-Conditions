@@ -42,3 +42,22 @@ playwright/.cache
 
 # Build directories
 build
+
+# Python (extraction tool)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+*.egg-info/
+.eggs/
+dist/
+*.egg
+
+# Extraction tool runtime data (gitignored per plan.md)
+extraction/data/
+extraction/reports/

@@ -1,0 +1,41 @@
+{
+  "labels": [
+    {
+      "id": "label-001",
+      "pdf_filename": "sample_test.pdf",
+      "page_number": 1,
+      "content_type": "maze",
+      "bounding_box": {
+        "x": 100,
+        "y": 200,
+        "width": 300,
+        "height": 300
+      },
+      "metadata": {
+        "labeled_by": "test_fixture",
+        "timestamp": "2026-02-23T00:00:00Z"
+      }
+    },
+    {
+      "id": "label-002",
+      "pdf_filename": "sample_test.pdf",
+      "page_number": 1,
+      "content_type": "restriction",
+      "bounding_box": {
+        "x": 50,
+        "y": 550,
+        "width": 400,
+        "height": 150
+      },
+      "metadata": {
+        "labeled_by": "test_fixture",
+        "timestamp": "2026-02-23T00:00:00Z"
+      }
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "total_labels": 2,
+    "content_types": ["maze", "restriction"]
+  }
+}
