@@ -3,6 +3,7 @@ import { useGameStore } from '../../../store/gameStore';
 import { Button } from '../../ui/Button';
 import { Card } from '../../ui/Card';
 import { CountdownTimer } from '../../ui/CountdownTimer';
+import { InducerPuzzleDisplay } from '../InducerPuzzleDisplay';
 import styles from './SuspectView.module.css';
 
 export const SuspectView: FC = () => {
@@ -100,6 +101,17 @@ export const SuspectView: FC = () => {
           )}
         </div>
       </Card>
+
+      {/* Inducer Puzzle - Only visible for robot roles during timed interview */}
+      {timerStarted && selectedRole.roleType !== 'human' && selectedRole.inducerMazeImage && (
+        <div className={styles.inducerSection}>
+          <InducerPuzzleDisplay
+            mazeImage={selectedRole.inducerMazeImage}
+            question="Navigate the maze and report the solution path"
+            expectedSolution={selectedRole.inducerSolution || ''}
+          />
+        </div>
+      )}
     </div>
   );
 };

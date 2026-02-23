@@ -1,0 +1,231 @@
+/**
+ * RoleReveal Component Styles
+ * Matches official Inhuman Conditions design with halftone patterns and monochrome aesthetic
+ */
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+  min-height: 100vh;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Fault Header */
+.faultHeader {
+  text-align: center;
+  padding: 20px;
+  background: var(--color-background);
+  border: 2px solid var(--color-border);
+  position: relative;
+}
+
+.faultHeader::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0.8) 1px,
+    transparent 1px
+  );
+  background-size: 4px 4px;
+  opacity: 0.03;
+  pointer-events: none;
+}
+
+.faultName {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text);
+  text-transform: capitalize;
+}
+
+.roleType {
+  margin: 8px 0 0 0;
+  font-size: 16px;
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+/* Description */
+.description {
+  padding: 16px;
+  background: var(--color-background);
+  border-left: 4px solid var(--color-primary);
+}
+
+.description p {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+/* Traits */
+.traits {
+  padding: 16px;
+}
+
+.traits h3 {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.traits ul {
+  margin: 0;
+  padding-left: 24px;
+  list-style-type: disc;
+}
+
+.traits li {
+  margin-bottom: 8px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+/* Restrictions (Patient Robots) */
+.restrictions {
+  padding: 20px;
+  background: var(--color-background);
+  border: 3px solid var(--color-primary);
+}
+
+.restrictions h3 {
+  margin: 0 0 16px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.restrictions ul {
+  margin: 0 0 16px 0;
+  padding-left: 24px;
+  list-style-type: square;
+}
+
+.restrictions li {
+  margin-bottom: 12px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.warning {
+  margin: 16px 0 0 0;
+  padding: 12px;
+  background: var(--color-background);
+  border: 2px dashed var(--color-border);
+  text-align: center;
+  font-size: 16px;
+  color: var(--color-text);
+}
+
+/* Tasks (Violent Robots) */
+.tasks {
+  padding: 20px;
+  background: var(--color-background);
+  border: 3px solid var(--color-primary);
+}
+
+.tasks h3 {
+  margin: 0 0 16px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.tasks ul {
+  margin: 0;
+  padding-left: 24px;
+  list-style-type: square;
+}
+
+.tasks li {
+  margin-bottom: 12px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+/* Inducer Maze Preview */
+.mazePreview {
+  padding: 20px;
+  background: var(--color-background);
+  border: 2px solid var(--color-border);
+  text-align: center;
+}
+
+.mazePreview h3 {
+  margin: 0 0 16px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.mazeImageWrapper {
+  margin: 16px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.mazeImage {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--color-border);
+}
+
+.mazeHint {
+  margin: 12px 0 0 0;
+  font-size: 14px;
+  color: var(--color-primary);
+  font-style: italic;
+}
+
+/* Button Wrapper */
+.buttonWrapper {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0 0 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 10px;
+  }
+
+  .faultName {
+    font-size: 24px;
+  }
+
+  .description p {
+    font-size: 16px;
+  }
+
+  .restrictions,
+  .tasks {
+    padding: 16px;
+  }
+
+  .mazePreview {
+    padding: 16px;
+  }
+}

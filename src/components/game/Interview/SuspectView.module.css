@@ -103,3 +103,12 @@
   font-weight: var(--font-weight-bold);
   text-align: center;
 }
+
+/* Inducer Puzzle Section */
+.inducerSection {
+  margin-top: var(--space-6);
+  padding: var(--space-5);
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--color-border-dark);
+  border-radius: var(--radius-md);
+}

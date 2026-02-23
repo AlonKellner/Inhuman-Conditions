@@ -5,6 +5,7 @@ import { SeedEntry } from './game/SeedEntry';
 import { PenaltyCalibration } from './game/PenaltyCalibration';
 import { PacketDisplay } from './game/PacketDisplay';
 import { BackgroundDisplay } from './game/BackgroundDisplay';
+import { RoleReveal } from './game/RoleReveal';
 import { ReadyToStart } from './game/ReadyToStart';
 import { InvestigatorView } from './game/Interview/InvestigatorView';
 import { SuspectView } from './game/Interview/SuspectView';
@@ -16,6 +17,7 @@ export const GameStateMachine: FC = () => {
     mode,
     playerRole,
     selectedPenalty,
+    selectedRole,
     // Note: selectedPacket and selectedBackground are accessed by
     // PacketDisplay and BackgroundDisplay via their own useGameStore hooks
     penaltyCalibration,
@@ -24,12 +26,12 @@ export const GameStateMachine: FC = () => {
   } = useGameStore();
 
   // Auto-advance through intermediate states ONLY for states not yet implemented
-  // PenaltyCalibration, PacketDisplay, BackgroundDisplay, and ReadyToStart have manual progression
+  // PenaltyCalibration, PacketDisplay, BackgroundDisplay, RoleReveal, ReadyToStart have manual progression
+  // InducerPuzzle has manual progression once implemented
   useEffect(() => {
     const intermediateStates: GameState[] = [
       GameState.ModeSelection,
       GameState.RoleSelection,
-      GameState.InducerPuzzle,
     ];
 
     if (intermediateStates.includes(gameState)) {
@@ -71,6 +73,28 @@ export const GameStateMachine: FC = () => {
       return (
         <PacketDisplay
           role={packetRole}
+          onContinue={advanceState}
+        />
+      );
+    }
+
+    case GameState.RoleReveal: {
+      // Show Robot Catalyzer card to Suspect BEFORE timer starts
+      // This is where Suspect learns their restrictions or tasks
+      // Only robots see this state; humans skip it automatically
+      if (!selectedRole || selectedRole.roleType === 'human') {
+        // Human players skip role reveal - advance immediately
+        advanceState();
+        return null;
+      }
+
+      // For robots, show the catalyzer card with restrictions/tasks and maze preview
+      const inducerMazeImage = selectedRole.inducerMazeImage || '/assets/mazes/default.png';
+
+      return (
+        <RoleReveal
+          role={selectedRole}
+          inducerMazeImage={inducerMazeImage}
           onContinue={advanceState}
         />
       );
@@ -131,10 +155,33 @@ export const GameStateMachine: FC = () => {
     case GameState.Conclusion:
       return <Conclusion />;
 
+    case GameState.InducerPuzzle:
+      // TODO: Implement InducerPuzzleDisplay component showing maze from catalyzer card
+      // For now, show placeholder and require manual advance
+      return (
+        <div style={{ textAlign: 'center', padding: '100px 20px' }}>
+          <h2>Inducer Puzzle Phase</h2>
+          <p style={{ marginTop: '20px', color: '#666' }}>
+            Inducer puzzle display coming soon...
+          </p>
+          <button
+            onClick={advanceState}
+            style={{
+              marginTop: '40px',
+              padding: '12px 24px',
+              fontSize: '16px',
+              cursor: 'pointer',
+            }}
+          >
+            Continue
+          </button>
+        </div>
+      );
+
     // For MVP, auto-advance through intermediate states not yet implemented
     case GameState.ModeSelection:
     case GameState.RoleSelection:
-    case GameState.InducerPuzzle:
+    case GameState.RoleReveal:
       // Show loading state while auto-advancing
       return (
         <div style={{ textAlign: 'center', padding: '100px 20px' }}>

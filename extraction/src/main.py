@@ -97,8 +97,8 @@ def main() -> int:
     label_parser.add_argument(
         "--content-type",
         choices=["maze", "restriction", "task", "icon", "background", "penalty"],
-        required=True,
-        help="Content type being labeled",
+        required=False,
+        help="Content type being labeled (interactive prompt if not provided)",
     )
     label_parser.add_argument(
         "--labels-file",
@@ -258,8 +258,89 @@ def main() -> int:
             return 0
 
         elif args.command == "label":
-            logger.info("Label command not yet implemented")
-            return 1
+            from .labeling import PDFAnnotator, validate_label, save_labels, load_labels
+
+            logger.info("Starting labeling session...")
+
+            # Validate PDF exists
+            if not args.pdf_path.exists():
+                logger.error(f"PDF file not found: {args.pdf_path}")
+                return 1
+
+            # Interactive content type selection if not provided
+            content_type = args.content_type
+            if content_type is None:
+                content_types = ["maze", "restriction", "task", "icon", "background", "penalty"]
+                print("\n📋 Select content type to label:")
+                for i, ct in enumerate(content_types, 1):
+                    print(f"  {i}. {ct}")
+
+                while True:
+                    try:
+                        choice = input("\nEnter number (1-6): ").strip()
+                        idx = int(choice) - 1
+                        if 0 <= idx < len(content_types):
+                            content_type = content_types[idx]
+                            logger.info(f"Selected content type: {content_type}")
+                            break
+                        else:
+                            print("❌ Invalid choice. Please enter 1-6.")
+                    except (ValueError, KeyboardInterrupt):
+                        print("\n❌ Cancelled by user")
+                        return 1
+
+            # Generate label ID
+            existing_labels = load_labels(args.labels_file)
+            label_id = f"label-{len(existing_labels) + 1:03d}"
+
+            # Create annotator
+            with PDFAnnotator(
+                pdf_path=str(args.pdf_path),
+                page_number=args.page,
+                content_type=content_type,
+                zoom=args.zoom,
+            ) as annotator:
+                # Display interactive interface
+                logger.info(
+                    f"Opening {args.pdf_path.name} page {args.page} for labeling "
+                    f"({content_type})"
+                )
+                annotator.display()
+
+                # Check keyboard action state
+                if annotator.should_quit:
+                    logger.info("❌ Labeling session cancelled by user (quit)")
+                    return 1
+
+                if not annotator.should_save and annotator.bbox_coords is None:
+                    logger.info("⏭️  Skipped to next (no box drawn)")
+                    return 0
+
+                # Create label from selection (if user pressed 's' or closed window with box drawn)
+                try:
+                    label = annotator.create_label(
+                        label_id=label_id,
+                        labeled_by="user",  # TODO: Get from config or CLI
+                    )
+
+                    # Validate label
+                    is_valid, message = validate_label(label)
+                    if not is_valid:
+                        logger.warning(f"Label validation warning: {message}")
+                        logger.info("Label saved anyway (validation warnings are informational)")
+
+                    # Append to existing labels
+                    all_labels = existing_labels + [label]
+
+                    # Save labels
+                    save_labels(all_labels, args.labels_file)
+
+                    logger.info(f"✓ Label saved! Total labels: {len(all_labels)}")
+                    return 0
+
+                except ValueError as e:
+                    logger.error(f"No bounding box selected: {e}")
+                    return 1
         elif args.command == "extract":
             logger.info("Extract command not yet implemented")
             return 1

@@ -11,7 +11,7 @@ export const packets: Packet[] = [
     id: 'small-talk',
     name: 'Small Talk',
     difficulty: 'intro',
-    icon: '📞',
+    icon: '/assets/icons/small_talk.svg',
     prompt: 'Get to know the suspect through casual conversation',
     questions: [
       {
@@ -62,6 +62,7 @@ export const packets: Packet[] = [
         description: 'A robot struggling with long-term memory',
         fault: 'long-term-memory',
         traits: ['You have difficulty recalling past events', 'Recent memories are clearer'],
+        catalyzerCardId: 'smalltalk-ltm-01',
       },
       {
         roleType: 'patient-robot',
@@ -71,6 +72,7 @@ export const packets: Packet[] = [
           'You struggle to understand personal relationships',
           'Emotional connections confuse you',
         ],
+        catalyzerCardId: 'problem-solving-friendship-01', // Using friendship from problem-solving module
       },
       {
         roleType: 'violent-robot',
@@ -78,6 +80,7 @@ export const packets: Packet[] = [
         fault: 'self-preservation',
         traits: ['You are paranoid about threats'],
         tasks: ['Mention feeling threatened', 'Reference protecting yourself'],
+        catalyzerCardId: 'problem-solving-selfpres-01',
       },
     ],
   },
@@ -85,7 +88,7 @@ export const packets: Packet[] = [
     id: 'creative-problem-solving',
     name: 'Creative Problem Solving',
     difficulty: 'easy',
-    icon: '✂️',
+    icon: '/assets/icons/creative.svg',
     prompt: 'Explore how the suspect approaches challenges',
     questions: [
       {
@@ -153,7 +156,7 @@ export const packets: Packet[] = [
     id: 'imagination',
     name: 'Imagination',
     difficulty: 'easy',
-    icon: '🦄',
+    icon: '/assets/icons/imagination.svg',
     prompt: "Test the suspect's creative thinking",
     questions: [
       {

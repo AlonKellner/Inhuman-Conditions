@@ -18,6 +18,7 @@ export interface PacketRole {
   fault?: string; // Only for robot roles
   traits: string[];
   tasks?: string[]; // Only for violent robots
+  catalyzerCardId?: string; // Links to CatalyzerCard.id for robots
 }
 
 export interface Packet {

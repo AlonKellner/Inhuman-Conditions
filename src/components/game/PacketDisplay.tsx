@@ -66,7 +66,11 @@ export function PacketDisplay({ role, onContinue }: PacketDisplayProps) {
 
           <div className={styles.packetInfo}>
             <div className={styles.packetHeader}>
-              <span className={styles.icon}>{selectedPacket.icon}</span>
+              {selectedPacket.icon.startsWith('/') ? (
+                <img src={selectedPacket.icon} alt="" className={styles.iconImage} />
+              ) : (
+                <span className={styles.icon}>{selectedPacket.icon}</span>
+              )}
               <h3 className={styles.packetName}>{selectedPacket.name}</h3>
             </div>
             <p className={styles.difficulty}>
@@ -99,7 +103,11 @@ export function PacketDisplay({ role, onContinue }: PacketDisplayProps) {
 
           <div className={styles.packetInfo}>
             <div className={styles.packetHeader}>
-              <span className={styles.icon}>{selectedPacket.icon}</span>
+              {selectedPacket.icon.startsWith('/') ? (
+                <img src={selectedPacket.icon} alt="" className={styles.iconImage} />
+              ) : (
+                <span className={styles.icon}>{selectedPacket.icon}</span>
+              )}
               <h3 className={styles.packetName}>{selectedPacket.name}</h3>
             </div>
             <p className={styles.difficulty}>

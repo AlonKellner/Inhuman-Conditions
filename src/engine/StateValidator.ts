@@ -9,13 +9,16 @@ import type { StateTransition } from './types';
 
 /**
  * Valid state transitions in the game
+ * Following official Inhuman Conditions flow:
+ * Seed → Mode → Penalty → Packet → Role Selection → Role Reveal → Inducer → Background → Ready → Interview → Conclusion
  */
 const VALID_TRANSITIONS: Record<GameState, GameState[]> = {
   'seed-entry': ['mode-selection'],
-  'mode-selection': ['role-selection'],
-  'role-selection': ['penalty-calibration'],
+  'mode-selection': ['penalty-calibration'],
   'penalty-calibration': ['packet-display'],
-  'packet-display': ['inducer-puzzle'],
+  'packet-display': ['role-selection'],
+  'role-selection': ['role-reveal'],
+  'role-reveal': ['inducer-puzzle'],
   'inducer-puzzle': ['background-display'],
   'background-display': ['ready-to-start'],
   'ready-to-start': ['interview'],

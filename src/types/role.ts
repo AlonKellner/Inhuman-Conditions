@@ -43,4 +43,6 @@ export interface RoleAssignment {
   traits: string[];
   tasks?: string[]; // Only for violent robots
   restrictions?: string[]; // Only for patient robots
+  inducerMazeImage?: string; // Only for robots - path to maze image
+  inducerSolution?: string; // Only for robots - expected maze solution
 }

@@ -104,9 +104,9 @@
 - [X] T038 [US2] Implement extraction/src/labeling/validator.py with validate_label() function (check grid structure for mazes, text blocks for restrictions)
 - [X] T039 [US2] Implement extraction/src/labeling/storage.py with save_labels() and load_labels() functions
 - [X] T040 [US2] Add label command to extraction/src/main.py with options (PDF_PATH, --page, --labels-file, --content-type, --zoom)
-- [ ] T041 [US2] Add content type selection UI (interactive prompt if --content-type not provided)
-- [ ] T042 [US2] Add keyboard shortcuts (s=save, n=next, q=quit) to interface
-- [ ] T043 [US2] Add logging for labeling actions (box drawn, label saved, validation result)
+- [X] T041 [US2] Add content type selection UI (interactive prompt if --content-type not provided)
+- [X] T042 [US2] Add keyboard shortcuts (s=save, n=next, q=quit) to interface
+- [X] T043 [US2] Add logging for labeling actions (box drawn, label saved, validation result)
 - [X] T044 [US2] Verify all tests pass (T031-T035)
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently

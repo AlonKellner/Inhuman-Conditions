@@ -73,6 +73,12 @@
   line-height: 1;
 }
 
+.iconImage {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
 .packetName {
   margin: 0;
   font-size: var(--font-size-xl);

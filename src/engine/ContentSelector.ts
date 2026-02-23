@@ -9,6 +9,7 @@ import { generateInducerPattern } from '../lib/inducerPattern';
 import { packets } from '../data/packets';
 import { penalties } from '../data/penalties';
 import { backgrounds } from '../data/backgrounds';
+import { getCardById } from '../data/catalyzerCards';
 import { RoleType } from '../types';
 import type {
   Seed,
@@ -169,12 +170,18 @@ export class ContentSelector {
     const patientRoles = packet.roles.filter((r) => r.roleType === RoleType.PatientRobot);
     for (let i = 0; i < 6; i++) {
       const patientRole = patientRoles[i % patientRoles.length];
+      const catalyzerCard = patientRole.catalyzerCardId
+        ? getCardById(patientRole.catalyzerCardId)
+        : null;
+
       roles.push({
         roleType: RoleType.PatientRobot,
         fault: patientRole.fault as any,
         description: patientRole.description,
         traits: patientRole.traits,
-        restrictions: ['Cannot mention certain topics'],
+        restrictions: catalyzerCard?.restrictions || ['You must follow your programming'],
+        inducerMazeImage: catalyzerCard?.inducerMazeImage,
+        inducerSolution: catalyzerCard?.inducerSolution,
       });
     }
 
@@ -182,12 +189,18 @@ export class ContentSelector {
     const violentRoles = packet.roles.filter((r) => r.roleType === RoleType.ViolentRobot);
     for (let i = 0; i < 2; i++) {
       const violentRole = violentRoles[i % violentRoles.length];
+      const catalyzerCard = violentRole.catalyzerCardId
+        ? getCardById(violentRole.catalyzerCardId)
+        : null;
+
       roles.push({
         roleType: RoleType.ViolentRobot,
         fault: violentRole.fault as any,
         description: violentRole.description,
         traits: violentRole.traits,
-        tasks: violentRole.tasks || ['Complete assigned tasks'],
+        tasks: catalyzerCard?.tasks || violentRole.tasks || ['Complete assigned tasks'],
+        inducerMazeImage: catalyzerCard?.inducerMazeImage,
+        inducerSolution: catalyzerCard?.inducerSolution,
       });
     }
 
@@ -233,12 +246,18 @@ export class ContentSelector {
   private selectPatientRobotRole(packet: Packet): RoleAssignment {
     const patientRoles = packet.roles.filter((r) => r.roleType === RoleType.PatientRobot);
     const patientRole = this.rng.choice(patientRoles);
+    const catalyzerCard = patientRole.catalyzerCardId
+      ? getCardById(patientRole.catalyzerCardId)
+      : null;
+
     return {
       roleType: RoleType.PatientRobot,
       fault: patientRole.fault as any,
       description: patientRole.description,
       traits: patientRole.traits,
-      restrictions: ['Cannot mention certain topics'], // Placeholder
+      restrictions: catalyzerCard?.restrictions || ['You must follow your programming'],
+      inducerMazeImage: catalyzerCard?.inducerMazeImage,
+      inducerSolution: catalyzerCard?.inducerSolution,
     };
   }
 
@@ -248,12 +267,18 @@ export class ContentSelector {
   private selectViolentRobotRole(packet: Packet): RoleAssignment {
     const violentRoles = packet.roles.filter((r) => r.roleType === RoleType.ViolentRobot);
     const violentRole = this.rng.choice(violentRoles);
+    const catalyzerCard = violentRole.catalyzerCardId
+      ? getCardById(violentRole.catalyzerCardId)
+      : null;
+
     return {
       roleType: RoleType.ViolentRobot,
       fault: violentRole.fault as any,
       description: violentRole.description,
       traits: violentRole.traits,
-      tasks: violentRole.tasks || ['Complete assigned tasks'],
+      tasks: catalyzerCard?.tasks || violentRole.tasks || ['Complete assigned tasks'],
+      inducerMazeImage: catalyzerCard?.inducerMazeImage,
+      inducerSolution: catalyzerCard?.inducerSolution,
     };
   }
 }
