@@ -43,23 +43,27 @@ python -m src.main download
 
 ### Step 2: Manual Labeling (5-10 minutes)
 
-Label 2-3 examples for each content type (maze, restriction, task, icon, background, penalty):
+**NEW**: You can now label multiple bounding boxes on the same page! After drawing each box, you'll be prompted to select its content type.
 
 ```bash
-# Label a maze example
-python -m src.main label data/pdfs/01_small_talk_suspect.pdf --page 5 --content-type maze
+# Label multiple items on page 5 (mazes, restrictions, icons, etc.)
+uv run python -m src.main label data/pdfs/01_small_talk_suspect.pdf --page 5
 
-# Label restriction text
-python -m src.main label data/pdfs/01_small_talk_suspect.pdf --page 5 --content-type restriction
-
-# Label task text (violent robot card)
-python -m src.main label data/pdfs/02_creative_problem_solving_suspect.pdf --page 8 --content-type task
-
-# Label module icon
-python -m src.main label data/pdfs/01_small_talk_suspect.pdf --page 0 --content-type icon
+# Workflow:
+# 1. Draw first bounding box (click and drag)
+# 2. Select content type from menu (1-6)
+# 3. Draw next bounding box
+# 4. Select its content type
+# 5. Repeat for all items on the page
+# 6. Press 'q' when done to save all boxes
 ```
 
-**Goal**: Create at least 2 labels per content type (10 labels total).
+**Keyboard Shortcuts**:
+- `d` - Delete last labeled box
+- `q` - Save all boxes and close
+- `c` - Cancel all boxes and close
+
+**Goal**: Create at least 2 labels per content type (10 labels total). With multi-box labeling, you can knock this out in 2-3 pages!
 
 ### Step 3: Automated Extraction (5 minutes)
 

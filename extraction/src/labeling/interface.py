@@ -31,7 +31,6 @@ class PDFAnnotator:
         self,
         pdf_path: str,
         page_number: int,
-        content_type: str,
         zoom: float = 2.0,
     ):
         """
@@ -40,7 +39,6 @@ class PDFAnnotator:
         Args:
             pdf_path: Path to PDF file
             page_number: Page number to annotate (1-indexed)
-            content_type: Type of content being labeled (maze, restriction, etc.)
             zoom: Zoom factor for rendering (default: 2.0)
 
         Raises:
@@ -48,7 +46,6 @@ class PDFAnnotator:
         """
         self.pdf_path = pdf_path
         self.page_number = page_number
-        self.content_type = content_type
         self.zoom = zoom
 
         # Open PDF and validate page number
@@ -60,18 +57,21 @@ class PDFAnnotator:
 
         logger.info(
             f"PDFAnnotator initialized: {Path(pdf_path).name} | "
-            f"Page {page_number}/{self.doc.page_count} | "
-            f"Type: {content_type} | Zoom: {zoom}x"
+            f"Page {page_number}/{self.doc.page_count} | Zoom: {zoom}x"
         )
 
-        # Selection state
-        self.bbox_coords: Optional[tuple[float, float, float, float]] = None
+        # Multiple bounding boxes with their content types
+        self.labeled_boxes: list[tuple[tuple[float, float, float, float], str]] = []
+        self.current_bbox: Optional[tuple[float, float, float, float]] = None
+
+        # UI state
         self.fig: Optional[plt.Figure] = None
         self.ax: Optional[plt.Axes] = None
         self.selector: Optional[RectangleSelector] = None
+        self.drawn_rectangles: list[Rectangle] = []
+        self.drawn_labels: list = []
 
         # Keyboard action state
-        self.should_save = False
         self.should_quit = False
 
     def render_page(self) -> np.ndarray:
@@ -113,11 +113,107 @@ class PDFAnnotator:
         y_min = min(y1, y2)
         y_max = max(y1, y2)
 
-        self.bbox_coords = (x_min, y_min, x_max, y_max)
+        self.current_bbox = (x_min, y_min, x_max, y_max)
 
         logger.info(
-            f"Bounding box selected: ({x_min:.0f}, {y_min:.0f}) to ({x_max:.0f}, {y_max:.0f})"
+            f"Bounding box drawn: ({x_min:.0f}, {y_min:.0f}) to ({x_max:.0f}, {y_max:.0f})"
         )
+
+        # Prompt for content type immediately
+        content_type = self._prompt_content_type()
+        if content_type:
+            # Store labeled box
+            self.labeled_boxes.append((self.current_bbox, content_type))
+            logger.info(f"Label #{len(self.labeled_boxes)}: {content_type}")
+
+            # Draw permanent rectangle on figure
+            self._draw_labeled_box(len(self.labeled_boxes) - 1)
+
+            # Reset current selection
+            self.current_bbox = None
+
+    def _prompt_content_type(self) -> Optional[str]:
+        """
+        Prompt user to select content type for current bounding box.
+
+        Returns:
+            Selected content type string, or None if cancelled
+        """
+        content_types = ["maze", "restriction", "task", "icon", "background", "penalty"]
+        print(f"\n📋 Box #{len(self.labeled_boxes) + 1} - Select content type:")
+        for i, ct in enumerate(content_types, 1):
+            print(f"  {i}. {ct}")
+        print("  0. Cancel (discard this box)")
+
+        while True:
+            try:
+                choice = input("\nEnter number (0-6): ").strip()
+                if choice == '0':
+                    logger.info("Box discarded by user")
+                    return None
+                idx = int(choice) - 1
+                if 0 <= idx < len(content_types):
+                    content_type = content_types[idx]
+                    logger.info(f"Selected content type: {content_type}")
+                    return content_type
+                else:
+                    print("❌ Invalid choice. Please enter 0-6.")
+            except (ValueError, EOFError):
+                print("❌ Invalid input. Please enter 0-6.")
+                return None
+
+    def _draw_labeled_box(self, box_index: int) -> None:
+        """
+        Draw a labeled bounding box on the figure.
+
+        Args:
+            box_index: Index in self.labeled_boxes list
+        """
+        if not self.ax:
+            return
+
+        bbox_coords, content_type = self.labeled_boxes[box_index]
+        x_min, y_min, x_max, y_max = bbox_coords
+
+        # Color map for different content types
+        color_map = {
+            "maze": "red",
+            "restriction": "blue",
+            "task": "green",
+            "icon": "purple",
+            "background": "orange",
+            "penalty": "cyan",
+        }
+        color = color_map.get(content_type, "yellow")
+
+        # Draw rectangle
+        rect = Rectangle(
+            (x_min, y_min),
+            x_max - x_min,
+            y_max - y_min,
+            linewidth=2,
+            edgecolor=color,
+            facecolor='none',
+            linestyle='--'
+        )
+        self.ax.add_patch(rect)
+        self.drawn_rectangles.append(rect)
+
+        # Draw label number and type
+        label_text = f"#{box_index + 1}: {content_type}"
+        text = self.ax.text(
+            x_min,
+            y_min - 10,
+            label_text,
+            fontsize=12,
+            color=color,
+            weight='bold',
+            bbox=dict(boxstyle='round', facecolor='white', alpha=0.8, edgecolor=color)
+        )
+        self.drawn_labels.append(text)
+
+        # Redraw canvas
+        self.fig.canvas.draw()
 
     def on_key_press(self, event) -> None:
         """
@@ -127,79 +223,79 @@ class PDFAnnotator:
             event: Matplotlib key press event
 
         Keyboard shortcuts:
-            's': Save current label and close window
-            'n': Skip to next (close without saving)
-            'q': Quit labeling session
+            'd': Delete last labeled box
+            'q': Quit and save all labeled boxes
+            'c': Cancel and discard all boxes
         """
-        if event.key == 's':
-            logger.info("Save shortcut pressed (s)")
-            self.should_save = True
-            plt.close(self.fig)
-        elif event.key == 'n':
-            logger.info("Skip shortcut pressed (n)")
-            self.should_save = False
-            plt.close(self.fig)
+        if event.key == 'd':
+            if self.labeled_boxes:
+                removed = self.labeled_boxes.pop()
+                logger.info(f"Deleted last box: {removed[1]}")
+                # Remove visual elements
+                if self.drawn_rectangles:
+                    self.drawn_rectangles[-1].remove()
+                    self.drawn_rectangles.pop()
+                if self.drawn_labels:
+                    self.drawn_labels[-1].remove()
+                    self.drawn_labels.pop()
+                self.fig.canvas.draw()
+                print(f"🗑️  Deleted box #{len(self.labeled_boxes) + 1}")
         elif event.key == 'q':
-            logger.info("Quit shortcut pressed (q)")
+            logger.info(f"Save shortcut pressed (q) - {len(self.labeled_boxes)} boxes labeled")
+            plt.close(self.fig)
+        elif event.key == 'c':
+            logger.info("Cancel shortcut pressed (c) - discarding all boxes")
             self.should_quit = True
-            self.should_save = False
             plt.close(self.fig)
 
-    def get_bounding_box(self) -> BoundingBox:
+    def create_labels(self, label_id_prefix: str, labeled_by: str, notes: Optional[str] = None) -> list[Label]:
         """
-        Get the selected bounding box.
-
-        Returns:
-            BoundingBox object with coordinates and dimensions
-
-        Raises:
-            ValueError: If no bounding box has been selected
-        """
-        if self.bbox_coords is None:
-            raise ValueError("No bounding box selected")
-
-        x1, y1, x2, y2 = self.bbox_coords
-        return BoundingBox(
-            x=x1,
-            y=y1,
-            width=x2 - x1,
-            height=y2 - y1,
-        )
-
-    def create_label(self, label_id: str, labeled_by: str, notes: Optional[str] = None) -> Label:
-        """
-        Create a Label object from the selected bounding box.
+        Create Label objects from all labeled bounding boxes.
 
         Args:
-            label_id: Unique identifier for this label
-            labeled_by: Who created this label
-            notes: Optional notes about this label
+            label_id_prefix: Prefix for label IDs (e.g., "label-001")
+            labeled_by: Who created these labels
+            notes: Optional notes about these labels
 
         Returns:
-            Label object
-
-        Raises:
-            ValueError: If no bounding box has been selected
+            List of Label objects (one per labeled box)
         """
-        bbox = self.get_bounding_box()
+        labels = []
 
-        label = Label(
-            id=label_id,
-            pdf_filename=Path(self.pdf_path).name,
-            page_number=self.page_number,
-            content_type=LabelContentType(self.content_type),
-            bounding_box=bbox,
-            labeled_by=labeled_by,
-            timestamp=datetime.now(),
-            notes=notes,
-        )
+        for i, (bbox_coords, content_type) in enumerate(self.labeled_boxes):
+            x1, y1, x2, y2 = bbox_coords
+            bbox = BoundingBox(
+                x=x1,
+                y=y1,
+                width=x2 - x1,
+                height=y2 - y1,
+            )
 
-        logger.info(
-            f"Label created: {label_id} | {self.content_type} | "
-            f"Box: {bbox.width:.0f}x{bbox.height:.0f}"
-        )
+            # Generate unique label ID (e.g., "label-001-a", "label-001-b")
+            if len(self.labeled_boxes) == 1:
+                label_id = label_id_prefix
+            else:
+                label_id = f"{label_id_prefix}-{chr(97 + i)}"  # 97 = 'a'
 
-        return label
+            label = Label(
+                id=label_id,
+                pdf_filename=Path(self.pdf_path).name,
+                page_number=self.page_number,
+                content_type=LabelContentType(content_type),
+                bounding_box=bbox,
+                labeled_by=labeled_by,
+                timestamp=datetime.now(),
+                notes=notes,
+            )
+
+            logger.info(
+                f"Label created: {label_id} | {content_type} | "
+                f"Box: {bbox.width:.0f}x{bbox.height:.0f}"
+            )
+
+            labels.append(label)
+
+        return labels
 
     def display(self) -> None:
         """
@@ -214,10 +310,9 @@ class PDFAnnotator:
         self.fig, self.ax = plt.subplots(figsize=(12, 16))
         self.ax.imshow(img)
         self.ax.set_title(
-            f"PDF: {Path(self.pdf_path).name} | Page: {self.page_number} | "
-            f"Content Type: {self.content_type}\n"
-            f"Draw bounding box around the content.\n"
-            f"Keyboard: [s]=save & close | [n]=skip to next | [q]=quit"
+            f"PDF: {Path(self.pdf_path).name} | Page: {self.page_number}\n"
+            f"Draw bounding boxes (multiple allowed - each will be labeled separately)\n"
+            f"Keyboard: [d]=delete last | [q]=save all & close | [c]=cancel all"
         )
         self.ax.axis("off")
 

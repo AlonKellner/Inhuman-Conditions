@@ -95,12 +95,6 @@ def main() -> int:
         help="Page number to label (1-indexed)",
     )
     label_parser.add_argument(
-        "--content-type",
-        choices=["maze", "restriction", "task", "icon", "background", "penalty"],
-        required=False,
-        help="Content type being labeled (interactive prompt if not provided)",
-    )
-    label_parser.add_argument(
         "--labels-file",
         type=Path,
         default=Path("data/labels/labels.json"),
@@ -267,80 +261,65 @@ def main() -> int:
                 logger.error(f"PDF file not found: {args.pdf_path}")
                 return 1
 
-            # Interactive content type selection if not provided
-            content_type = args.content_type
-            if content_type is None:
-                content_types = ["maze", "restriction", "task", "icon", "background", "penalty"]
-                print("\n📋 Select content type to label:")
-                for i, ct in enumerate(content_types, 1):
-                    print(f"  {i}. {ct}")
-
-                while True:
-                    try:
-                        choice = input("\nEnter number (1-6): ").strip()
-                        idx = int(choice) - 1
-                        if 0 <= idx < len(content_types):
-                            content_type = content_types[idx]
-                            logger.info(f"Selected content type: {content_type}")
-                            break
-                        else:
-                            print("❌ Invalid choice. Please enter 1-6.")
-                    except (ValueError, KeyboardInterrupt):
-                        print("\n❌ Cancelled by user")
-                        return 1
-
-            # Generate label ID
+            # Load existing labels
             existing_labels = load_labels(args.labels_file)
-            label_id = f"label-{len(existing_labels) + 1:03d}"
+            label_id_prefix = f"label-{len(existing_labels) + 1:03d}"
 
-            # Create annotator
+            # Create annotator (no content_type needed - each box gets its own)
             with PDFAnnotator(
                 pdf_path=str(args.pdf_path),
                 page_number=args.page,
-                content_type=content_type,
                 zoom=args.zoom,
             ) as annotator:
                 # Display interactive interface
                 logger.info(
-                    f"Opening {args.pdf_path.name} page {args.page} for labeling "
-                    f"({content_type})"
+                    f"Opening {args.pdf_path.name} page {args.page} for labeling"
                 )
+                print(f"\n🏷️  Labeling {args.pdf_path.name} - Page {args.page}")
+                print("📦 Draw bounding boxes (as many as you want on this page)")
+                print("   After each box, you'll select its content type")
+                print("   Press 'q' when done to save all boxes\n")
+
                 annotator.display()
 
                 # Check keyboard action state
                 if annotator.should_quit:
-                    logger.info("❌ Labeling session cancelled by user (quit)")
+                    logger.info("❌ Labeling session cancelled by user")
                     return 1
 
-                if not annotator.should_save and annotator.bbox_coords is None:
-                    logger.info("⏭️  Skipped to next (no box drawn)")
+                if not annotator.labeled_boxes:
+                    logger.info("⏭️  No boxes labeled")
                     return 0
 
-                # Create label from selection (if user pressed 's' or closed window with box drawn)
-                try:
-                    label = annotator.create_label(
-                        label_id=label_id,
-                        labeled_by="user",  # TODO: Get from config or CLI
-                    )
+                # Create labels from all labeled boxes
+                new_labels = annotator.create_labels(
+                    label_id_prefix=label_id_prefix,
+                    labeled_by="user",  # TODO: Get from config or CLI
+                )
 
-                    # Validate label
+                # Validate all labels
+                validation_warnings = []
+                for label in new_labels:
                     is_valid, message = validate_label(label)
                     if not is_valid:
-                        logger.warning(f"Label validation warning: {message}")
-                        logger.info("Label saved anyway (validation warnings are informational)")
+                        validation_warnings.append(f"{label.id}: {message}")
 
-                    # Append to existing labels
-                    all_labels = existing_labels + [label]
+                if validation_warnings:
+                    logger.warning(f"Validation warnings for {len(validation_warnings)} labels:")
+                    for warning in validation_warnings:
+                        logger.warning(f"  - {warning}")
+                    logger.info("Labels saved anyway (validation warnings are informational)")
 
-                    # Save labels
-                    save_labels(all_labels, args.labels_file)
+                # Append to existing labels
+                all_labels = existing_labels + new_labels
 
-                    logger.info(f"✓ Label saved! Total labels: {len(all_labels)}")
-                    return 0
+                # Save labels
+                save_labels(all_labels, args.labels_file)
 
-                except ValueError as e:
-                    logger.error(f"No bounding box selected: {e}")
-                    return 1
+                logger.info(f"✓ Saved {len(new_labels)} new labels! Total labels: {len(all_labels)}")
+                print(f"\n✅ Saved {len(new_labels)} labels from this page")
+                print(f"📊 Total labels in dataset: {len(all_labels)}")
+                return 0
         elif args.command == "extract":
             logger.info("Extract command not yet implemented")
             return 1
