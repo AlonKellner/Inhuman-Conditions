@@ -4,6 +4,8 @@ import { Button } from '../../ui/Button';
 import { Card } from '../../ui/Card';
 import { CountdownTimer } from '../../ui/CountdownTimer';
 import { Determination } from '../../../types';
+import QuestionCardImage from '../../cards/QuestionCardImage';
+import '../../../styles/cards.css';
 import styles from './InvestigatorView.module.css';
 
 export const InvestigatorView: FC = () => {
@@ -49,21 +51,31 @@ export const InvestigatorView: FC = () => {
           <h3>Questions:</h3>
           {shuffledQuestions.map((q, index) => (
             <div key={q.id} className={styles.question}>
-              <div className={styles.questionHeader}>
-                <span className={styles.questionNumber}>Q{index + 1}</span>
-                <span className={[styles.type, styles[q.type]].join(' ')}>
-                  {q.type === 'primary' ? 'Primary' : 'Secondary'}
-                </span>
-              </div>
-              <div className={styles.questionText}>{q.text}</div>
-              <div className={styles.examples}>
-                <strong>Follow-ups:</strong>
-                <ul>
-                  {q.examples.map((ex, i) => (
-                    <li key={i}>{ex}</li>
-                  ))}
-                </ul>
-              </div>
+              {/* Use QuestionCardImage if available, otherwise fallback to custom text */}
+              {q.cardImage ? (
+                <div className={styles.cardImageContainer}>
+                  <div className={styles.questionNumber}>Q{index + 1}</div>
+                  <QuestionCardImage question={q} />
+                </div>
+              ) : (
+                <>
+                  <div className={styles.questionHeader}>
+                    <span className={styles.questionNumber}>Q{index + 1}</span>
+                    <span className={[styles.type, styles[q.type]].join(' ')}>
+                      {q.type === 'primary' ? 'Primary' : 'Secondary'}
+                    </span>
+                  </div>
+                  <div className={styles.questionText}>{q.text}</div>
+                  <div className={styles.examples}>
+                    <strong>Follow-ups:</strong>
+                    <ul>
+                      {q.examples.map((ex, i) => (
+                        <li key={i}>{ex}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </>
+              )}
             </div>
           ))}
         </div>

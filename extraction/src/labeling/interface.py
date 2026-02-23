@@ -345,13 +345,42 @@ class PDFAnnotator:
         if not self.unlabeled_boxes:
             return
 
-        card_types_list = ["human-card", "patient-card", "violent-card"]
+        # Detect PDF type from filename
+        filename_lower = self.pdf_path.lower()
+        is_investigator = 'investigator' in filename_lower and 'form' not in filename_lower
+        is_investigator_forms = 'investigator' in filename_lower and 'form' in filename_lower
+        is_backgrounds = 'background' in filename_lower
+        is_penalties = 'penalt' in filename_lower  # matches "penalty" or "penalties"
 
-        print(f"\n📋 Now assign card types to your {len(self.unlabeled_boxes)} boxes:")
-        print("Card types:")
-        print("  1 = human-card (contains: maze only)")
-        print("  2 = patient-card (contains: maze + restriction text)")
-        print("  3 = violent-card (contains: maze + task text)")
+        if is_backgrounds:
+            card_types_list = ["background"]
+            print(f"\n📋 Now assign content type to your {len(self.unlabeled_boxes)} boxes:")
+            print("Background PDF:")
+            print("  1 = background (character background card)")
+        elif is_penalties:
+            card_types_list = ["penalty"]
+            print(f"\n📋 Now assign content type to your {len(self.unlabeled_boxes)} boxes:")
+            print("Penalties PDF:")
+            print("  1 = penalty (penalty card)")
+        elif is_investigator_forms:
+            card_types_list = ["investigator-form"]
+            print(f"\n📋 Now assign content type to your {len(self.unlabeled_boxes)} boxes:")
+            print("Investigator Forms PDF:")
+            print("  1 = investigator-form (interview forms and templates)")
+        elif is_investigator:
+            card_types_list = ["cover-sheet", "primary-prompts", "secondary-prompts"]
+            print(f"\n📋 Now assign card types to your {len(self.unlabeled_boxes)} boxes:")
+            print("Investigator PDF card types:")
+            print("  1 = cover-sheet (page 1)")
+            print("  2 = primary-prompts (page 2)")
+            print("  3 = secondary-prompts (page 3)")
+        else:
+            card_types_list = ["human-card", "patient-card", "violent-card"]
+            print(f"\n📋 Now assign card types to your {len(self.unlabeled_boxes)} boxes:")
+            print("Suspect PDF card types:")
+            print("  1 = human-card (contains: maze only)")
+            print("  2 = patient-card (contains: maze + restriction text)")
+            print("  3 = violent-card (contains: maze + task text)")
         print()
 
         for i, bbox in enumerate(self.unlabeled_boxes):
@@ -361,9 +390,14 @@ class PDFAnnotator:
             aspect_ratio = height / width
             print(f"Box #{i + 1} ({width:.0f}w x {height:.0f}h pixels, ratio {aspect_ratio:.2f}:1)")
 
+            # Dynamic prompt based on number of options
+            max_choice = len(card_types_list)
+            prompt_text = f"  Content type (1-{max_choice}): " if max_choice > 1 else "  Content type (1): "
+            error_text = f"  ❌ Invalid. Enter 1-{max_choice}." if max_choice > 1 else "  ❌ Invalid. Enter 1."
+
             while True:
                 try:
-                    choice = input(f"  Card type (1-3): ").strip()
+                    choice = input(prompt_text).strip()
                     idx = int(choice) - 1
                     if 0 <= idx < len(card_types_list):
                         card_type = card_types_list[idx]
@@ -372,9 +406,9 @@ class PDFAnnotator:
                         print(f"  ✓ Labeled as: {card_type}\n")
                         break
                     else:
-                        print("  ❌ Invalid. Enter 1-3.")
+                        print(error_text)
                 except (ValueError, KeyboardInterrupt):
-                    print("  ❌ Invalid. Enter 1-3.")
+                    print(error_text)
 
         print(f"✅ All {len(self.labeled_boxes)} cards labeled!")
 

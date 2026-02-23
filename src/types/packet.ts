@@ -10,6 +10,7 @@ export interface Question {
   type: 'primary' | 'secondary';
   text: string;
   examples: string[];
+  cardImage?: string; // Path to question card image PNG from extracted PDFs
 }
 
 export interface PacketRole {
@@ -29,4 +30,5 @@ export interface Packet {
   prompt: string; // Instructions for Investigator
   questions: Question[];
   roles: PacketRole[];
+  coverSheetImage?: string; // Path to cover sheet image PNG from extracted PDFs
 }

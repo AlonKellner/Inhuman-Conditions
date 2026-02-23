@@ -11,10 +11,15 @@ from typing import Optional
 class LabelContentType(Enum):
     """Content type for labeled regions."""
 
-    # Full card types (contain multiple components)
+    # Suspect card types (full cards)
     HUMAN_CARD = "human-card"
     PATIENT_CARD = "patient-card"
     VIOLENT_CARD = "violent-card"
+
+    # Investigator card types (full cards)
+    COVER_SHEET = "cover-sheet"
+    PRIMARY_PROMPTS = "primary-prompts"
+    SECONDARY_PROMPTS = "secondary-prompts"
 
     # Individual component types (for fine-grained labeling)
     MAZE = "maze"
@@ -23,6 +28,7 @@ class LabelContentType(Enum):
     ICON = "icon"
     BACKGROUND = "background"
     PENALTY = "penalty"
+    INVESTIGATOR_FORM = "investigator-form"
 
 
 @dataclass

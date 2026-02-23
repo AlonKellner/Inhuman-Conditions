@@ -2,6 +2,9 @@ import { type FC } from 'react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import type { RoleAssignment } from '../../types/role';
+import { catalyzerCards } from '../../data/catalyzerCards';
+import CatalyzerCardImage from '../cards/CatalyzerCardImage';
+import '../../styles/cards.css';
 import styles from './RoleReveal.module.css';
 
 export interface RoleRevealProps {
@@ -35,60 +38,76 @@ export const RoleReveal: FC<RoleRevealProps> = ({ role, inducerMazeImage, onCont
   const isPatientRobot = role.roleType === 'patient-robot';
   const isViolentRobot = role.roleType === 'violent-robot';
 
+  // Try to find matching catalyzer card with card image
+  const matchingCard = role.fault
+    ? catalyzerCards.find(
+        card => card.roleType === role.roleType && card.fault === role.fault
+      )
+    : undefined;
+
   return (
     <div className={styles.container}>
       <Card title="Robot Catalyzer Card">
         <div className={styles.content}>
-          {/* Fault Header */}
-          <div className={styles.faultHeader}>
-            <h2 className={styles.faultName}>{formatFaultName(role.fault)}</h2>
-            <p className={styles.roleType}>
-              {isPatientRobot ? 'Patient Robot' : isViolentRobot ? 'Violent Robot' : 'Robot'}
-            </p>
-          </div>
-
-          {/* Description */}
-          <div className={styles.description}>
-            <p>{role.description}</p>
-          </div>
-
-          {/* Traits */}
-          {role.traits && role.traits.length > 0 && (
-            <div className={styles.traits}>
-              <h3>Your Traits</h3>
-              <ul>
-                {role.traits.map((trait, i) => (
-                  <li key={i}>{trait}</li>
-                ))}
-              </ul>
+          {/* Use CatalyzerCardImage if available, otherwise fallback to custom widget */}
+          {matchingCard && matchingCard.cardImage ? (
+            <div className={styles.cardImageContainer}>
+              <CatalyzerCardImage card={matchingCard} />
             </div>
-          )}
+          ) : (
+            <>
+              {/* Fault Header */}
+              <div className={styles.faultHeader}>
+                <h2 className={styles.faultName}>{formatFaultName(role.fault)}</h2>
+                <p className={styles.roleType}>
+                  {isPatientRobot ? 'Patient Robot' : isViolentRobot ? 'Violent Robot' : 'Robot'}
+                </p>
+              </div>
 
-          {/* Restrictions (Patient Robots) */}
-          {role.restrictions && role.restrictions.length > 0 && (
-            <div className={styles.restrictions}>
-              <h3>Your Restrictions</h3>
-              <ul>
-                {role.restrictions.map((restriction, i) => (
-                  <li key={i}>{restriction}</li>
-                ))}
-              </ul>
-              <p className={styles.warning}>
-                <strong>⚠️ Perform your penalty when you break a restriction!</strong>
-              </p>
-            </div>
-          )}
+              {/* Description */}
+              <div className={styles.description}>
+                <p>{role.description}</p>
+              </div>
 
-          {/* Tasks (Violent Robots) */}
-          {role.tasks && role.tasks.length > 0 && (
-            <div className={styles.tasks}>
-              <h3>Tasks to Complete</h3>
-              <ul>
-                {role.tasks.map((task, i) => (
-                  <li key={i}>{task}</li>
-                ))}
-              </ul>
-            </div>
+              {/* Traits */}
+              {role.traits && role.traits.length > 0 && (
+                <div className={styles.traits}>
+                  <h3>Your Traits</h3>
+                  <ul>
+                    {role.traits.map((trait, i) => (
+                      <li key={i}>{trait}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Restrictions (Patient Robots) */}
+              {role.restrictions && role.restrictions.length > 0 && (
+                <div className={styles.restrictions}>
+                  <h3>Your Restrictions</h3>
+                  <ul>
+                    {role.restrictions.map((restriction, i) => (
+                      <li key={i}>{restriction}</li>
+                    ))}
+                  </ul>
+                  <p className={styles.warning}>
+                    <strong>⚠️ Perform your penalty when you break a restriction!</strong>
+                  </p>
+                </div>
+              )}
+
+              {/* Tasks (Violent Robots) */}
+              {role.tasks && role.tasks.length > 0 && (
+                <div className={styles.tasks}>
+                  <h3>Tasks to Complete</h3>
+                  <ul>
+                    {role.tasks.map((task, i) => (
+                      <li key={i}>{task}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </>
           )}
 
           {/* Inducer Maze Preview */}

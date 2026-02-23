@@ -17,6 +17,7 @@ export interface CatalyzerCard {
   tasks?: string[]; // Violent robots only
   inducerMazeImage: string; // Path: '/assets/mazes/smalltalk-010.png'
   inducerSolution?: string; // Expected solution (e.g., 'ABCD')
+  cardImage?: string; // Path to full card image PNG from extracted PDFs
 }
 
 /**
@@ -45,6 +46,7 @@ export const catalyzerCards: CatalyzerCard[] = [
     ],
     inducerMazeImage: '/assets/mazes/smalltalk-010.png',
     inducerSolution: 'ABCD',
+    cardImage: '/assets/cards/suspect/01_small_talk_suspect_p2_c01_patient-card.png',
   },
   {
     id: 'smalltalk-curiosity-01',
@@ -63,6 +65,7 @@ export const catalyzerCards: CatalyzerCard[] = [
     ],
     inducerMazeImage: '/assets/mazes/smalltalk-020.png',
     inducerSolution: 'EFGH',
+    cardImage: '/assets/cards/suspect/01_small_talk_suspect_p2_c02_patient-card.png',
   },
   {
     id: 'smalltalk-emp-01',
@@ -81,6 +84,7 @@ export const catalyzerCards: CatalyzerCard[] = [
     ],
     inducerMazeImage: '/assets/mazes/smalltalk-030.png',
     inducerSolution: 'IJKL',
+    cardImage: '/assets/cards/suspect/01_small_talk_suspect_p2_c03_patient-card.png',
   },
 
   // Small Talk Module - Violent Robots
@@ -101,6 +105,7 @@ export const catalyzerCards: CatalyzerCard[] = [
     ],
     inducerMazeImage: '/assets/mazes/smalltalk-040.png',
     inducerSolution: 'MNOP',
+    cardImage: '/assets/cards/suspect/01_small_talk_suspect_p3_c01_violent-card.png',
   },
 
   // Creative Problem Solving Module - Patient Robots
@@ -121,6 +126,7 @@ export const catalyzerCards: CatalyzerCard[] = [
     ],
     inducerMazeImage: '/assets/mazes/problem-010.png',
     inducerSolution: 'QRST',
+    cardImage: '/assets/cards/suspect/02_problem_solving_suspect_p2_c01_patient-card.png',
   },
   {
     id: 'problem-solving-friendship-01',
@@ -139,6 +145,7 @@ export const catalyzerCards: CatalyzerCard[] = [
     ],
     inducerMazeImage: '/assets/mazes/problem-020.png',
     inducerSolution: 'UVWX',
+    cardImage: '/assets/cards/suspect/02_problem_solving_suspect_p2_c02_patient-card.png',
   },
 
   // Creative Problem Solving Module - Violent Robots
@@ -159,6 +166,7 @@ export const catalyzerCards: CatalyzerCard[] = [
     ],
     inducerMazeImage: '/assets/mazes/problem-030.png',
     inducerSolution: 'YZAB',
+    cardImage: '/assets/cards/suspect/02_problem_solving_suspect_p3_c01_violent-card.png',
   },
 
   // Imagination Module - Patient Robots
@@ -179,6 +187,7 @@ export const catalyzerCards: CatalyzerCard[] = [
     ],
     inducerMazeImage: '/assets/mazes/imagination-010.png',
     inducerSolution: 'CDEF',
+    cardImage: '/assets/cards/suspect/03_imagination_suspect_p2_c01_patient-card.png',
   },
   {
     id: 'imagination-taste-01',
@@ -197,6 +206,7 @@ export const catalyzerCards: CatalyzerCard[] = [
     ],
     inducerMazeImage: '/assets/mazes/imagination-020.png',
     inducerSolution: 'GHIJ',
+    cardImage: '/assets/cards/suspect/03_imagination_suspect_p2_c02_patient-card.png',
   },
 
   // Imagination Module - Violent Robots
@@ -217,6 +227,7 @@ export const catalyzerCards: CatalyzerCard[] = [
     ],
     inducerMazeImage: '/assets/mazes/imagination-030.png',
     inducerSolution: 'KLMN',
+    cardImage: '/assets/cards/suspect/03_imagination_suspect_p3_c01_violent-card.png',
   },
 ];
 

@@ -1,0 +1,241 @@
+/**
+ * Card Image Styles
+ * Feature: 003-pdf-asset-extraction (US5)
+ * Responsive, lazy-loading styles for card images and fallback widgets
+ */
+
+/* ========================================
+   Card Images (Official PDF Assets)
+   ======================================== */
+
+.catalyzer-card-image,
+.question-card-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.catalyzer-card-image:hover,
+.question-card-image:hover {
+  transform: scale(1.02);
+}
+
+/* Responsive sizing for different screen sizes */
+@media (max-width: 768px) {
+  .catalyzer-card-image,
+  .question-card-image {
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 769px) {
+  .catalyzer-card-image,
+  .question-card-image {
+    max-width: 500px;
+  }
+}
+
+/* ========================================
+   Fallback Widgets (When No Image Available)
+   ======================================== */
+
+.catalyzer-card-fallback,
+.question-card-fallback {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border: 2px solid #8e9eab;
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 500px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: 'Courier New', monospace;
+}
+
+/* Catalyzer Card Fallback Header */
+.catalyzer-card-fallback .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #8e9eab;
+}
+
+.catalyzer-card-fallback .card-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #2c3e50;
+  text-transform: capitalize;
+}
+
+.catalyzer-card-fallback .role-type {
+  background: #3498db;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+/* Catalyzer Card Fallback Body */
+.catalyzer-card-fallback .card-body {
+  color: #34495e;
+}
+
+.catalyzer-card-fallback .fault {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #e74c3c;
+}
+
+.catalyzer-card-fallback .description {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.catalyzer-card-fallback .traits,
+.catalyzer-card-fallback .restrictions,
+.catalyzer-card-fallback .tasks {
+  margin-top: 1rem;
+}
+
+.catalyzer-card-fallback ul {
+  margin: 0.5rem 0 0 1.5rem;
+  padding: 0;
+}
+
+.catalyzer-card-fallback li {
+  margin-bottom: 0.25rem;
+  line-height: 1.4;
+}
+
+/* Question Card Fallback Header */
+.question-card-fallback .question-header {
+  margin-bottom: 1rem;
+}
+
+.question-card-fallback .question-type {
+  background: #9b59b6;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  font-weight: bold;
+  display: inline-block;
+}
+
+/* Question Card Fallback Body */
+.question-card-fallback .question-body {
+  color: #34495e;
+}
+
+.question-card-fallback .question-text {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  color: #2c3e50;
+}
+
+.question-card-fallback .examples {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #bdc3c7;
+}
+
+.question-card-fallback .examples strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #7f8c8d;
+}
+
+.question-card-fallback ul {
+  margin: 0.5rem 0 0 1.5rem;
+  padding: 0;
+}
+
+.question-card-fallback li {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+/* ========================================
+   Accessibility & Loading States
+   ======================================== */
+
+/* Loading placeholder for lazy-loaded images */
+.catalyzer-card-image[loading="lazy"],
+.question-card-image[loading="lazy"] {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+  min-height: 300px;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Focus states for keyboard navigation */
+.catalyzer-card-image:focus,
+.question-card-image:focus,
+.catalyzer-card-fallback:focus,
+.question-card-fallback:focus {
+  outline: 3px solid #3498db;
+  outline-offset: 4px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .catalyzer-card-fallback,
+  .question-card-fallback {
+    border-width: 3px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .catalyzer-card-image,
+  .question-card-image {
+    transition: none;
+  }
+
+  .catalyzer-card-image:hover,
+  .question-card-image:hover {
+    transform: none;
+  }
+
+  @keyframes loading {
+    0%, 100% {
+      background-position: 0% 0;
+    }
+  }
+}
+
+/* ========================================
+   Print Styles
+   ======================================== */
+
+@media print {
+  .catalyzer-card-image,
+  .question-card-image {
+    max-width: 100%;
+    page-break-inside: avoid;
+  }
+
+  .catalyzer-card-fallback,
+  .question-card-fallback {
+    page-break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+}
