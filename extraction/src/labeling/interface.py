@@ -230,53 +230,57 @@ class PDFAnnotator:
             f"PDF: {Path(self.pdf_path).name} | Page: {self.page_number} | "
             f"Zoom: {self.view_zoom:.1f}x | Boxes: {len(self.labeled_boxes)}\n"
             f"Draw bounding boxes (multiple allowed - each will be labeled separately)\n"
-            f"Zoom: [+]=in [-]=out [0]=fit | [d]=delete last | [q]=save all | [c]=cancel"
+            f"Scroll to zoom | [0]=fit page | [d]=delete last | [q]=save all | [c]=cancel"
         )
         self.fig.canvas.draw()
 
-    def _zoom_in(self) -> None:
-        """Zoom in by 25%."""
-        if not self.ax:
+    def on_scroll(self, event) -> None:
+        """
+        Callback for mouse scroll events (zoom in/out).
+
+        Args:
+            event: Matplotlib scroll event
+        """
+        if not self.ax or event.inaxes != self.ax:
             return
 
-        # Get current center of view
-        xlim = self.ax.get_xlim()
-        ylim = self.ax.get_ylim()
-        x_center = (xlim[0] + xlim[1]) / 2
-        y_center = (ylim[0] + ylim[1]) / 2
-
-        # Zoom in (reduce range by 25%)
-        x_range = (xlim[1] - xlim[0]) * 0.75
-        y_range = (ylim[1] - ylim[0]) * 0.75
-
-        self.ax.set_xlim([x_center - x_range/2, x_center + x_range/2])
-        self.ax.set_ylim([y_center - y_range/2, y_center + y_range/2])
-
-        self.view_zoom *= 1.25
-        self._update_view_title()
-        logger.info(f"Zoomed in to {self.view_zoom:.1f}x")
-
-    def _zoom_out(self) -> None:
-        """Zoom out by 25%."""
-        if not self.ax:
+        # Get cursor position
+        x_cursor = event.xdata
+        y_cursor = event.ydata
+        if x_cursor is None or y_cursor is None:
             return
 
-        # Get current center of view
+        # Get current axis limits
         xlim = self.ax.get_xlim()
         ylim = self.ax.get_ylim()
-        x_center = (xlim[0] + xlim[1]) / 2
-        y_center = (ylim[0] + ylim[1]) / 2
 
-        # Zoom out (increase range by 25%)
-        x_range = (xlim[1] - xlim[0]) * 1.25
-        y_range = (ylim[1] - ylim[0]) * 1.25
+        # Zoom factor per scroll step
+        zoom_factor = 1.2 if event.button == 'up' else 0.8
 
-        self.ax.set_xlim([x_center - x_range/2, x_center + x_range/2])
-        self.ax.set_ylim([y_center - y_range/2, y_center + y_range/2])
+        # Calculate new ranges (zoom towards cursor)
+        x_range = (xlim[1] - xlim[0]) / zoom_factor
+        y_range = (ylim[1] - ylim[0]) / zoom_factor
 
-        self.view_zoom *= 0.8
+        # Calculate cursor position ratio in current view
+        x_ratio = (x_cursor - xlim[0]) / (xlim[1] - xlim[0])
+        y_ratio = (y_cursor - ylim[0]) / (ylim[1] - ylim[0])
+
+        # New limits centered on cursor position
+        new_xlim = [
+            x_cursor - x_range * x_ratio,
+            x_cursor + x_range * (1 - x_ratio)
+        ]
+        new_ylim = [
+            y_cursor - y_range * y_ratio,
+            y_cursor + y_range * (1 - y_ratio)
+        ]
+
+        self.ax.set_xlim(new_xlim)
+        self.ax.set_ylim(new_ylim)
+
+        self.view_zoom *= zoom_factor
         self._update_view_title()
-        logger.info(f"Zoomed out to {self.view_zoom:.1f}x")
+        logger.debug(f"Scrolled to {self.view_zoom:.1f}x zoom")
 
     def _zoom_fit(self) -> None:
         """Reset zoom to fit entire page."""
@@ -299,18 +303,12 @@ class PDFAnnotator:
             event: Matplotlib key press event
 
         Keyboard shortcuts:
-            '+' or '=': Zoom in
-            '-': Zoom out
             '0': Fit page to window
             'd': Delete last labeled box
             'q': Quit and save all labeled boxes
             'c': Cancel and discard all boxes
         """
-        if event.key in ['+', '=']:
-            self._zoom_in()
-        elif event.key == '-':
-            self._zoom_out()
-        elif event.key == '0':
+        if event.key == '0':
             self._zoom_fit()
         elif event.key == 'd':
             if self.labeled_boxes:
@@ -418,12 +416,13 @@ class PDFAnnotator:
             interactive=True,
         )
 
-        # Connect keyboard event handler
+        # Connect event handlers
         self.fig.canvas.mpl_connect('key_press_event', self.on_key_press)
+        self.fig.canvas.mpl_connect('scroll_event', self.on_scroll)
 
         # Show figure
         logger.info("Displaying interactive matplotlib interface")
-        print("🔍 Use +/- to zoom, 0 to fit page, draw boxes with mouse")
+        print("🔍 Scroll wheel to zoom, press 0 to fit page, draw boxes with mouse")
         plt.tight_layout()
         plt.show()
         logger.debug("matplotlib window closed")
