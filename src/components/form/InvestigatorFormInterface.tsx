@@ -13,7 +13,7 @@ import { FormTextArea } from './FormTextArea';
 import { FormIconSelector } from './FormIconSelector';
 import { FormContentSelector } from './FormContentSelector';
 import { parseFormLabels, groupElementsBySection } from '../../utils/parseFormLabels';
-import formLabelsData from '../../../extraction/data/labels/form_labels.json';
+import formLabelsData from '../../data/form_labels.json';
 import styles from './InvestigatorFormInterface.module.css';
 
 export const InvestigatorFormInterface: FC = () => {
@@ -25,7 +25,6 @@ export const InvestigatorFormInterface: FC = () => {
   const {
     investigatorForm,
     selectedPacket,
-    selectedPenalty,
     selectedBackground,
     selectedRole,
     determination,
@@ -37,8 +36,6 @@ export const InvestigatorFormInterface: FC = () => {
     updateFormSignature,
     submitInvestigatorForm,
     cycleContent,
-    permutationSizes,
-    contentIndices,
   } = useGameStore();
 
   // Check if form can be submitted
@@ -149,7 +146,7 @@ export const InvestigatorFormInterface: FC = () => {
       {sections.suspect.find((el) => el.description.includes('Background')) && (
         <FormTextField
           position={sections.suspect.find((el) => el.description.includes('Background'))!.position}
-          value={selectedBackground?.title || ''}
+          value={selectedBackground?.name || ''}
           onChange={() => {}} // Read-only, managed by game state
           readOnly={true}
           ariaLabel="Suspect background"

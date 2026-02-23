@@ -1,0 +1,476 @@
+{
+  "labels": [
+    {
+      "id": "label-001-a",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 1008.5824547174911,
+        "y": 28.076034063260295,
+        "width": 15.63936198972715,
+        "height": 13.684441741011085
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:09:34.597896",
+      "notes": "PENALTY: Checkbox, first calibration attempt"
+    },
+    {
+      "id": "label-001-b",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 1054.3275885374426,
+        "y": 28.076034063260295,
+        "width": 14.075425790754252,
+        "height": 12.90247364152475
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:09:34.598038",
+      "notes": "PENALTY: Checkbox, second calibration attempt"
+    },
+    {
+      "id": "label-001-c",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 1099.681738307651,
+        "y": 28.076034063260295,
+        "width": 14.466409840497363,
+        "height": 13.684441741011085
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:09:34.598066",
+      "notes": "PENALTY: Checkbox, third calibration attempt"
+    },
+    {
+      "id": "label-001-d",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 293.8636117869695,
+        "y": 82.42281697756147,
+        "width": 227.16173290078393,
+        "height": 21.504122735874546
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:09:34.598091",
+      "notes": "INDUCE: Free text, Selected Module"
+    },
+    {
+      "id": "label-001-e",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 1051.5907001892401,
+        "y": 87.5056096242227,
+        "width": 15.63936198972715,
+        "height": 15.639361989726979
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:09:34.598122",
+      "notes": "INDUCE: Checkbox, Schematic order question answered correctly, YES"
+    },
+    {
+      "id": "label-001-f",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 1100.4637064071371,
+        "y": 88.28757772370909,
+        "width": 15.63936198972715,
+        "height": 14.46640984049742
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:09:34.598141",
+      "notes": "INDUCE: Checkbox, Schematic order question answered correctly, NO"
+    },
+    {
+      "id": "label-001-g",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 294.2545958367127,
+        "y": 141.4614084887807,
+        "width": 279.9445796161124,
+        "height": 21.11313868613138
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:09:34.598158",
+      "notes": "SUSPECT: Free text, Background"
+    },
+    {
+      "id": "label-008-a",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 589.8385374425521,
+        "y": 141.07042443903754,
+        "width": 233.41747769667472,
+        "height": 21.11313868613138
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:16:48.917212",
+      "notes": "SUSPECT: Letter-by-letter text, First name"
+    },
+    {
+      "id": "label-008-b",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 836.9404568802381,
+        "y": 141.07042443903754,
+        "width": 15.248377939983584,
+        "height": 20.331170586645044
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:16:48.917855",
+      "notes": "SUSPECT: LEtter-by-letter text, Middle name initial letter\u001b"
+    },
+    {
+      "id": "label-008-c",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 865.4822925114895,
+        "y": 141.07042443903754,
+        "width": 248.66585563665876,
+        "height": 20.331170586645044
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:16:48.917930",
+      "notes": "SUSPECT: Letter-by-letter text, Last name"
+    },
+    {
+      "id": "label-008-d",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 281.35212219518786,
+        "y": 179.77784536361173,
+        "width": 869.9395106785619,
+        "height": 48.48202216815355
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:16:48.917951",
+      "notes": "NOTES: Large empty section for any type of note"
+    },
+    {
+      "id": "label-012-a",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 589.4475533928089,
+        "y": 141.07042443903754,
+        "width": 15.248377939983811,
+        "height": 21.895106785617713
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:24:38.718956",
+      "notes": "SUSPECT: Letter-by-letter single letter, First name, first letter"
+    },
+    {
+      "id": "label-012-b",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 606.2598675317654,
+        "y": 141.07042443903754,
+        "width": 14.075425790754252,
+        "height": 22.677074885104105
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:24:38.719152",
+      "notes": "SUSPECT: Letter-by-letter single letter, First name, letter 2/15"
+    },
+    {
+      "id": "label-012-c",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 620.3352933225196,
+        "y": 141.07042443903754,
+        "width": 16.03034603947026,
+        "height": 21.895106785617713
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:24:38.719202",
+      "notes": "SUSPECT: Letter-by-letter single letter, First name, letter 3/15"
+    },
+    {
+      "id": "label-012-d",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 635.1926872127602,
+        "y": 140.2884563395512,
+        "width": 16.81231413895648,
+        "height": 23.068058934847215
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:24:38.719235",
+      "notes": "SUSPECT: LEtter-by-letter single letter, First name, letter 4/15"
+    },
+    {
+      "id": "label-012-e",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 651.6140173019736,
+        "y": 139.89747228980804,
+        "width": 15.639361989726922,
+        "height": 23.068058934847215
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:24:38.719262",
+      "notes": "SUSPECT: Letter-by-letter single letter, First name, letter 5/15"
+    },
+    {
+      "id": "label-012-f",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 806.0527169505272,
+        "y": 139.50648824006487,
+        "width": 16.42133008921337,
+        "height": 23.459042984590383
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:24:38.719288",
+      "notes": "SUSPECT: Letter-by-letter single letter, First name letter 15/15 (last)"
+    },
+    {
+      "id": "label-012-g",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 865.8732765612328,
+        "y": 139.89747228980804,
+        "width": 15.248377939983811,
+        "height": 24.241011084076774
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:24:38.719317",
+      "notes": "SUSPECT: Letter-by-letter single letter, Last name, letter 1/15"
+    },
+    {
+      "id": "label-012-h",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 879.1667342525008,
+        "y": 139.89747228980804,
+        "width": 17.20329818869959,
+        "height": 23.459042984590383
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:24:38.719348",
+      "notes": "SUSPECT: Letter-by-letter single letter, Last name, letter 2/15"
+    },
+    {
+      "id": "label-012-i",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 894.4151121924847,
+        "y": 139.50648824006487,
+        "width": 17.594282238442702,
+        "height": 24.63199513381994
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:24:38.719372",
+      "notes": "SUSPECT: Letter-by-letter single letter, Last name, letter 3/15"
+    },
+    {
+      "id": "label-012-j",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 911.618410381184,
+        "y": 140.2884563395512,
+        "width": 16.03034603947026,
+        "height": 23.850027034333607
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:24:38.719396",
+      "notes": "SUSPECT: Letter-by-letter single letter, Last name, letter 4/15"
+    },
+    {
+      "id": "label-012-k",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 926.4758042714247,
+        "y": 139.89747228980804,
+        "width": 16.42133008921337,
+        "height": 24.241011084076774
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:24:38.719419",
+      "notes": "SUSPECT: Letter-by-letter single letter, Last name, letter 5/15"
+    },
+    {
+      "id": "label-012-l",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 1097.3358340091918,
+        "y": 139.89747228980804,
+        "width": 17.20329818869959,
+        "height": 23.068058934847215
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:24:38.719444",
+      "notes": "SUSPECT: Letter-by-letter single letter, Last name, letter 15/15 (last)"
+    },
+    {
+      "id": "label-024-a",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 280.9611381454447,
+        "y": 237.64348472560144,
+        "width": 72.72303325223038,
+        "height": 71.55008110300079
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:39:07.404802",
+      "notes": "VERIFY: Two option icon to circle (COG/BRAIN), COG"
+    },
+    {
+      "id": "label-024-b",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 352.51121924844557,
+        "y": 279.08779399837795,
+        "width": 85.62550689375507,
+        "height": 83.27960259529596
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:39:07.404985",
+      "notes": "VERIFY: Two option icon to circle (COG/BRAIN), BRAIN"
+    },
+    {
+      "id": "label-024-c",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 436.1818058934848,
+        "y": 285.73452284401185,
+        "width": 171.64199783725326,
+        "height": 42.61726142200587
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:39:07.405078",
+      "notes": "VERIFY: Free text, signature section above line"
+    },
+    {
+      "id": "label-024-d",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 962.4463368477966,
+        "y": 284.56157069478235,
+        "width": 158.34854014598568,
+        "height": 43.79021357123543
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:39:07.405118",
+      "notes": "VERIFY: Date/Free text, date section above line"
+    },
+    {
+      "id": "label-024-e",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 430.3170451473372,
+        "y": 285.34353879426874,
+        "width": 693.6057042443904,
+        "height": 63.730400108137246
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:39:07.405153",
+      "notes": "VERIFY: Full signature and date line, including the labels below the line"
+    },
+    {
+      "id": "label-029-a",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 846.3240740740741,
+        "y": 368.2321573398215,
+        "width": 15.248377939983811,
+        "height": 14.075425790754252
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:41:07.078126",
+      "notes": "PERFORMANCE REVIEW: Checkbox, interviewer was - CORRECT"
+    },
+    {
+      "id": "label-029-b",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 981.9955393349553,
+        "y": 368.23215733982147,
+        "width": 15.63936198972715,
+        "height": 13.684441741011142
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:41:07.078247",
+      "notes": "PERFORMANCE REVIEW: Checkbox, interviewer was - INCORRECT"
+    },
+    {
+      "id": "label-029-c",
+      "pdf_filename": "investigator_forms_p1_c01_investigator-form.png",
+      "page_number": 1,
+      "content_type": "investigator-form",
+      "bounding_box": {
+        "x": 1115.321100297378,
+        "y": 367.45018924033513,
+        "width": 16.030346039469805,
+        "height": 13.684441741011142
+      },
+      "labeled_by": "user",
+      "timestamp": "2026-02-23T16:41:07.078283",
+      "notes": "PERFORMANCE REVIEW: Checkbox, interviewer was - N/A (DEAD)"
+    }
+  ],
+  "metadata": {
+    "total_labels": 31,
+    "last_updated": "2026-02-23T16:41:07.078789",
+    "content_type_counts": {
+      "investigator-form": 31
+    }
+  }
+}

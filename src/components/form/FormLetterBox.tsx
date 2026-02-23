@@ -18,8 +18,8 @@ export interface FormLetterBoxProps {
 export const FormLetterBox: FC<FormLetterBoxProps> = ({
   position,
   letter,
-  index,
-  readOnly = true, // Default to read-only (name is typed elsewhere, displayed here)
+  index: _index, // Prefix with _ to mark as intentionally unused
+  readOnly: _readOnly = true, // Default to read-only (name is typed elsewhere, displayed here)
 }) => {
   // Ensure only single character
   const displayLetter = letter.charAt(0).toUpperCase();

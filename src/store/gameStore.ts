@@ -394,7 +394,7 @@ export const useGameStore = create<GameStore>((set, get) => {
     },
 
     submitInvestigatorForm: () => {
-      const { investigatorForm, selectedRole } = get();
+      const { selectedRole } = get();
 
       // Auto-fill performance review based on determination vs actual role
       let performanceReview: 'correct' | 'incorrect' | 'na' = 'incorrect';
