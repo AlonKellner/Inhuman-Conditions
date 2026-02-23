@@ -110,20 +110,22 @@ export const RoleReveal: FC<RoleRevealProps> = ({ role, inducerMazeImage, onCont
             </>
           )}
 
-          {/* Inducer Maze Preview */}
-          <div className={styles.mazePreview}>
-            <h3>Inducer Pattern</h3>
-            <div className={styles.mazeImageWrapper}>
-              <img
-                src={inducerMazeImage}
-                alt="Inducer Maze Preview"
-                className={styles.mazeImage}
-              />
+          {/* Inducer Maze Preview - only show if not using card image (card already includes maze) */}
+          {!(matchingCard && matchingCard.cardImage) && (
+            <div className={styles.mazePreview}>
+              <h3>Inducer Pattern</h3>
+              <div className={styles.mazeImageWrapper}>
+                <img
+                  src={inducerMazeImage}
+                  alt="Inducer Maze Preview"
+                  className={styles.mazeImage}
+                />
+              </div>
+              <p className={styles.mazeHint}>
+                You will solve this maze during the interview
+              </p>
             </div>
-            <p className={styles.mazeHint}>
-              You will solve this maze during the interview
-            </p>
-          </div>
+          )}
 
           {/* Confirmation Button */}
           <div className={styles.buttonWrapper}>

@@ -1,10 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import { CyclingButtons } from './CyclingButtons';
+import type { Penalty } from '../../types/penalty';
+import PenaltyCardImage from '../cards/PenaltyCardImage';
+import '../../styles/cards.css';
 import styles from './PenaltyCalibration.module.css';
 
 export interface PenaltyCalibrationProps {
-  penalty: string;
+  penalty: Penalty;
   role: 'investigator' | 'suspect' | 'spectator';
   onComplete: () => void;
   currentAttempt?: number;
@@ -86,7 +89,7 @@ export function PenaltyCalibration({
           />
 
           <div className={styles.penaltyBox}>
-            <p className={styles.penaltyText}>{penalty}</p>
+            <PenaltyCardImage penalty={penalty} />
           </div>
           <p className={styles.waitingMessage}>
             Calibration in progress...
@@ -118,7 +121,7 @@ export function PenaltyCalibration({
           />
 
           <div className={styles.penaltyBox}>
-            <p className={styles.penaltyText}>{penalty}</p>
+            <PenaltyCardImage penalty={penalty} />
           </div>
 
           <p className={styles.waitingMessage}>
@@ -151,7 +154,7 @@ export function PenaltyCalibration({
         />
 
         <div className={styles.penaltyBox}>
-          <p className={styles.penaltyText}>{penalty}</p>
+          <PenaltyCardImage penalty={penalty} />
         </div>
 
         <div className={styles.attemptCounter}>

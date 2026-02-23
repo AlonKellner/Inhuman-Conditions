@@ -10,6 +10,7 @@ import { ReadyToStart } from './game/ReadyToStart';
 import { InvestigatorView } from './game/Interview/InvestigatorView';
 import { SuspectView } from './game/Interview/SuspectView';
 import { Conclusion } from './game/Conclusion';
+import { InducerPuzzleDisplay } from './game/InducerPuzzleDisplay';
 
 export const GameStateMachine: FC = () => {
   const {
@@ -56,9 +57,13 @@ export const GameStateMachine: FC = () => {
       // (Suspect needs to click "I Practiced" button 3 times)
       const calibrationRole = mode === 'single-device' ? 'suspect' : (playerRole || 'spectator');
 
+      if (!selectedPenalty) {
+        return <div>Loading penalty...</div>;
+      }
+
       return (
         <PenaltyCalibration
-          penalty={selectedPenalty?.text || ''}
+          penalty={selectedPenalty}
           role={calibrationRole}
           currentAttempt={penaltyCalibration.practiceAttempts}
           onComplete={advanceState}
@@ -156,26 +161,31 @@ export const GameStateMachine: FC = () => {
       return <Conclusion />;
 
     case GameState.InducerPuzzle:
-      // TODO: Implement InducerPuzzleDisplay component showing maze from catalyzer card
-      // For now, show placeholder and require manual advance
+      // Show inducer maze puzzle for robots during interview
+      if (!selectedRole || selectedRole.roleType === 'human') {
+        // Humans don't have inducer puzzles - skip this state
+        advanceState();
+        return null;
+      }
+
+      const mazeImage = selectedRole.inducerMazeImage || '';
+      const solution = selectedRole.inducerSolution || '';
+
       return (
-        <div style={{ textAlign: 'center', padding: '100px 20px' }}>
-          <h2>Inducer Puzzle Phase</h2>
-          <p style={{ marginTop: '20px', color: '#666' }}>
-            Inducer puzzle display coming soon...
-          </p>
-          <button
-            onClick={advanceState}
-            style={{
-              marginTop: '40px',
-              padding: '12px 24px',
-              fontSize: '16px',
-              cursor: 'pointer',
-            }}
-          >
-            Continue
-          </button>
-        </div>
+        <InducerPuzzleDisplay
+          mazeImage={mazeImage}
+          question="Navigate through the maze and report the sequence of letters along your path."
+          expectedSolution={solution}
+          onSolutionSubmit={(submittedSolution, isCorrect) => {
+            // Log the result for debugging
+            console.log(`Inducer puzzle submitted: ${submittedSolution}, correct: ${isCorrect}`);
+            // For now, allow continuation after any submission
+            // In a full implementation, this might track attempts or require correctness
+            if (isCorrect) {
+              advanceState();
+            }
+          }}
+        />
       );
 
     // For MVP, auto-advance through intermediate states not yet implemented

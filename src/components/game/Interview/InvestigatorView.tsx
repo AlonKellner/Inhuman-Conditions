@@ -37,6 +37,19 @@ export const InvestigatorView: FC = () => {
         <div className={styles.prompt}>
           <strong>Packet:</strong> {selectedPacket.name} ({selectedPacket.difficulty})
         </div>
+
+        {/* Cover Sheet Image */}
+        {selectedPacket.coverSheetImage && (
+          <div className={styles.coverSheetContainer}>
+            <img
+              src={selectedPacket.coverSheetImage}
+              alt={`${selectedPacket.name} cover sheet`}
+              loading="lazy"
+              className={styles.coverSheetImage}
+            />
+          </div>
+        )}
+
         <div className={styles.prompt}>
           <strong>Instructions:</strong> {selectedPacket.prompt}
         </div>
