@@ -5,6 +5,7 @@ Automated content extraction system that downloads all official Inhuman Conditio
 ## Prerequisites
 
 - Python 3.11+ installed
+- `uv` package manager ([install guide](https://github.com/astral-sh/uv))
 - ~200MB disk space for PDFs and extracted assets
 - Internet connection for initial PDF download
 - 10-15 minutes for manual labeling
@@ -15,12 +16,14 @@ Automated content extraction system that downloads all official Inhuman Conditio
 # Navigate to extraction tool directory
 cd extraction/
 
-# Install dependencies
-pip install -r requirements.txt
+# Create venv and install all dependencies in one command
+uv sync
 
 # Verify installation
-python -m src.main --version
+uv run python -m src.main --version
 ```
+
+**Note**: All subsequent commands should be prefixed with `uv run` (e.g., `uv run python -m src.main label ...`)
 
 ## Quick Start
 
