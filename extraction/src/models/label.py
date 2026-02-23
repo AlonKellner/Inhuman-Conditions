@@ -11,6 +11,12 @@ from typing import Optional
 class LabelContentType(Enum):
     """Content type for labeled regions."""
 
+    # Full card types (contain multiple components)
+    HUMAN_CARD = "human-card"
+    PATIENT_CARD = "patient-card"
+    VIOLENT_CARD = "violent-card"
+
+    # Individual component types (for fine-grained labeling)
     MAZE = "maze"
     RESTRICTION = "restriction"
     TASK = "task"

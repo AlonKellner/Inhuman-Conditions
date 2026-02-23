@@ -16,6 +16,8 @@ logger = get_logger(__name__)
 MIN_BOX_SIZE = 50  # Minimum width/height in pixels
 MAZE_ASPECT_RATIO_TOLERANCE = 0.3  # Max deviation from 1.0 for square mazes
 ICON_ASPECT_RATIO_TOLERANCE = 0.3  # Max deviation from 1.0 for square icons
+CARD_ASPECT_RATIO = 3.0  # Expected height/width ratio for cards (tall and narrow)
+CARD_ASPECT_RATIO_TOLERANCE = 0.5  # Max deviation from 3.0 for card aspect ratio
 
 
 def validate_label(label: Label) -> Tuple[bool, Optional[str]]:
@@ -64,6 +66,24 @@ def validate_label(label: Label) -> Tuple[bool, Optional[str]]:
                 f"{label.content_type.value.capitalize()} bounding box should be square. "
                 f"Current aspect ratio: {aspect_ratio:.2f} (width/height). "
                 f"Expected: ~1.0 ± {tolerance:.2f}"
+            )
+            logger.warning(f"Label validation failed: {message}")
+            return False, message
+
+    elif label.content_type in [
+        LabelContentType.HUMAN_CARD,
+        LabelContentType.PATIENT_CARD,
+        LabelContentType.VIOLENT_CARD
+    ]:
+        # Card types should be tall and narrow (1:3 ratio)
+        aspect_ratio = bbox.height / bbox.width  # Note: height/width for vertical cards
+        deviation = abs(aspect_ratio - CARD_ASPECT_RATIO)
+
+        if deviation > CARD_ASPECT_RATIO_TOLERANCE:
+            message = (
+                f"{label.content_type.value.capitalize()} should be tall and narrow. "
+                f"Current aspect ratio: {aspect_ratio:.2f} (height/width). "
+                f"Expected: ~{CARD_ASPECT_RATIO} ± {CARD_ASPECT_RATIO_TOLERANCE}"
             )
             logger.warning(f"Label validation failed: {message}")
             return False, message

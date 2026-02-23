@@ -338,39 +338,45 @@ class PDFAnnotator:
 
     def assign_content_types(self) -> None:
         """
-        Prompt user to assign content types to all unlabeled boxes.
+        Prompt user to assign card types to all unlabeled boxes.
 
         This is called AFTER matplotlib window closes to avoid readline conflicts.
         """
         if not self.unlabeled_boxes:
             return
 
-        content_types_list = ["maze", "restriction", "task", "icon", "background", "penalty"]
+        card_types_list = ["human-card", "patient-card", "violent-card"]
 
-        print(f"\n📋 Now assign content types to your {len(self.unlabeled_boxes)} boxes:")
-        print("Available types: 1=maze 2=restriction 3=task 4=icon 5=background 6=penalty")
+        print(f"\n📋 Now assign card types to your {len(self.unlabeled_boxes)} boxes:")
+        print("Card types:")
+        print("  1 = human-card (contains: maze only)")
+        print("  2 = patient-card (contains: maze + restriction text)")
+        print("  3 = violent-card (contains: maze + task text)")
         print()
 
         for i, bbox in enumerate(self.unlabeled_boxes):
             x1, y1, x2, y2 = bbox
-            print(f"Box #{i + 1} ({x2-x1:.0f}x{y2-y1:.0f} pixels at {x1:.0f},{y1:.0f})")
+            width = x2 - x1
+            height = y2 - y1
+            aspect_ratio = height / width
+            print(f"Box #{i + 1} ({width:.0f}w x {height:.0f}h pixels, ratio {aspect_ratio:.2f}:1)")
 
             while True:
                 try:
-                    choice = input(f"  Content type (1-6): ").strip()
+                    choice = input(f"  Card type (1-3): ").strip()
                     idx = int(choice) - 1
-                    if 0 <= idx < len(content_types_list):
-                        content_type = content_types_list[idx]
-                        self.labeled_boxes.append((bbox, content_type))
-                        logger.info(f"Box #{i + 1} labeled as: {content_type}")
-                        print(f"  ✓ Labeled as: {content_type}\n")
+                    if 0 <= idx < len(card_types_list):
+                        card_type = card_types_list[idx]
+                        self.labeled_boxes.append((bbox, card_type))
+                        logger.info(f"Box #{i + 1} labeled as: {card_type}")
+                        print(f"  ✓ Labeled as: {card_type}\n")
                         break
                     else:
-                        print("  ❌ Invalid. Enter 1-6.")
+                        print("  ❌ Invalid. Enter 1-3.")
                 except (ValueError, KeyboardInterrupt):
-                    print("  ❌ Invalid. Enter 1-6.")
+                    print("  ❌ Invalid. Enter 1-3.")
 
-        print(f"✅ All {len(self.labeled_boxes)} boxes labeled!")
+        print(f"✅ All {len(self.labeled_boxes)} cards labeled!")
 
     def create_labels(self, label_id_prefix: str, labeled_by: str, notes: Optional[str] = None) -> list[Label]:
         """

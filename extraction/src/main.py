@@ -276,9 +276,10 @@ def main() -> int:
                     f"Opening {args.pdf_path.name} page {args.page} for labeling"
                 )
                 print(f"\n🏷️  Labeling {args.pdf_path.name} - Page {args.page}")
-                print("📦 Draw ALL bounding boxes first (as many as you want)")
-                print("   You'll assign content types AFTER closing the window")
-                print("   Press 'q' when done drawing boxes\n")
+                print("🃏 Draw bounding boxes around FULL CARDS (tall and narrow, 1:3 ratio)")
+                print("   Each card contains: maze + restrictions/tasks")
+                print("   You'll assign card types AFTER closing the window")
+                print("   Press 'q' when done drawing all cards\n")
 
                 annotator.display()
 

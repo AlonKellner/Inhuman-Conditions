@@ -43,18 +43,24 @@ python -m src.main download
 
 ### Step 2: Manual Labeling (5-10 minutes)
 
-**NEW**: You can now label multiple bounding boxes on the same page!
+**Methodology**: Label full cards (not individual components). Each card contains multiple elements:
+- **Human cards**: Maze only
+- **Patient cards**: Maze + restriction text
+- **Violent cards**: Maze + task text
 
 ```bash
-# Label multiple items on page 5 (mazes, restrictions, icons, etc.)
-uv run python -m src.main label data/pdfs/01_small_talk_suspect.pdf --page 5
+# Label cards on page 1 (draw bounding boxes around FULL cards)
+uv run python -m src.main label data/pdfs/01_small_talk_suspect.pdf --page 1
 
 # Workflow:
-# 1. Draw ALL bounding boxes first (click and drag for each)
-# 2. Press 'q' when done drawing
-# 3. Window closes, then you assign content types in console
-# 4. Enter 1-6 for each box (1=maze, 2=restriction, etc.)
-# 5. All boxes saved together
+# 1. Draw bounding boxes around FULL cards (tall and narrow, 1:3 ratio)
+# 2. Press 'q' when done drawing all cards
+# 3. Window closes, then you assign card types in console
+# 4. Enter 1-3 for each card:
+#    1 = human-card (maze only)
+#    2 = patient-card (maze + restrictions)
+#    3 = violent-card (maze + tasks)
+# 5. All cards saved together
 ```
 
 **Controls**:
