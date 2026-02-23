@@ -59,9 +59,9 @@ uv run python -m src.main label data/pdfs/01_small_talk_suspect.pdf --page 5
 ```
 
 **Keyboard Shortcuts**:
-- `d` - Delete last labeled box
-- `q` - Save all boxes and close
-- `c` - Cancel all boxes and close
+- **Zoom**: `+` or `=` to zoom in, `-` to zoom out, `0` to fit page
+- **Labeling**: `d` to delete last box, `q` to save all & close, `c` to cancel all
+- **Drawing**: Click and drag with mouse to draw bounding boxes
 
 **Goal**: Create at least 2 labels per content type (10 labels total). With multi-box labeling, you can knock this out in 2-3 pages!
 

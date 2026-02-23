@@ -70,6 +70,12 @@ class PDFAnnotator:
         self.selector: Optional[RectangleSelector] = None
         self.drawn_rectangles: list[Rectangle] = []
         self.drawn_labels: list = []
+        self.img: Optional[np.ndarray] = None
+
+        # View state for zoom/pan
+        self.view_zoom = 1.0  # Current view zoom level
+        self.xlim = None
+        self.ylim = None
 
         # Keyboard action state
         self.should_quit = False
@@ -212,8 +218,78 @@ class PDFAnnotator:
         )
         self.drawn_labels.append(text)
 
-        # Redraw canvas
+        # Update title and redraw
+        self._update_view_title()
+
+    def _update_view_title(self) -> None:
+        """Update the figure title with current zoom level and box count."""
+        if not self.ax:
+            return
+
+        self.ax.set_title(
+            f"PDF: {Path(self.pdf_path).name} | Page: {self.page_number} | "
+            f"Zoom: {self.view_zoom:.1f}x | Boxes: {len(self.labeled_boxes)}\n"
+            f"Draw bounding boxes (multiple allowed - each will be labeled separately)\n"
+            f"Zoom: [+]=in [-]=out [0]=fit | [d]=delete last | [q]=save all | [c]=cancel"
+        )
         self.fig.canvas.draw()
+
+    def _zoom_in(self) -> None:
+        """Zoom in by 25%."""
+        if not self.ax:
+            return
+
+        # Get current center of view
+        xlim = self.ax.get_xlim()
+        ylim = self.ax.get_ylim()
+        x_center = (xlim[0] + xlim[1]) / 2
+        y_center = (ylim[0] + ylim[1]) / 2
+
+        # Zoom in (reduce range by 25%)
+        x_range = (xlim[1] - xlim[0]) * 0.75
+        y_range = (ylim[1] - ylim[0]) * 0.75
+
+        self.ax.set_xlim([x_center - x_range/2, x_center + x_range/2])
+        self.ax.set_ylim([y_center - y_range/2, y_center + y_range/2])
+
+        self.view_zoom *= 1.25
+        self._update_view_title()
+        logger.info(f"Zoomed in to {self.view_zoom:.1f}x")
+
+    def _zoom_out(self) -> None:
+        """Zoom out by 25%."""
+        if not self.ax:
+            return
+
+        # Get current center of view
+        xlim = self.ax.get_xlim()
+        ylim = self.ax.get_ylim()
+        x_center = (xlim[0] + xlim[1]) / 2
+        y_center = (ylim[0] + ylim[1]) / 2
+
+        # Zoom out (increase range by 25%)
+        x_range = (xlim[1] - xlim[0]) * 1.25
+        y_range = (ylim[1] - ylim[0]) * 1.25
+
+        self.ax.set_xlim([x_center - x_range/2, x_center + x_range/2])
+        self.ax.set_ylim([y_center - y_range/2, y_center + y_range/2])
+
+        self.view_zoom *= 0.8
+        self._update_view_title()
+        logger.info(f"Zoomed out to {self.view_zoom:.1f}x")
+
+    def _zoom_fit(self) -> None:
+        """Reset zoom to fit entire page."""
+        if not self.ax or self.img is None:
+            return
+
+        height, width = self.img.shape[:2]
+        self.ax.set_xlim([0, width])
+        self.ax.set_ylim([height, 0])  # Y is inverted in images
+
+        self.view_zoom = 1.0
+        self._update_view_title()
+        logger.info("Reset zoom to fit page")
 
     def on_key_press(self, event) -> None:
         """
@@ -223,11 +299,20 @@ class PDFAnnotator:
             event: Matplotlib key press event
 
         Keyboard shortcuts:
+            '+' or '=': Zoom in
+            '-': Zoom out
+            '0': Fit page to window
             'd': Delete last labeled box
             'q': Quit and save all labeled boxes
             'c': Cancel and discard all boxes
         """
-        if event.key == 'd':
+        if event.key in ['+', '=']:
+            self._zoom_in()
+        elif event.key == '-':
+            self._zoom_out()
+        elif event.key == '0':
+            self._zoom_fit()
+        elif event.key == 'd':
             if self.labeled_boxes:
                 removed = self.labeled_boxes.pop()
                 logger.info(f"Deleted last box: {removed[1]}")
@@ -238,7 +323,7 @@ class PDFAnnotator:
                 if self.drawn_labels:
                     self.drawn_labels[-1].remove()
                     self.drawn_labels.pop()
-                self.fig.canvas.draw()
+                self._update_view_title()
                 print(f"🗑️  Deleted box #{len(self.labeled_boxes) + 1}")
         elif event.key == 'q':
             logger.info(f"Save shortcut pressed (q) - {len(self.labeled_boxes)} boxes labeled")
@@ -304,17 +389,20 @@ class PDFAnnotator:
         Shows PDF page with rectangle selector for drawing bounding boxes.
         """
         # Render page
-        img = self.render_page()
+        self.img = self.render_page()
 
         # Create figure
-        self.fig, self.ax = plt.subplots(figsize=(12, 16))
-        self.ax.imshow(img)
-        self.ax.set_title(
-            f"PDF: {Path(self.pdf_path).name} | Page: {self.page_number}\n"
-            f"Draw bounding boxes (multiple allowed - each will be labeled separately)\n"
-            f"Keyboard: [d]=delete last | [q]=save all & close | [c]=cancel all"
-        )
+        self.fig, self.ax = plt.subplots(figsize=(14, 18))
+        self.ax.imshow(self.img)
         self.ax.axis("off")
+
+        # Set initial view to fit entire page
+        height, width = self.img.shape[:2]
+        self.ax.set_xlim([0, width])
+        self.ax.set_ylim([height, 0])  # Y is inverted in images
+
+        # Update title with instructions
+        self._update_view_title()
 
         # Create rectangle selector
         self.selector = RectangleSelector(
@@ -334,7 +422,8 @@ class PDFAnnotator:
         self.fig.canvas.mpl_connect('key_press_event', self.on_key_press)
 
         # Show figure
-        logger.info("Displaying interactive matplotlib interface (draw box, then press 's' to save)")
+        logger.info("Displaying interactive matplotlib interface")
+        print("🔍 Use +/- to zoom, 0 to fit page, draw boxes with mouse")
         plt.tight_layout()
         plt.show()
         logger.debug("matplotlib window closed")
