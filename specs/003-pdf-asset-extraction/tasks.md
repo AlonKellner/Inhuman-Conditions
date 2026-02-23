@@ -91,23 +91,23 @@
 
 ### Tests for User Story 2
 
-- [ ] T031 [P] [US2] Contract test for label command in extraction/tests/contract/test_label_cli.py
-- [ ] T032 [P] [US2] Unit test for interactive interface in extraction/tests/unit/test_interface.py
-- [ ] T033 [P] [US2] Unit test for label validator in extraction/tests/unit/test_validator.py
-- [ ] T034 [P] [US2] Unit test for label storage in extraction/tests/unit/test_storage.py
-- [ ] T035 [P] [US2] Integration test for labeling session in extraction/tests/integration/test_labeling_session.py
+- [X] T031 [P] [US2] Contract test for label command in extraction/tests/contract/test_label_cli.py
+- [X] T032 [P] [US2] Unit test for interactive interface in extraction/tests/unit/test_interface.py
+- [X] T033 [P] [US2] Unit test for label validator in extraction/tests/unit/test_validator.py
+- [X] T034 [P] [US2] Unit test for label storage in extraction/tests/unit/test_storage.py
+- [X] T035 [P] [US2] Integration test for labeling session in extraction/tests/integration/test_labeling_session.py
 
 ### Implementation for User Story 2
 
-- [ ] T036 [P] [US2] Create extraction/src/labeling/__init__.py
-- [ ] T037 [US2] Implement extraction/src/labeling/interface.py with PDFAnnotator class using matplotlib.widgets.RectangleSelector
-- [ ] T038 [US2] Implement extraction/src/labeling/validator.py with validate_label() function (check grid structure for mazes, text blocks for restrictions)
-- [ ] T039 [US2] Implement extraction/src/labeling/storage.py with save_labels() and load_labels() functions
-- [ ] T040 [US2] Add label command to extraction/src/main.py with options (PDF_PATH, --page, --labels-file, --content-type, --zoom)
+- [X] T036 [P] [US2] Create extraction/src/labeling/__init__.py
+- [X] T037 [US2] Implement extraction/src/labeling/interface.py with PDFAnnotator class using matplotlib.widgets.RectangleSelector
+- [X] T038 [US2] Implement extraction/src/labeling/validator.py with validate_label() function (check grid structure for mazes, text blocks for restrictions)
+- [X] T039 [US2] Implement extraction/src/labeling/storage.py with save_labels() and load_labels() functions
+- [X] T040 [US2] Add label command to extraction/src/main.py with options (PDF_PATH, --page, --labels-file, --content-type, --zoom)
 - [ ] T041 [US2] Add content type selection UI (interactive prompt if --content-type not provided)
 - [ ] T042 [US2] Add keyboard shortcuts (s=save, n=next, q=quit) to interface
 - [ ] T043 [US2] Add logging for labeling actions (box drawn, label saved, validation result)
-- [ ] T044 [US2] Verify all tests pass (T031-T035)
+- [X] T044 [US2] Verify all tests pass (T031-T035)
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
