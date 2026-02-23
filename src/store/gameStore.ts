@@ -94,6 +94,24 @@ interface GameStore {
   setDetermination: (determination: Determination) => void;
   outcome: GameOutcome | null;
 
+  // === VK-82(e) Investigator Form ===
+  investigatorForm: {
+    penaltyAttempts: { attempt1: boolean; attempt2: boolean; attempt3: boolean };
+    inducerResult: 'yes' | 'no' | null;
+    suspectName: { first: string; middle: string; last: string };
+    investigatorNotes: string;
+    signature: string;
+    date: string;
+    performanceReview: 'correct' | 'incorrect' | 'na' | null;
+  };
+  updateFormPenaltyAttempt: (attemptNumber: 1 | 2 | 3, checked: boolean) => void;
+  updateFormInducerResult: (result: 'yes' | 'no' | null) => void;
+  updateFormSuspectName: (name: { first: string; middle: string; last: string }) => void;
+  updateFormNotes: (notes: string) => void;
+  updateFormSignature: (signature: string) => void;
+  submitInvestigatorForm: () => void; // Auto-fills performance review and advances state
+  resetInvestigatorForm: () => void;
+
   // === UI State ===
   roleVisible: boolean;
   toggleRoleVisibility: () => void;
@@ -157,6 +175,17 @@ export const useGameStore = create<GameStore>((set, get) => {
     determination: null,
     outcome: null,
     roleVisible: false,
+
+    // === VK-82(e) Investigator Form ===
+    investigatorForm: {
+      penaltyAttempts: { attempt1: false, attempt2: false, attempt3: false },
+      inducerResult: null,
+      suspectName: { first: '', middle: '', last: '' },
+      investigatorNotes: '',
+      signature: '',
+      date: new Date().toLocaleDateString('en-US'),
+      performanceReview: null,
+    },
 
     // === Seed Management ===
     setSeed: (seed: Seed) => {
@@ -237,6 +266,15 @@ export const useGameStore = create<GameStore>((set, get) => {
         determination: null,
         outcome: null,
         roleVisible: false,
+        investigatorForm: {
+          penaltyAttempts: { attempt1: false, attempt2: false, attempt3: false },
+          inducerResult: null,
+          suspectName: { first: '', middle: '', last: '' },
+          investigatorNotes: '',
+          signature: '',
+          date: new Date().toLocaleDateString('en-US'),
+          performanceReview: null,
+        },
         seed, // Preserve seed
       });
     },
@@ -302,6 +340,102 @@ export const useGameStore = create<GameStore>((set, get) => {
     },
 
     // === UI State ===
+    // === VK-82(e) Investigator Form Methods ===
+    updateFormPenaltyAttempt: (attemptNumber: 1 | 2 | 3, checked: boolean) => {
+      set((state) => ({
+        investigatorForm: {
+          ...state.investigatorForm,
+          penaltyAttempts: {
+            ...state.investigatorForm.penaltyAttempts,
+            [`attempt${attemptNumber}`]: checked,
+          },
+        },
+      }));
+    },
+
+    updateFormInducerResult: (result: 'yes' | 'no' | null) => {
+      set((state) => ({
+        investigatorForm: {
+          ...state.investigatorForm,
+          inducerResult: result,
+        },
+      }));
+    },
+
+    updateFormSuspectName: (name: { first: string; middle: string; last: string }) => {
+      set((state) => ({
+        investigatorForm: {
+          ...state.investigatorForm,
+          suspectName: {
+            first: name.first.slice(0, 15), // Max 15 characters
+            middle: name.middle.slice(0, 1), // Max 1 character
+            last: name.last.slice(0, 15), // Max 15 characters
+          },
+        },
+      }));
+    },
+
+    updateFormNotes: (notes: string) => {
+      set((state) => ({
+        investigatorForm: {
+          ...state.investigatorForm,
+          investigatorNotes: notes,
+        },
+      }));
+    },
+
+    updateFormSignature: (signature: string) => {
+      set((state) => ({
+        investigatorForm: {
+          ...state.investigatorForm,
+          signature,
+        },
+      }));
+    },
+
+    submitInvestigatorForm: () => {
+      const { investigatorForm, selectedRole } = get();
+
+      // Auto-fill performance review based on determination vs actual role
+      let performanceReview: 'correct' | 'incorrect' | 'na' = 'incorrect';
+
+      if (selectedRole) {
+        const actualIsRobot = selectedRole.roleType !== 'human';
+        const investigatorSaidRobot = get().determination === 'robot';
+
+        if (actualIsRobot === investigatorSaidRobot) {
+          performanceReview = 'correct';
+        } else {
+          performanceReview = 'incorrect';
+        }
+      }
+
+      // Update form with performance review
+      set((state) => ({
+        investigatorForm: {
+          ...state.investigatorForm,
+          performanceReview,
+        },
+      }));
+
+      // Advance to conclusion state
+      get().advanceState();
+    },
+
+    resetInvestigatorForm: () => {
+      set({
+        investigatorForm: {
+          penaltyAttempts: { attempt1: false, attempt2: false, attempt3: false },
+          inducerResult: null,
+          suspectName: { first: '', middle: '', last: '' },
+          investigatorNotes: '',
+          signature: '',
+          date: new Date().toLocaleDateString('en-US'),
+          performanceReview: null,
+        },
+      });
+    },
+
     toggleRoleVisibility: () => {
       set((state) => ({ roleVisible: !state.roleVisible }));
     },
