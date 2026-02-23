@@ -84,15 +84,15 @@ def main() -> int:
         help="Interactive bounding box labeling for content types",
     )
     label_parser.add_argument(
-        "pdf_path",
+        "file_path",
         type=Path,
-        help="Path to PDF file to label",
+        help="Path to PDF or PNG file to label",
     )
     label_parser.add_argument(
         "--page",
         type=int,
-        required=True,
-        help="Page number to label (1-indexed)",
+        default=1,
+        help="Page number to label (1-indexed, for PDFs only, default: 1)",
     )
     label_parser.add_argument(
         "--labels-file",
@@ -104,7 +104,7 @@ def main() -> int:
         "--zoom",
         type=float,
         default=2.0,
-        help="Zoom level for PDF rendering (default: 2.0)",
+        help="Zoom level for PDF rendering (default: 2.0, ignored for PNG)",
     )
 
     # Extract command
@@ -256,30 +256,37 @@ def main() -> int:
 
             logger.info("Starting labeling session...")
 
-            # Validate PDF exists
-            if not args.pdf_path.exists():
-                logger.error(f"PDF file not found: {args.pdf_path}")
+            # Validate file exists
+            if not args.file_path.exists():
+                logger.error(f"File not found: {args.file_path}")
                 return 1
 
             # Load existing labels
             existing_labels = load_labels(args.labels_file)
             label_id_prefix = f"label-{len(existing_labels) + 1:03d}"
 
-            # Create annotator (no content_type needed - each box gets its own)
+            # Detect file type
+            is_png = args.file_path.suffix.lower() == '.png'
+
+            # Create annotator (supports both PDF and PNG)
             with PDFAnnotator(
-                pdf_path=str(args.pdf_path),
+                pdf_path=str(args.file_path),
                 page_number=args.page,
                 zoom=args.zoom,
             ) as annotator:
                 # Display interactive interface
-                logger.info(
-                    f"Opening {args.pdf_path.name} page {args.page} for labeling"
-                )
-                print(f"\n🏷️  Labeling {args.pdf_path.name} - Page {args.page}")
-                print("🃏 Draw bounding boxes around FULL CARDS (tall and narrow, 1:3 ratio)")
-                print("   Each card contains: maze + restrictions/tasks")
-                print("   You'll assign card types AFTER closing the window")
-                print("   Press 'q' when done drawing all cards\n")
+                if is_png:
+                    logger.info(f"Opening {args.file_path.name} for labeling")
+                    print(f"\n🏷️  Labeling {args.file_path.name}")
+                else:
+                    logger.info(
+                        f"Opening {args.file_path.name} page {args.page} for labeling"
+                    )
+                    print(f"\n🏷️  Labeling {args.file_path.name} - Page {args.page}")
+
+                print("📦 Draw bounding boxes around form elements")
+                print("   You'll describe each element AFTER closing the window")
+                print("   Press 'q' when done drawing all boxes\n")
 
                 annotator.display()
 

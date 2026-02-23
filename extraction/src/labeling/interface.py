@@ -1,7 +1,7 @@
 """
-Interactive PDF annotation interface using matplotlib.
+Interactive PDF and PNG annotation interface using matplotlib.
 
-Provides PDFAnnotator class for drawing bounding boxes on PDF pages.
+Provides PDFAnnotator class for drawing bounding boxes on PDF pages and PNG images.
 """
 
 from datetime import datetime
@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Rectangle
 from matplotlib.widgets import RectangleSelector
+from PIL import Image
 
 from ..models.label import Label, BoundingBox, LabelContentType
 from ..utils.logging_config import get_logger
@@ -22,43 +23,57 @@ logger = get_logger(__name__)
 
 class PDFAnnotator:
     """
-    Interactive PDF labeling interface using matplotlib.
+    Interactive PDF and PNG labeling interface using matplotlib.
 
-    Allows users to draw bounding boxes on PDF pages to label content regions.
+    Allows users to draw bounding boxes on PDF pages or PNG images to label content regions.
     """
 
     def __init__(
         self,
         pdf_path: str,
-        page_number: int,
+        page_number: int = 1,
         zoom: float = 2.0,
     ):
         """
-        Initialize PDFAnnotator.
+        Initialize PDFAnnotator (supports both PDF and PNG files).
 
         Args:
-            pdf_path: Path to PDF file
-            page_number: Page number to annotate (1-indexed)
-            zoom: Zoom factor for rendering (default: 2.0)
+            pdf_path: Path to PDF or PNG file
+            page_number: Page number to annotate (1-indexed, ignored for PNG)
+            zoom: Zoom factor for rendering (default: 2.0, ignored for PNG)
 
         Raises:
-            ValueError: If page_number is out of range
+            ValueError: If page_number is out of range or file format unsupported
         """
         self.pdf_path = pdf_path
         self.page_number = page_number
         self.zoom = zoom
 
-        # Open PDF and validate page number
-        self.doc = fitz.open(pdf_path)
-        if page_number < 1 or page_number > self.doc.page_count:
-            raise ValueError(
-                f"page_number {page_number} out of range (1-{self.doc.page_count})"
-            )
+        # Detect file type
+        file_path = Path(pdf_path)
+        self.file_extension = file_path.suffix.lower()
+        self.is_png = self.file_extension == '.png'
+        self.doc = None
 
-        logger.info(
-            f"PDFAnnotator initialized: {Path(pdf_path).name} | "
-            f"Page {page_number}/{self.doc.page_count} | Zoom: {zoom}x"
-        )
+        if self.is_png:
+            # For PNG files, just validate the file exists
+            if not file_path.exists():
+                raise ValueError(f"PNG file not found: {pdf_path}")
+            logger.info(
+                f"PDFAnnotator initialized for PNG: {file_path.name}"
+            )
+        else:
+            # Open PDF and validate page number
+            self.doc = fitz.open(pdf_path)
+            if page_number < 1 or page_number > self.doc.page_count:
+                raise ValueError(
+                    f"page_number {page_number} out of range (1-{self.doc.page_count})"
+                )
+
+            logger.info(
+                f"PDFAnnotator initialized: {Path(pdf_path).name} | "
+                f"Page {page_number}/{self.doc.page_count} | Zoom: {zoom}x"
+            )
 
         # Multiple bounding boxes (coords only, content types added later)
         self.unlabeled_boxes: list[tuple[float, float, float, float]] = []
@@ -83,28 +98,40 @@ class PDFAnnotator:
 
     def render_page(self) -> np.ndarray:
         """
-        Render PDF page to numpy array (image).
+        Render PDF page or PNG image to numpy array.
 
         Returns:
             Page image as numpy array (RGB)
         """
-        page = self.doc[self.page_number - 1]  # Convert to 0-indexed
+        if self.is_png:
+            # Load PNG directly with PIL
+            img_pil = Image.open(self.pdf_path)
+            # Convert to RGB if needed
+            if img_pil.mode != 'RGB':
+                img_pil = img_pil.convert('RGB')
+            # Convert to numpy array
+            img = np.array(img_pil)
+            logger.debug(f"PNG loaded: {img.shape[1]}x{img.shape[0]} pixels")
+            return img
+        else:
+            # Render PDF page
+            page = self.doc[self.page_number - 1]  # Convert to 0-indexed
 
-        # Render at specified zoom level
-        mat = fitz.Matrix(self.zoom, self.zoom)
-        pix = page.get_pixmap(matrix=mat)
+            # Render at specified zoom level
+            mat = fitz.Matrix(self.zoom, self.zoom)
+            pix = page.get_pixmap(matrix=mat)
 
-        # Convert to numpy array
-        img = np.frombuffer(pix.samples, dtype=np.uint8).reshape(
-            pix.height, pix.width, pix.n
-        )
+            # Convert to numpy array
+            img = np.frombuffer(pix.samples, dtype=np.uint8).reshape(
+                pix.height, pix.width, pix.n
+            )
 
-        # Convert RGBA to RGB if needed
-        if pix.n == 4:
-            img = img[:, :, :3]
+            # Convert RGBA to RGB if needed
+            if pix.n == 4:
+                img = img[:, :, :3]
 
-        logger.debug(f"Page rendered: {img.shape[1]}x{img.shape[0]} pixels")
-        return img
+            logger.debug(f"Page rendered: {img.shape[1]}x{img.shape[0]} pixels")
+            return img
 
     def on_select(self, x1: float, y1: float, x2: float, y2: float) -> None:
         """
@@ -352,6 +379,35 @@ class PDFAnnotator:
         is_backgrounds = 'background' in filename_lower
         is_penalties = 'penalt' in filename_lower  # matches "penalty" or "penalties"
 
+        # Investigator forms use free-text descriptions instead of predefined types
+        if is_investigator_forms:
+            print(f"\n📋 Now describe each element in your {len(self.unlabeled_boxes)} boxes:")
+            print("Investigator Forms PDF (VK-82(e)):")
+            print("  Describe each form element textually (e.g., 'Penalty checkbox group', 'Module dropdown', 'Notes textarea')")
+            print("  These descriptions will be used to create the correct form widgets.\n")
+
+            for i, bbox in enumerate(self.unlabeled_boxes):
+                x1, y1, x2, y2 = bbox
+                width = x2 - x1
+                height = y2 - y1
+                aspect_ratio = height / width
+                print(f"Box #{i + 1} ({width:.0f}w x {height:.0f}h pixels, ratio {aspect_ratio:.2f}:1)")
+
+                while True:
+                    description = input("  Description: ").strip()
+                    if description:
+                        # Store description as the "content type" for investigator forms
+                        self.labeled_boxes.append((bbox, description))
+                        logger.info(f"Box #{i + 1} described as: {description}")
+                        print(f"  ✓ Described as: {description}\n")
+                        break
+                    else:
+                        print("  ❌ Description cannot be empty.")
+
+            print(f"✅ All {len(self.labeled_boxes)} form elements described!")
+            return
+
+        # Standard predefined content types for other PDFs
         if is_backgrounds:
             card_types_list = ["background"]
             print(f"\n📋 Now assign content type to your {len(self.unlabeled_boxes)} boxes:")
@@ -362,11 +418,6 @@ class PDFAnnotator:
             print(f"\n📋 Now assign content type to your {len(self.unlabeled_boxes)} boxes:")
             print("Penalties PDF:")
             print("  1 = penalty (penalty card)")
-        elif is_investigator_forms:
-            card_types_list = ["investigator-form"]
-            print(f"\n📋 Now assign content type to your {len(self.unlabeled_boxes)} boxes:")
-            print("Investigator Forms PDF:")
-            print("  1 = investigator-form (interview forms and templates)")
         elif is_investigator:
             card_types_list = ["cover-sheet", "primary-prompts", "secondary-prompts"]
             print(f"\n📋 Now assign card types to your {len(self.unlabeled_boxes)} boxes:")
@@ -426,6 +477,10 @@ class PDFAnnotator:
         """
         labels = []
 
+        # Detect if this is an investigator forms PDF
+        filename_lower = self.pdf_path.lower()
+        is_investigator_forms = 'investigator' in filename_lower and 'form' in filename_lower
+
         for i, (bbox_coords, content_type) in enumerate(self.labeled_boxes):
             x1, y1, x2, y2 = bbox_coords
             bbox = BoundingBox(
@@ -441,20 +496,30 @@ class PDFAnnotator:
             else:
                 label_id = f"{label_id_prefix}-{chr(97 + i)}"  # 97 = 'a'
 
+            # For investigator forms, content_type is a free-text description
+            # Store it in notes and use INVESTIGATOR_FORM as the enum type
+            if is_investigator_forms:
+                label_notes = content_type  # The user's textual description
+                label_content_type = LabelContentType.INVESTIGATOR_FORM
+            else:
+                label_notes = notes
+                label_content_type = LabelContentType(content_type)
+
             label = Label(
                 id=label_id,
                 pdf_filename=Path(self.pdf_path).name,
                 page_number=self.page_number,
-                content_type=LabelContentType(content_type),
+                content_type=label_content_type,
                 bounding_box=bbox,
                 labeled_by=labeled_by,
                 timestamp=datetime.now(),
-                notes=notes,
+                notes=label_notes,
             )
 
             logger.info(
-                f"Label created: {label_id} | {content_type} | "
+                f"Label created: {label_id} | {label_content_type.value} | "
                 f"Box: {bbox.width:.0f}x{bbox.height:.0f}"
+                + (f" | Description: {label_notes}" if is_investigator_forms else "")
             )
 
             labels.append(label)
@@ -509,9 +574,10 @@ class PDFAnnotator:
         logger.debug("matplotlib window closed")
 
     def close(self) -> None:
-        """Close the PDF document."""
+        """Close the PDF document (if applicable)."""
         if self.doc:
             self.doc.close()
+            logger.debug("PDF document closed")
 
     def __enter__(self):
         """Context manager entry."""
