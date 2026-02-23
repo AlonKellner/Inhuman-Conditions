@@ -276,9 +276,9 @@ def main() -> int:
                     f"Opening {args.pdf_path.name} page {args.page} for labeling"
                 )
                 print(f"\n🏷️  Labeling {args.pdf_path.name} - Page {args.page}")
-                print("📦 Draw bounding boxes (as many as you want on this page)")
-                print("   After each box, you'll select its content type")
-                print("   Press 'q' when done to save all boxes\n")
+                print("📦 Draw ALL bounding boxes first (as many as you want)")
+                print("   You'll assign content types AFTER closing the window")
+                print("   Press 'q' when done drawing boxes\n")
 
                 annotator.display()
 
@@ -286,6 +286,13 @@ def main() -> int:
                 if annotator.should_quit:
                     logger.info("❌ Labeling session cancelled by user")
                     return 1
+
+                if not annotator.unlabeled_boxes:
+                    logger.info("⏭️  No boxes drawn")
+                    return 0
+
+                # Assign content types to all boxes (console prompts)
+                annotator.assign_content_types()
 
                 if not annotator.labeled_boxes:
                     logger.info("⏭️  No boxes labeled")

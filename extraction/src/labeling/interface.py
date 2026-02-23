@@ -60,7 +60,8 @@ class PDFAnnotator:
             f"Page {page_number}/{self.doc.page_count} | Zoom: {zoom}x"
         )
 
-        # Multiple bounding boxes with their content types
+        # Multiple bounding boxes (coords only, content types added later)
+        self.unlabeled_boxes: list[tuple[float, float, float, float]] = []
         self.labeled_boxes: list[tuple[tuple[float, float, float, float], str]] = []
         self.current_bbox: Optional[tuple[float, float, float, float]] = None
 
@@ -119,54 +120,58 @@ class PDFAnnotator:
         y_min = min(y1, y2)
         y_max = max(y1, y2)
 
-        self.current_bbox = (x_min, y_min, x_max, y_max)
+        # Store the box (content type will be assigned later)
+        bbox = (x_min, y_min, x_max, y_max)
+        self.unlabeled_boxes.append(bbox)
 
         logger.info(
-            f"Bounding box drawn: ({x_min:.0f}, {y_min:.0f}) to ({x_max:.0f}, {y_max:.0f})"
+            f"Box #{len(self.unlabeled_boxes)} drawn: ({x_min:.0f}, {y_min:.0f}) to ({x_max:.0f}, {y_max:.0f})"
         )
 
-        # Prompt for content type immediately
-        content_type = self._prompt_content_type()
-        if content_type:
-            # Store labeled box
-            self.labeled_boxes.append((self.current_bbox, content_type))
-            logger.info(f"Label #{len(self.labeled_boxes)}: {content_type}")
+        # Draw the box with number
+        self._draw_unlabeled_box(len(self.unlabeled_boxes) - 1)
+        print(f"✓ Box #{len(self.unlabeled_boxes)} drawn")
 
-            # Draw permanent rectangle on figure
-            self._draw_labeled_box(len(self.labeled_boxes) - 1)
-
-            # Reset current selection
-            self.current_bbox = None
-
-    def _prompt_content_type(self) -> Optional[str]:
+    def _draw_unlabeled_box(self, box_index: int) -> None:
         """
-        Prompt user to select content type for current bounding box.
+        Draw an unlabeled bounding box with number on the figure.
 
-        Returns:
-            Selected content type string, or None if cancelled
+        Args:
+            box_index: Index in self.unlabeled_boxes list
         """
-        content_types = ["maze", "restriction", "task", "icon", "background", "penalty"]
-        print(f"\n📋 Box #{len(self.labeled_boxes) + 1} - Select content type:")
-        for i, ct in enumerate(content_types, 1):
-            print(f"  {i}. {ct}")
-        print("  0. Cancel (discard this box)")
+        if not self.ax:
+            return
 
-        while True:
-            try:
-                choice = input("\nEnter number (0-6): ").strip()
-                if choice == '0':
-                    logger.info("Box discarded by user")
-                    return None
-                idx = int(choice) - 1
-                if 0 <= idx < len(content_types):
-                    content_type = content_types[idx]
-                    logger.info(f"Selected content type: {content_type}")
-                    return content_type
-                else:
-                    print("❌ Invalid choice. Please enter 0-6.")
-            except (ValueError, EOFError):
-                print("❌ Invalid input. Please enter 0-6.")
-                return None
+        x_min, y_min, x_max, y_max = self.unlabeled_boxes[box_index]
+
+        # Draw rectangle in white
+        rect = Rectangle(
+            (x_min, y_min),
+            x_max - x_min,
+            y_max - y_min,
+            linewidth=2,
+            edgecolor='white',
+            facecolor='none',
+            linestyle='-'
+        )
+        self.ax.add_patch(rect)
+        self.drawn_rectangles.append(rect)
+
+        # Draw box number
+        label_text = f"#{box_index + 1}"
+        text = self.ax.text(
+            x_min,
+            y_min - 10,
+            label_text,
+            fontsize=14,
+            color='white',
+            weight='bold',
+            bbox=dict(boxstyle='round', facecolor='black', alpha=0.8, edgecolor='white')
+        )
+        self.drawn_labels.append(text)
+
+        # Update title and redraw
+        self._update_view_title()
 
     def _draw_labeled_box(self, box_index: int) -> None:
         """
@@ -228,9 +233,9 @@ class PDFAnnotator:
 
         self.ax.set_title(
             f"PDF: {Path(self.pdf_path).name} | Page: {self.page_number} | "
-            f"Zoom: {self.view_zoom:.1f}x | Boxes: {len(self.labeled_boxes)}\n"
-            f"Draw bounding boxes (multiple allowed - each will be labeled separately)\n"
-            f"Scroll to zoom | [0]=fit page | [d]=delete last | [q]=save all | [c]=cancel"
+            f"Zoom: {self.view_zoom:.1f}x | Boxes: {len(self.unlabeled_boxes)}\n"
+            f"Draw ALL bounding boxes first, then label them after closing\n"
+            f"Scroll to zoom | [0]=fit page | [d]=delete last | [q]=done drawing | [c]=cancel"
         )
         self.fig.canvas.draw()
 
@@ -311,9 +316,9 @@ class PDFAnnotator:
         if event.key == '0':
             self._zoom_fit()
         elif event.key == 'd':
-            if self.labeled_boxes:
-                removed = self.labeled_boxes.pop()
-                logger.info(f"Deleted last box: {removed[1]}")
+            if self.unlabeled_boxes:
+                self.unlabeled_boxes.pop()
+                logger.info(f"Deleted box #{len(self.unlabeled_boxes) + 1}")
                 # Remove visual elements
                 if self.drawn_rectangles:
                     self.drawn_rectangles[-1].remove()
@@ -322,14 +327,50 @@ class PDFAnnotator:
                     self.drawn_labels[-1].remove()
                     self.drawn_labels.pop()
                 self._update_view_title()
-                print(f"🗑️  Deleted box #{len(self.labeled_boxes) + 1}")
+                print(f"🗑️  Deleted box #{len(self.unlabeled_boxes) + 1}")
         elif event.key == 'q':
-            logger.info(f"Save shortcut pressed (q) - {len(self.labeled_boxes)} boxes labeled")
+            logger.info(f"Done drawing - {len(self.unlabeled_boxes)} boxes to label")
             plt.close(self.fig)
         elif event.key == 'c':
             logger.info("Cancel shortcut pressed (c) - discarding all boxes")
             self.should_quit = True
             plt.close(self.fig)
+
+    def assign_content_types(self) -> None:
+        """
+        Prompt user to assign content types to all unlabeled boxes.
+
+        This is called AFTER matplotlib window closes to avoid readline conflicts.
+        """
+        if not self.unlabeled_boxes:
+            return
+
+        content_types_list = ["maze", "restriction", "task", "icon", "background", "penalty"]
+
+        print(f"\n📋 Now assign content types to your {len(self.unlabeled_boxes)} boxes:")
+        print("Available types: 1=maze 2=restriction 3=task 4=icon 5=background 6=penalty")
+        print()
+
+        for i, bbox in enumerate(self.unlabeled_boxes):
+            x1, y1, x2, y2 = bbox
+            print(f"Box #{i + 1} ({x2-x1:.0f}x{y2-y1:.0f} pixels at {x1:.0f},{y1:.0f})")
+
+            while True:
+                try:
+                    choice = input(f"  Content type (1-6): ").strip()
+                    idx = int(choice) - 1
+                    if 0 <= idx < len(content_types_list):
+                        content_type = content_types_list[idx]
+                        self.labeled_boxes.append((bbox, content_type))
+                        logger.info(f"Box #{i + 1} labeled as: {content_type}")
+                        print(f"  ✓ Labeled as: {content_type}\n")
+                        break
+                    else:
+                        print("  ❌ Invalid. Enter 1-6.")
+                except (ValueError, KeyboardInterrupt):
+                    print("  ❌ Invalid. Enter 1-6.")
+
+        print(f"✅ All {len(self.labeled_boxes)} boxes labeled!")
 
     def create_labels(self, label_id_prefix: str, labeled_by: str, notes: Optional[str] = None) -> list[Label]:
         """
@@ -422,7 +463,7 @@ class PDFAnnotator:
 
         # Show figure
         logger.info("Displaying interactive matplotlib interface")
-        print("🔍 Scroll wheel to zoom, press 0 to fit page, draw boxes with mouse")
+        print("🔍 Scroll to zoom | Draw boxes with mouse | Press 'q' when done")
         plt.tight_layout()
         plt.show()
         logger.debug("matplotlib window closed")
