@@ -1,6 +1,6 @@
 /**
  * FormCheckbox Component
- * Renders a checkbox overlaid at exact position from labeled bounding box
+ * Renders a transparent checkbox with handwritten checkmark when checked
  */
 
 import type { FC } from 'react';
@@ -22,6 +22,19 @@ export const FormCheckbox: FC<FormCheckboxProps> = ({
   disabled = false,
   ariaLabel,
 }) => {
+  const handleClick = () => {
+    if (!disabled) {
+      onChange(!checked);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!disabled && (e.key === ' ' || e.key === 'Enter')) {
+      e.preventDefault();
+      onChange(!checked);
+    }
+  };
+
   return (
     <div
       className={styles.checkboxContainer}
@@ -32,15 +45,36 @@ export const FormCheckbox: FC<FormCheckboxProps> = ({
         width: `${position.width}px`,
         height: `${position.height}px`,
       }}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      tabIndex={disabled ? -1 : 0}
+      role="checkbox"
+      aria-checked={checked}
+      aria-label={ariaLabel}
+      aria-disabled={disabled}
     >
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        disabled={disabled}
-        aria-label={ariaLabel}
-        className={styles.checkbox}
-      />
+      {checked && (
+        <svg
+          className={styles.checkmark}
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          {/* Handwritten-style checkmark */}
+          <path
+            d="M4 12 L9 17 L20 6"
+            stroke="#000"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+            style={{
+              strokeDasharray: '30',
+              strokeDashoffset: checked ? '0' : '30',
+              transition: 'stroke-dashoffset 0.3s ease',
+            }}
+          />
+        </svg>
+      )}
     </div>
   );
 };

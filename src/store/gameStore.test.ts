@@ -1,12 +1,17 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useGameStore } from './gameStore';
+import { useInvestigatorStore, useSuspectStore } from './gameStore';
 import { GameState, GameMode, PlayerRole, Determination } from '../types';
 
+// Test the investigator store (primary) and add independence tests
 describe('gameStore', () => {
   beforeEach(() => {
-    // Reset store before each test
-    useGameStore.getState().resetGame();
+    // Reset both stores before each test
+    useInvestigatorStore.getState().resetGame();
+    useSuspectStore.getState().resetGame();
   });
+
+  // Use investigator store for existing tests
+  const useGameStore = useInvestigatorStore;
 
   describe('seed management', () => {
     it('should set seed and initialize game', () => {
@@ -558,6 +563,87 @@ describe('gameStore', () => {
         expect(penalty1Id).toBe(penalty2Id);
         expect(index1).toBe(index2);
       });
+    });
+  });
+
+  // New tests for store independence
+  describe('store independence', () => {
+    it('should create two independent GameEngine instances', () => {
+      const inv = useInvestigatorStore.getState();
+      const sus = useSuspectStore.getState();
+
+      expect(inv._engine).not.toBe(sus._engine);
+    });
+
+    it('should not share state when seeds are different', () => {
+      const inv = useInvestigatorStore.getState();
+      const sus = useSuspectStore.getState();
+
+      inv.setSeed('AAAA');
+      sus.setSeed('ZZZZ');
+
+      expect(inv.selectedPacket?.id).not.toBe(sus.selectedPacket?.id);
+      expect(inv.seed).toBe('AAAA');
+      expect(sus.seed).toBe('ZZZZ');
+    });
+
+    it('should not share gameState advancement', () => {
+      const inv = useInvestigatorStore.getState();
+      const sus = useSuspectStore.getState();
+
+      inv.advanceState();
+      inv.advanceState();
+
+      expect(inv.gameState).not.toBe(sus.gameState);
+    });
+
+    it('should not share penalty selection state', () => {
+      const inv = useInvestigatorStore.getState();
+      const sus = useSuspectStore.getState();
+
+      inv.setSeed('TEST');
+      sus.setSeed('TEST'); // Same seed for deterministic content
+
+      inv.initializePenaltySelection();
+      sus.initializePenaltySelection();
+
+      // Eliminate different penalties
+      inv.eliminatePenalty(inv.penaltySelection!.availablePenalties[0].id);
+      sus.eliminatePenalty(sus.penaltySelection!.availablePenalties[1].id);
+
+      expect(inv.penaltySelection?.investigatorEliminated).not.toBe(
+        sus.penaltySelection?.investigatorEliminated
+      );
+    });
+
+    it('should not share content cycling state', () => {
+      const inv = useInvestigatorStore.getState();
+      const sus = useSuspectStore.getState();
+
+      inv.setSeed('CYCLE');
+      sus.setSeed('CYCLE'); // Same seed for deterministic permutations
+
+      // Investigator cycles penalty
+      inv.cycleContent('penalty', 'next');
+      inv.cycleContent('penalty', 'next');
+
+      // Suspect does not cycle
+      expect(inv.contentIndices.penaltyIndex).toBe(2);
+      expect(sus.contentIndices.penaltyIndex).toBe(0);
+      expect(inv.selectedPenalty?.id).not.toBe(sus.selectedPenalty?.id);
+    });
+
+    it('should maintain independent timer state', () => {
+      const inv = useInvestigatorStore.getState();
+      const sus = useSuspectStore.getState();
+
+      inv.startTimer();
+      inv.onTimerElapsed();
+
+      expect(inv.timerStarted).toBe(true);
+      expect(inv.timerElapsed).toBe(true);
+      expect(sus.timerStarted).toBe(false);
+      expect(sus.timerElapsed).toBe(false);
     });
   });
 });

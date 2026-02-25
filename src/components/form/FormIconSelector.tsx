@@ -1,6 +1,7 @@
 /**
  * FormIconSelector Component
- * Renders clickable COG and BRAIN icons with circle overlay for selection
+ * Renders clickable COG and BRAIN icons with dotted circle overlay for selection
+ * Built using TDD methodology - see FormIconSelector.test.tsx
  */
 
 import type { FC } from 'react';
@@ -15,6 +16,28 @@ export interface FormIconSelectorProps {
   disabled?: boolean;
 }
 
+// Dotted circle overlay
+const HandDrawnCircle: FC = () => (
+  <svg
+    className={styles.circleOverlay}
+    viewBox="-5 -5 110 110"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    preserveAspectRatio="xMidYMid meet"
+  >
+    {/* Simple dotted circle outline */}
+    <circle
+      cx="50"
+      cy="50"
+      r="50"
+      stroke="#000"
+      strokeWidth="5"
+      strokeDasharray="4 4"
+      fill="none"
+    />
+  </svg>
+);
+
 export const FormIconSelector: FC<FormIconSelectorProps> = ({
   cogPosition,
   brainPosition,
@@ -27,10 +50,10 @@ export const FormIconSelector: FC<FormIconSelectorProps> = ({
 
   return (
     <>
-      {/* COG Icon (Robot) */}
+      {/* COG Icon (Robot) - Invisible button, dotted circle on selection */}
       <button
         type="button"
-        className={`${styles.iconButton} ${isRobotSelected ? styles.selected : ''}`}
+        className={styles.iconButton}
         style={{
           position: 'absolute',
           left: `${cogPosition.x}px`,
@@ -41,14 +64,15 @@ export const FormIconSelector: FC<FormIconSelectorProps> = ({
         onClick={() => onChange('robot')}
         disabled={disabled}
         aria-label="Select Robot (COG)"
+        title="Robot (COG)"
       >
-        {isRobotSelected && <div className={styles.circleOverlay} />}
+        {isRobotSelected && <HandDrawnCircle />}
       </button>
 
-      {/* BRAIN Icon (Human) */}
+      {/* BRAIN Icon (Human) - Invisible button, dotted circle on selection */}
       <button
         type="button"
-        className={`${styles.iconButton} ${isHumanSelected ? styles.selected : ''}`}
+        className={styles.iconButton}
         style={{
           position: 'absolute',
           left: `${brainPosition.x}px`,
@@ -59,8 +83,9 @@ export const FormIconSelector: FC<FormIconSelectorProps> = ({
         onClick={() => onChange('human')}
         disabled={disabled}
         aria-label="Select Human (BRAIN)"
+        title="Human (BRAIN)"
       >
-        {isHumanSelected && <div className={styles.circleOverlay} />}
+        {isHumanSelected && <HandDrawnCircle />}
       </button>
     </>
   );

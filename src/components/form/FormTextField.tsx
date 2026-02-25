@@ -37,16 +37,24 @@ export const FormTextField: FC<FormTextFieldProps> = ({
         height: `${position.height}px`,
       }}
     >
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        readOnly={readOnly}
-        maxLength={maxLength}
-        aria-label={ariaLabel}
-        className={styles.textField}
-      />
+      {readOnly ? (
+        // Render as simple div for html2canvas (no input element)
+        <div className={styles.textFieldStatic} aria-label={ariaLabel}>
+          {value}
+        </div>
+      ) : (
+        // Render as input for interactive form
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          readOnly={readOnly}
+          maxLength={maxLength}
+          aria-label={ariaLabel}
+          className={styles.textField}
+        />
+      )}
     </div>
   );
 };

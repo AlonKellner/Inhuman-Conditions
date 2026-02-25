@@ -62,6 +62,7 @@ export class GameEngine implements IGameEngine {
         backgrounds: 0,
         roles: 0,
       },
+      penaltySelection: null,
       penaltyCalibration: {
         penaltyText: '',
         practiceAttempts: 0,
@@ -248,6 +249,82 @@ export class GameEngine implements IGameEngine {
   }
 
   /**
+   * Initialize penalty selection with 3 penalties from permutation
+   */
+  initializePenaltySelection(): void {
+    if (!this.contentSelector) {
+      throw new Error('ContentSelector not initialized - call initialize() first');
+    }
+
+    // Get first 3 penalties from permutation
+    const permutations = this.contentSelector.generatePermutations();
+    const availablePenalties = permutations.penalties.slice(0, 3);
+
+    this.state.penaltySelection = {
+      availablePenalties,
+      investigatorEliminated: null,
+      suspectChosen: null,
+      isComplete: false,
+    };
+
+    this.emit({
+      type: 'PENALTY_SELECTION_INITIALIZED',
+      penalties: availablePenalties,
+    });
+  }
+
+  /**
+   * Investigator eliminates one of the three penalties
+   */
+  eliminatePenalty(penaltyId: string): void {
+    if (!this.state.penaltySelection) {
+      throw new Error('Penalty selection not initialized');
+    }
+
+    const penalty = this.state.penaltySelection.availablePenalties.find(p => p.id === penaltyId);
+    if (!penalty) {
+      throw new Error(`Invalid penalty ID: ${penaltyId}`);
+    }
+
+    this.state.penaltySelection.investigatorEliminated = penaltyId;
+
+    this.emit({
+      type: 'PENALTY_ELIMINATED',
+      penaltyId,
+    });
+  }
+
+  /**
+   * Suspect chooses one of the two remaining penalties
+   */
+  choosePenalty(penaltyId: string): void {
+    if (!this.state.penaltySelection) {
+      throw new Error('Penalty selection not initialized');
+    }
+
+    // Verify penalty is not the eliminated one
+    if (penaltyId === this.state.penaltySelection.investigatorEliminated) {
+      throw new Error('Cannot choose the eliminated penalty');
+    }
+
+    const penalty = this.state.penaltySelection.availablePenalties.find(p => p.id === penaltyId);
+    if (!penalty) {
+      throw new Error(`Invalid penalty ID: ${penaltyId}`);
+    }
+
+    this.state.penaltySelection.suspectChosen = penaltyId;
+    this.state.penaltySelection.isComplete = true;
+
+    // Set this as the selected penalty for calibration phase
+    this.state.selectedPenalty = penalty;
+
+    this.emit({
+      type: 'PENALTY_CHOSEN',
+      penaltyId,
+    });
+  }
+
+  /**
    * Increment penalty calibration attempts
    */
   incrementCalibration(): void {
@@ -403,6 +480,62 @@ export class GameEngine implements IGameEngine {
       contentType,
       direction,
       newIndex,
+    });
+  }
+
+  /**
+   * Select content by ID (for dropdown/direct selection)
+   */
+  selectContentById(contentType: 'packet' | 'background', id: string): void {
+    if (!this.contentSelector) {
+      throw new Error('Game must be initialized before selecting content');
+    }
+
+    // Get current indices
+    const currentIndices = { ...this.state.contentIndices };
+
+    // Find the permutation index of the item with the given ID
+    let targetIndex = -1;
+
+    if (contentType === 'packet') {
+      targetIndex = this.contentSelector.getPacketIndexById(id);
+    } else if (contentType === 'background') {
+      targetIndex = this.contentSelector.getBackgroundIndexById(id);
+    }
+
+    if (targetIndex === -1) {
+      console.warn(`${contentType} with id "${id}" not found in permutation`);
+      return;
+    }
+
+    // Update the appropriate index
+    if (contentType === 'packet') {
+      currentIndices.packetIndex = targetIndex;
+    } else if (contentType === 'background') {
+      currentIndices.backgroundIndex = targetIndex;
+    }
+
+    // Select new content with updated indices
+    const newContent = this.contentSelector.selectContentAtIndices(currentIndices);
+
+    // Update state with new content and indices
+    this.state = {
+      ...this.state,
+      contentIndices: currentIndices,
+      selectedPacket: newContent.packet,
+      selectedPenalty: newContent.penalty,
+      selectedRole: newContent.role,
+      selectedBackground: newContent.background,
+      inducerPattern: newContent.inducerPattern,
+      shuffledQuestions: newContent.shuffledQuestions,
+    };
+
+    // Emit content selected event
+    this.emit({
+      type: 'CONTENT_CYCLED',
+      contentType,
+      direction: 'next', // Reuse existing event type
+      newIndex: targetIndex,
     });
   }
 

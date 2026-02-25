@@ -4,7 +4,7 @@
  * Allows players to cycle through all 11 available packets
  */
 
-import { useGameStore } from '../../store/gameStore';
+import { useGameStore } from '../../store/GameStoreContext';
 import { CyclingButtons } from './CyclingButtons';
 import styles from './PacketDisplay.module.css';
 
@@ -66,16 +66,11 @@ export function PacketDisplay({ role, onContinue }: PacketDisplayProps) {
 
           <div className={styles.packetInfo}>
             <div className={styles.packetHeader}>
-              {selectedPacket.icon.startsWith('/') ? (
-                <img src={selectedPacket.icon} alt="" className={styles.iconImage} />
-              ) : (
-                <span className={styles.icon}>{selectedPacket.icon}</span>
-              )}
-              <h3 className={styles.packetName}>{selectedPacket.name}</h3>
+              <h3 className={styles.packetName}>
+                {selectedPacket.name}
+                <img src={selectedPacket.icon} alt="" className={styles.moduleIcon} />
+              </h3>
             </div>
-            <p className={styles.difficulty}>
-              Difficulty: <strong>{selectedPacket.difficulty}</strong>
-            </p>
           </div>
 
           <p className={styles.waitingMessage}>
@@ -103,21 +98,11 @@ export function PacketDisplay({ role, onContinue }: PacketDisplayProps) {
 
           <div className={styles.packetInfo}>
             <div className={styles.packetHeader}>
-              {selectedPacket.icon.startsWith('/') ? (
-                <img src={selectedPacket.icon} alt="" className={styles.iconImage} />
-              ) : (
-                <span className={styles.icon}>{selectedPacket.icon}</span>
-              )}
-              <h3 className={styles.packetName}>{selectedPacket.name}</h3>
+              <h3 className={styles.packetName}>
+                {selectedPacket.name}
+                <img src={selectedPacket.icon} alt="" className={styles.moduleIcon} />
+              </h3>
             </div>
-            <p className={styles.difficulty}>
-              Difficulty: <strong>{selectedPacket.difficulty}</strong>
-            </p>
-          </div>
-
-          <div className={styles.promptBox}>
-            <p className={styles.promptLabel}>Investigator Prompt:</p>
-            <p className={styles.promptText}>{selectedPacket.prompt}</p>
           </div>
 
           <div className={styles.questionsBox}>
@@ -128,7 +113,6 @@ export function PacketDisplay({ role, onContinue }: PacketDisplayProps) {
               {selectedPacket.questions.map((question, index) => (
                 <li key={question.id} className={styles.questionItem}>
                   <span className={styles.questionNumber}>{index + 1}.</span>
-                  <span className={styles.questionText}>{question.text}</span>
                   <span className={styles.questionType}>({question.type})</span>
                 </li>
               ))}
@@ -151,10 +135,10 @@ export function PacketDisplay({ role, onContinue }: PacketDisplayProps) {
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        <h2 className={styles.heading}>Question Packet</h2>
+        <h2 className={styles.heading}>Module Selection</h2>
 
         <CyclingButtons
-          label="Packet"
+          label="Module"
           currentIndex={contentIndices.packetIndex}
           totalItems={permutationSizes.packets}
           onPrevious={handleCyclePrevious}
@@ -163,24 +147,26 @@ export function PacketDisplay({ role, onContinue }: PacketDisplayProps) {
 
         <div className={styles.packetInfo}>
           <div className={styles.packetHeader}>
-            <span className={styles.icon}>{selectedPacket.icon}</span>
-            <h3 className={styles.packetName}>{selectedPacket.name}</h3>
+            <h3 className={styles.packetName}>
+              {selectedPacket.name}
+              <img src={selectedPacket.icon} alt="" className={styles.moduleIcon} />
+            </h3>
           </div>
-          <p className={styles.difficulty}>
-            Difficulty: <strong>{selectedPacket.difficulty}</strong>
-          </p>
         </div>
 
         <div className={styles.instructions}>
           <p className={styles.instructionText}>
-            The Investigator will ask you questions from this packet.
-            You will not see the questions in advance.
+            You won't see the actual questions until the interview begins.
           </p>
         </div>
 
-        <p className={styles.waitingMessage}>
-          Waiting for Investigator to continue...
-        </p>
+        <button
+          className={styles.continueButton}
+          onClick={onContinue}
+          aria-label="Continue to next stage"
+        >
+          Continue
+        </button>
       </div>
     </div>
   );

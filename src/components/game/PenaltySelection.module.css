@@ -1,0 +1,96 @@
+.instructions {
+  margin-bottom: var(--space-4);
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  text-align: center;
+  color: #000;
+}
+
+
+/* Side-by-side penalty card layout */
+.penaltyRow {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4);
+  margin: var(--space-4) 0;
+  flex-wrap: nowrap;
+}
+
+/* Clickable penalty card */
+.clickableCard {
+  cursor: pointer;
+  border: 3px solid #000;
+  background-color: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  flex-shrink: 0;
+}
+
+.clickableCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  border-color: #000;
+}
+
+.clickableCard:active {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.clickableCard:focus {
+  outline: 4px solid rgba(0, 0, 0, 0.5);
+  outline-offset: 2px;
+}
+
+
+
+.prompt {
+  margin: var(--space-4) 0;
+  padding: var(--space-3);
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.05);
+  border: 1px solid #000;
+  color: #000;
+}
+
+.success {
+  margin: var(--space-4) 0;
+  padding: var(--space-3);
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: bold;
+  text-align: center;
+  background-color: #000;
+  color: #fff;
+}
+
+.error {
+  margin: var(--space-3) 0;
+  padding: var(--space-3);
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  text-align: center;
+  background-color: #fff;
+  border: 2px solid #000;
+  color: #000;
+}
+
+.finalPenalty {
+  margin: var(--space-4) auto;
+  display: flex;
+  justify-content: center;
+  border: 3px solid #000;
+  background-color: #fff;
+  width: fit-content;
+}
+
+.continueButton {
+  width: 100%;
+  margin-top: var(--space-4);
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+

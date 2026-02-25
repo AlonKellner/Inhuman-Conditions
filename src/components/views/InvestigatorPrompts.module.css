@@ -1,0 +1,96 @@
+.promptCard {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.promptHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.promptIcon {
+  font-size: 24px;
+}
+
+.promptTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.promptContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.promptStep {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 12px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.promptStep:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.stepNumber {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.stepText {
+  margin: 0;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.promptHint {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  font-size: 13px;
+  border-left: 4px solid rgba(255, 255, 255, 0.5);
+}
+
+.promptHint em {
+  font-style: italic;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .promptCard {
+    padding: 16px;
+  }
+
+  .promptTitle {
+    font-size: 16px;
+  }
+
+  .stepText {
+    font-size: 13px;
+  }
+
+  .promptHint {
+    font-size: 12px;
+  }
+}

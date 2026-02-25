@@ -4,7 +4,7 @@
  * Allows players to cycle through all 30 available backgrounds
  */
 
-import { useGameStore } from '../../store/gameStore';
+import { useGameStore } from '../../store/GameStoreContext';
 import { CyclingButtons } from './CyclingButtons';
 import styles from './BackgroundDisplay.module.css';
 

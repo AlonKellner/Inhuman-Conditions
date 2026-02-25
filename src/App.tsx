@@ -1,6 +1,6 @@
 import './styles/global.css';
 import './App.css';
-import { GameStateMachine } from './components/GameStateMachine';
+import { ViewSwitcher } from './components/ViewSwitcher';
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
       </header>
 
       <main>
-        <GameStateMachine />
+        <ViewSwitcher />
       </main>
 
       <footer>

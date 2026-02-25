@@ -22,6 +22,7 @@ import type {
   Packet,
   Question,
   Penalty,
+  PenaltySelectionState,
   Background,
   RoleAssignment,
   InducerPattern,
@@ -74,6 +75,7 @@ interface GameStore {
     roles: number;
   };
   cycleContent: (contentType: ContentType, direction: CycleDirection) => void;
+  selectContentById: (contentType: 'packet' | 'background', id: string) => void;
 
   // === Game Initialization ===
   initializeGame: () => void;
@@ -83,6 +85,12 @@ interface GameStore {
   timerElapsed: boolean;
   startTimer: () => void;
   onTimerElapsed: () => void;
+
+  // === Penalty Selection ===
+  penaltySelection: PenaltySelectionState | null;
+  initializePenaltySelection: () => void;
+  eliminatePenalty: (penaltyId: string) => void;
+  choosePenalty: (penaltyId: string) => void;
 
   // === Penalty Calibration ===
   penaltyCalibration: PenaltyCalibrationState;
@@ -123,20 +131,25 @@ interface GameStore {
   _syncFromEngine: () => void;
 }
 
-export const useGameStore = create<GameStore>((set, get) => {
-  // Create game engine instance
-  const engine = new GameEngine();
+/**
+ * Factory function to create an independent game store instance
+ * Each instance has its own GameEngine and state
+ */
+function createGameStoreInstance() {
+  return create<GameStore>((set, get) => {
+    // Create game engine instance
+    const engine = new GameEngine();
 
-  // Subscribe to engine events and sync to Zustand
-  engine.subscribe((event) => {
-    console.log('[GameEngine Event]', event);
-    // Use requestAnimationFrame to batch state updates and prevent event loop issues
-    requestAnimationFrame(() => {
-      get()._syncFromEngine();
+    // Subscribe to engine events and sync to Zustand
+    engine.subscribe((event) => {
+      console.log('[GameEngine Event]', event);
+      // Use requestAnimationFrame to batch state updates and prevent event loop issues
+      requestAnimationFrame(() => {
+        get()._syncFromEngine();
+      });
     });
-  });
 
-  return {
+    return {
     // === Engine Instance ===
     _engine: engine,
 
@@ -165,6 +178,7 @@ export const useGameStore = create<GameStore>((set, get) => {
     },
     timerStarted: false,
     timerElapsed: false,
+    penaltySelection: null,
     penaltyCalibration: {
       penaltyText: '',
       practiceAttempts: 0,
@@ -306,6 +320,25 @@ export const useGameStore = create<GameStore>((set, get) => {
       get()._syncFromEngine();
     },
 
+    // === Penalty Selection (Delegates to Engine) ===
+    initializePenaltySelection: () => {
+      const { _engine } = get();
+      _engine.initializePenaltySelection();
+      get()._syncFromEngine();
+    },
+
+    eliminatePenalty: (penaltyId: string) => {
+      const { _engine } = get();
+      _engine.eliminatePenalty(penaltyId);
+      get()._syncFromEngine();
+    },
+
+    choosePenalty: (penaltyId: string) => {
+      const { _engine } = get();
+      _engine.choosePenalty(penaltyId);
+      get()._syncFromEngine();
+    },
+
     // === Penalty Calibration (Delegates to Engine) ===
     incrementCalibration: () => {
       const { _engine } = get();
@@ -336,6 +369,12 @@ export const useGameStore = create<GameStore>((set, get) => {
     cycleContent: (contentType: ContentType, direction: CycleDirection) => {
       const { _engine } = get();
       _engine.cycleContent(contentType, direction);
+      get()._syncFromEngine();
+    },
+
+    selectContentById: (contentType: 'packet' | 'background', id: string) => {
+      const { _engine } = get();
+      _engine.selectContentById(contentType, id);
       get()._syncFromEngine();
     },
 
@@ -404,9 +443,17 @@ export const useGameStore = create<GameStore>((set, get) => {
         const investigatorSaidRobot = get().determination === 'robot';
 
         if (actualIsRobot === investigatorSaidRobot) {
+          // Investigator was correct
           performanceReview = 'correct';
         } else {
-          performanceReview = 'incorrect';
+          // Investigator was incorrect
+          // If the actual suspect was a violent robot, investigator is dead (N/A)
+          // If the actual suspect was a patient robot or human, investigator is just incorrect
+          if (selectedRole.roleType === 'violent-robot') {
+            performanceReview = 'na';
+          } else {
+            performanceReview = 'incorrect';
+          }
         }
       }
 
@@ -462,6 +509,7 @@ export const useGameStore = create<GameStore>((set, get) => {
         shuffledQuestions: engineState.shuffledQuestions,
         contentIndices: engineState.contentIndices,
         permutationSizes: engineState.permutationSizes,
+        penaltySelection: engineState.penaltySelection,
         penaltyCalibration: engineState.penaltyCalibration,
         timerStarted: engineState.timerStarted,
         timerElapsed: engineState.timerElapsed,
@@ -471,4 +519,13 @@ export const useGameStore = create<GameStore>((set, get) => {
       });
     },
   };
-});
+  });
+}
+
+// Create two independent store instances - one for each role
+export const useInvestigatorStore = createGameStoreInstance();
+export const useSuspectStore = createGameStoreInstance();
+
+// Deprecated: This will be replaced by context-aware useGameStore from GameStoreContext
+// For now, it points to investigator store for backwards compatibility during transition
+export const useGameStore = useInvestigatorStore;

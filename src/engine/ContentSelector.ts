@@ -281,4 +281,22 @@ export class ContentSelector {
       inducerSolution: catalyzerCard?.inducerSolution,
     };
   }
+
+  /**
+   * Find the permutation index for a packet by its ID
+   * Returns -1 if not found
+   */
+  getPacketIndexById(id: string): number {
+    const perms = this.generatePermutations();
+    return perms.packets.findIndex(packet => packet.id === id);
+  }
+
+  /**
+   * Find the permutation index for a background by its ID
+   * Returns -1 if not found
+   */
+  getBackgroundIndexById(id: string): number {
+    const perms = this.generatePermutations();
+    return perms.backgrounds.findIndex(bg => bg.id === id);
+  }
 }

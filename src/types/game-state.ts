@@ -1,12 +1,13 @@
 /**
  * Game State Machine
- * 11 linear states following official Inhuman Conditions game flow
- * Official order: Seed → Mode → Penalty → Packet → Role Selection → Role Reveal → Inducer → Background → Ready → Interview → Conclusion
+ * 12 linear states following official Inhuman Conditions game flow
+ * Official order: Seed → Mode → Penalty Selection → Penalty Calibration → Packet → Role Selection → Role Reveal → Inducer → Background → Ready → Interview → Conclusion
  */
 
 export type GameState =
   | 'seed-entry'
   | 'mode-selection'
+  | 'penalty-selection'
   | 'penalty-calibration'
   | 'packet-display'
   | 'role-selection'
@@ -20,6 +21,7 @@ export type GameState =
 export const GameState = {
   SeedEntry: 'seed-entry' as const,
   ModeSelection: 'mode-selection' as const,
+  PenaltySelection: 'penalty-selection' as const,
   PenaltyCalibration: 'penalty-calibration' as const,
   PacketDisplay: 'packet-display' as const,
   RoleSelection: 'role-selection' as const,

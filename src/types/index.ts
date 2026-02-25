@@ -10,6 +10,7 @@ export type { Packet, Question, PacketRole } from './packet';
 export { RoleType, RobotFault } from './role';
 export type { RoleAssignment } from './role';
 export type { Penalty } from './penalty';
+export type { PenaltySelectionState } from './penalty-selection';
 export type { Background } from './background';
 export type { PenaltyCalibrationState } from './theme';
 export { Direction } from './inducer';

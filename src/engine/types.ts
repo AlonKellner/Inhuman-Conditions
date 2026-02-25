@@ -10,6 +10,7 @@ import type {
   PlayerRole,
   Packet,
   Penalty,
+  PenaltySelectionState,
   Background,
   RoleAssignment,
   InducerPattern,
@@ -59,6 +60,7 @@ export interface GameEngineState {
   };
 
   // Game progress
+  penaltySelection: PenaltySelectionState | null;
   penaltyCalibration: {
     penaltyText: string;
     practiceAttempts: number;
@@ -107,6 +109,9 @@ export type CycleDirection = 'next' | 'previous';
 export type GameEngineEvent =
   | { type: 'STATE_CHANGED'; from: GameState; to: GameState }
   | { type: 'GAME_INITIALIZED'; seed: Seed }
+  | { type: 'PENALTY_SELECTION_INITIALIZED'; penalties: Penalty[] }
+  | { type: 'PENALTY_ELIMINATED'; penaltyId: string }
+  | { type: 'PENALTY_CHOSEN'; penaltyId: string }
   | { type: 'TIMER_STARTED' }
   | { type: 'TIMER_ELAPSED' }
   | { type: 'CALIBRATION_INCREMENTED'; attempts: number }
@@ -135,6 +140,9 @@ export interface IGameEngine {
   canAdvanceState(): boolean;
 
   // Game actions
+  initializePenaltySelection(): void;
+  eliminatePenalty(penaltyId: string): void;
+  choosePenalty(penaltyId: string): void;
   startTimer(): void;
   incrementCalibration(): void;
   makeDetermination(determination: 'human' | 'robot'): void;

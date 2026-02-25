@@ -4,22 +4,44 @@
  * Overlays interactive widgets on the official form image
  */
 
-import { type FC, useMemo } from 'react';
-import { useGameStore } from '../../store/gameStore';
+import { type FC, useMemo, useState, useEffect, useRef } from 'react';
+import html2canvas from 'html2canvas';
+import { useGameStore } from '../../store/GameStoreContext';
 import { FormCheckbox } from './FormCheckbox';
 import { FormLetterBox } from './FormLetterBox';
 import { FormTextField } from './FormTextField';
 import { FormTextArea } from './FormTextArea';
 import { FormIconSelector } from './FormIconSelector';
 import { FormContentSelector } from './FormContentSelector';
+import { FormSignature } from './FormSignature';
 import { parseFormLabels, groupElementsBySection } from '../../utils/parseFormLabels';
 import formLabelsData from '../../data/form_labels.json';
+import { backgrounds } from '../../data/backgrounds';
+import { packets } from '../../data/packets';
+import type { Background } from '../../types/background';
 import styles from './InvestigatorFormInterface.module.css';
 
 export const InvestigatorFormInterface: FC = () => {
+  // State for captured form image
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const formContainerRef = useRef<HTMLDivElement>(null);
+
   // Parse form labels once
   const formElements = useMemo(() => parseFormLabels(formLabelsData), []);
   const sections = useMemo(() => groupElementsBySection(formElements), [formElements]);
+
+  // Original image dimensions: 1157x401
+  // Target display size: 900x300
+  const SCALE_X = 900 / 1157;
+  const SCALE_Y = 300 / 401;
+
+  // Helper to scale positions
+  const scalePosition = (pos: { x: number; y: number; width: number; height: number }) => ({
+    x: pos.x * SCALE_X,
+    y: pos.y * SCALE_Y,
+    width: pos.width * SCALE_X,
+    height: pos.height * SCALE_Y,
+  });
 
   // Get game state and form data
   const {
@@ -36,6 +58,7 @@ export const InvestigatorFormInterface: FC = () => {
     updateFormSignature,
     submitInvestigatorForm,
     cycleContent,
+    selectContentById,
   } = useGameStore();
 
   // Check if form can be submitted
@@ -44,34 +67,131 @@ export const InvestigatorFormInterface: FC = () => {
     determination !== null &&
     investigatorForm.performanceReview === null; // Only allow submit if not already submitted
 
-  // Handle name change - split into first/middle/last
-  const handleNameChange = (field: 'first' | 'middle' | 'last', value: string) => {
+  // Handle single letter change in name
+  const handleLetterChange = (nameField: 'first' | 'middle' | 'last', index: number, value: string) => {
+    const currentName = investigatorForm.suspectName[nameField] || '';
+    const nameArray = currentName.split('');
+
+    // Pad array if needed
+    while (nameArray.length <= index) {
+      nameArray.push('');
+    }
+
+    // Update the letter at the index
+    nameArray[index] = value;
+
+    // Trim trailing empty strings
+    while (nameArray.length > 0 && nameArray[nameArray.length - 1] === '') {
+      nameArray.pop();
+    }
+
+    const newName = nameArray.join('');
+
     updateFormSuspectName({
       ...investigatorForm.suspectName,
-      [field]: value,
+      [nameField]: newName,
     });
   };
 
-  // Find COG and BRAIN positions for icon selector
-  const cogElement = sections.verify.find(
-    (el) => el.type === 'icon-selector' && el.metadata?.iconValue === 'robot'
-  );
-  const brainElement = sections.verify.find(
-    (el) => el.type === 'icon-selector' && el.metadata?.iconValue === 'human'
-  );
+  // Handle advancing to next name field (triggered by space or reaching end)
+  const handleAdvanceToField = (targetField: 'first' | 'middle' | 'last') => {
+    // Find the first letter box of the target field and focus it
+    const firstBox = document.querySelector<HTMLInputElement>(
+      `input[data-name-field="${targetField}"][data-index="0"]`
+    );
+    if (firstBox) {
+      firstBox.focus();
+    }
+  };
+
+  // Find COG and BRAIN positions for icon selector - use array indices
+  const iconSelectors = sections.verify.filter((el) => el.type === 'icon-selector');
+  const cogElementRaw = iconSelectors[0]; // First icon selector is COG
+  const brainElementRaw = iconSelectors[1]; // Second icon selector is BRAIN
+
+  // Adjust bounding boxes: Make BRAIN square (width = height), then make COG same size but centered
+  // Increase size by 10% for better circle visibility
+  const brainElement = brainElementRaw
+    ? {
+        ...brainElementRaw,
+        position: {
+          ...brainElementRaw.position,
+          x: brainElementRaw.position.x + 3 - (brainElementRaw.position.height * 0.1) / 2, // Shift 3px right and center 10% increase
+          y: brainElementRaw.position.y - (brainElementRaw.position.height * 0.1) / 2, // Center 10% increase
+          width: brainElementRaw.position.height * 1.1, // Make square using height, 10% larger
+          height: brainElementRaw.position.height * 1.1,
+        },
+      }
+    : brainElementRaw;
+
+  const cogElement = cogElementRaw && brainElementRaw
+    ? {
+        ...cogElementRaw,
+        position: {
+          // Center the new square on COG's original center, 10% larger
+          x: cogElementRaw.position.x + cogElementRaw.position.width / 2 - (brainElementRaw.position.height * 1.1) / 2,
+          y: cogElementRaw.position.y + cogElementRaw.position.height / 2 - (brainElementRaw.position.height * 1.1) / 2,
+          width: brainElementRaw.position.height * 1.1, // Same size as BRAIN, 10% larger
+          height: brainElementRaw.position.height * 1.1,
+        },
+      }
+    : cogElementRaw;
 
   // Success/failure message after submission
   const showResultMessage = investigatorForm.performanceReview !== null;
   const isCorrect = investigatorForm.performanceReview === 'correct';
+  const isDead = investigatorForm.performanceReview === 'na';
+
+  // Capture form as image when submitted
+  const captureForm = async () => {
+    if (formContainerRef.current) {
+      try {
+        const canvas = await html2canvas(formContainerRef.current, {
+          backgroundColor: '#ffffff',
+          scale: 2, // Higher quality
+          logging: false,
+          useCORS: true,
+          allowTaint: true,
+          foreignObjectRendering: false, // Better transform support
+        });
+        const imageData = canvas.toDataURL('image/png');
+        setCapturedImage(imageData);
+      } catch (error) {
+        console.error('Failed to capture form:', error);
+      }
+    }
+  };
+
+  // Capture after a delay to ensure all transforms and positions are applied
+  useEffect(() => {
+    if (showResultMessage && !capturedImage) {
+      // Wait for performance review checkboxes to render and settle
+      setTimeout(() => {
+        captureForm();
+      }, 200);
+    }
+  }, [showResultMessage, capturedImage]);
 
   return (
-    <div className={styles.formContainer}>
-      {/* Background form image */}
-      <img
-        src="/assets/cards/forms/investigator_forms_p1_c01_investigator-form.png"
-        alt="VK-82(e) Investigator Interview Recording Form"
-        className={styles.formImage}
-      />
+    <div>
+      {capturedImage ? (
+        // Show captured static image after submission
+        <div className={styles.capturedFormContainer}>
+          <img
+            src={capturedImage}
+            alt="Completed VK-82(e) Form"
+            className={styles.capturedFormImage}
+          />
+        </div>
+      ) : (
+        // Show interactive form before submission
+        <div ref={formContainerRef} className={styles.formContainer}>
+        {/* Background form image */}
+        <img
+          src="/assets/cards/forms/investigator_forms_p1_c01_investigator-form.png"
+          alt="VK-82(e) Investigator Interview Recording Form"
+          className={styles.formImage}
+        />
 
       {/* PENALTY Section - 3 checkboxes for calibration attempts */}
       {sections.penalty.map((el) => {
@@ -81,7 +201,7 @@ export const InvestigatorFormInterface: FC = () => {
           return (
             <FormCheckbox
               key={el.id}
-              position={el.position}
+              position={scalePosition(el.position)}
               checked={checked}
               onChange={(c) => updateFormPenaltyAttempt(attemptNum, c)}
               ariaLabel={`Penalty calibration attempt ${attemptNum}`}
@@ -94,26 +214,14 @@ export const InvestigatorFormInterface: FC = () => {
       {/* INDUCE Section - Module selector */}
       {sections.induce.find((el) => el.description.includes('Selected Module')) && (
         <FormContentSelector
-          position={sections.induce.find((el) => el.description.includes('Selected Module'))!.position}
-          label="Module"
-          options={[
-            { id: '01_small_talk', name: 'Small Talk' },
-            { id: '02_creative_problem_solving', name: 'Creative Problem Solving' },
-            { id: '03_imagination', name: 'Imagination' },
-            { id: '04_observation', name: 'Observation' },
-            { id: '05_morality', name: 'Morality' },
-            { id: '06_philosophy', name: 'Philosophy' },
-            { id: '07_music', name: 'Music' },
-            { id: '08_the_body', name: 'The Body' },
-            { id: '09_intimacy', name: 'Intimacy' },
-            { id: '10_empathy', name: 'Empathy' },
-            { id: '11_language', name: 'Language' },
-          ]}
-          selectedId={selectedPacket?.id || null}
-          onSelect={(id) => {
-            // TODO: Implement direct packet selection by ID
-            console.log('Select packet:', id);
+          position={{
+            ...scalePosition(sections.induce.find((el) => el.description.includes('Selected Module'))!.position),
+            y: scalePosition(sections.induce.find((el) => el.description.includes('Selected Module'))!.position).y + 1
           }}
+          label="Module"
+          options={packets.map((packet) => ({ id: packet.id, name: packet.name, icon: packet.icon }))}
+          selectedId={selectedPacket?.id || null}
+          onSelect={(id) => selectContentById('packet', id)}
           onPrevious={() => cycleContent('packet', 'previous')}
           onNext={() => cycleContent('packet', 'next')}
         />
@@ -128,7 +236,7 @@ export const InvestigatorFormInterface: FC = () => {
           return (
             <FormCheckbox
               key={el.id}
-              position={el.position}
+              position={scalePosition(el.position)}
               checked={checked}
               onChange={(c) => {
                 if (c) {
@@ -142,74 +250,45 @@ export const InvestigatorFormInterface: FC = () => {
           );
         })}
 
-      {/* SUSPECT Section - Background text */}
+      {/* SUSPECT Section - Background selector */}
       {sections.suspect.find((el) => el.description.includes('Background')) && (
-        <FormTextField
-          position={sections.suspect.find((el) => el.description.includes('Background'))!.position}
-          value={selectedBackground?.name || ''}
-          onChange={() => {}} // Read-only, managed by game state
-          readOnly={true}
-          ariaLabel="Suspect background"
+        <FormContentSelector
+          position={scalePosition(sections.suspect.find((el) => el.description.includes('Background'))!.position)}
+          label="Background"
+          options={backgrounds.map((bg: Background) => ({ id: bg.id, name: bg.name }))}
+          selectedId={selectedBackground?.id || null}
+          onSelect={(id) => selectContentById('background', id)}
+          onPrevious={() => cycleContent('background', 'previous')}
+          onNext={() => cycleContent('background', 'next')}
         />
       )}
 
       {/* SUSPECT Section - Name letter boxes */}
       {sections.suspect
         .filter((el) => el.type === 'letter-box')
-        .map((el) => {
+        .map((el, idx) => {
           const nameField = el.metadata?.nameField as 'first' | 'middle' | 'last';
           const letterIndex = el.metadata?.letterIndex as number;
           const name = investigatorForm.suspectName[nameField] || '';
           const letter = name.charAt(letterIndex);
 
+          // Auto-focus the first letter box of the first name field
+          const isFirstBox = idx === 0;
+
           return (
             <FormLetterBox
               key={el.id}
-              position={el.position}
+              position={scalePosition(el.position)}
               letter={letter}
               index={letterIndex}
-              readOnly={true}
+              nameField={nameField}
+              readOnly={showResultMessage}
+              onChange={handleLetterChange}
+              onAdvance={handleAdvanceToField}
+              autoFocus={isFirstBox}
             />
           );
         })}
-
-      {/* SUSPECT Section - Name input fields (for typing names) */}
-      <div className={styles.nameInputs}>
-        <div className={styles.inputGroup}>
-          <label>First Name:</label>
-          <input
-            type="text"
-            value={investigatorForm.suspectName.first}
-            onChange={(e) => handleNameChange('first', e.target.value)}
-            maxLength={15}
-            placeholder="Type first name..."
-            className={styles.nameInput}
-          />
-        </div>
-        <div className={styles.inputGroup}>
-          <label>MI:</label>
-          <input
-            type="text"
-            value={investigatorForm.suspectName.middle}
-            onChange={(e) => handleNameChange('middle', e.target.value)}
-            maxLength={1}
-            placeholder="M"
-            className={styles.nameInput}
-            style={{ width: '40px' }}
-          />
-        </div>
-        <div className={styles.inputGroup}>
-          <label>Last Name:</label>
-          <input
-            type="text"
-            value={investigatorForm.suspectName.last}
-            onChange={(e) => handleNameChange('last', e.target.value)}
-            maxLength={15}
-            placeholder="Type last name..."
-            className={styles.nameInput}
-          />
-        </div>
-      </div>
 
       {/* NOTES Section - Textarea */}
       {sections.notes.map((el) => {
@@ -217,10 +296,11 @@ export const InvestigatorFormInterface: FC = () => {
           return (
             <FormTextArea
               key={el.id}
-              position={el.position}
+              position={scalePosition(el.position)}
               value={investigatorForm.investigatorNotes}
               onChange={updateFormNotes}
               placeholder="Investigator observations during interview..."
+              readOnly={showResultMessage}
               ariaLabel="Investigator notes"
             />
           );
@@ -231,8 +311,8 @@ export const InvestigatorFormInterface: FC = () => {
       {/* VERIFY Section - COG/BRAIN Icon Selector */}
       {cogElement && brainElement && (
         <FormIconSelector
-          cogPosition={cogElement.position}
-          brainPosition={brainElement.position}
+          cogPosition={scalePosition(cogElement.position)}
+          brainPosition={scalePosition(brainElement.position)}
           value={determination}
           onChange={setDetermination}
           disabled={showResultMessage}
@@ -241,12 +321,23 @@ export const InvestigatorFormInterface: FC = () => {
 
       {/* VERIFY Section - Signature */}
       {sections.verify.find((el) => el.description.includes('signature section')) && (
-        <FormTextField
-          position={sections.verify.find((el) => el.description.includes('signature section'))!.position}
+        <FormSignature
+          position={scalePosition(sections.verify.find((el) => el.description.includes('signature section'))!.position)}
           value={investigatorForm.signature}
           onChange={updateFormSignature}
-          placeholder="Investigator signature..."
+          readOnly={showResultMessage}
           ariaLabel="Investigator signature"
+        />
+      )}
+
+      {/* VERIFY Section - Date */}
+      {sections.verify.find((el) => el.description.toLowerCase().includes('date')) && (
+        <FormTextField
+          position={scalePosition(sections.verify.find((el) => el.description.toLowerCase().includes('date'))!.position)}
+          value={new Date().toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })}
+          onChange={() => {}} // Read-only, shows current date
+          readOnly={true}
+          ariaLabel="Interview date"
         />
       )}
 
@@ -259,7 +350,7 @@ export const InvestigatorFormInterface: FC = () => {
             return (
               <FormCheckbox
                 key={el.id}
-                position={el.position}
+                position={scalePosition(el.position)}
                 checked={checked}
                 onChange={() => {}} // Read-only
                 disabled={true}
@@ -270,7 +361,10 @@ export const InvestigatorFormInterface: FC = () => {
           return null;
         })}
 
-      {/* Submit Button */}
+      </div>
+      )}
+
+      {/* Submit Button - Below Form */}
       {!showResultMessage && (
         <button
           onClick={submitInvestigatorForm}
@@ -278,25 +372,39 @@ export const InvestigatorFormInterface: FC = () => {
           className={styles.submitButton}
           aria-label="Submit VK-82(e) Form"
         >
-          Submit VK-82(e) Form
+          SUBMIT VK-82(e) FORM
         </button>
       )}
 
-      {/* Result Message Popup */}
+      {/* Print Button - Directly Below Form */}
       {showResultMessage && (
-        <div className={styles.resultOverlay}>
-          <div className={`${styles.resultMessage} ${isCorrect ? styles.success : styles.failure}`}>
-            <h2>{isCorrect ? '✓ Correct!' : '✗ Incorrect'}</h2>
+        <button
+          onClick={() => window.print()}
+          className={styles.printButton}
+          aria-label="Print VK-82(e) Form"
+        >
+          PRINT FORM
+        </button>
+      )}
+
+      {/* Result Message - Below Print Button */}
+      {showResultMessage && (
+        <div className={`${styles.resultMessage} ${isCorrect ? styles.success : isDead ? styles.dead : styles.failure}`}>
+          <div className={styles.resultHeader}>
+            {isCorrect ? 'PERFORMANCE REVIEW: CORRECT' : isDead ? 'PERFORMANCE REVIEW: N/A (TERMINATED)' : 'PERFORMANCE REVIEW: INCORRECT'}
+          </div>
+          <div className={styles.resultBody}>
             <p>
               {isCorrect
-                ? 'You correctly identified the suspect.'
-                : `The suspect was actually a ${selectedRole?.roleType === 'human' ? 'Human' : 'Robot'}.`}
+                ? 'Subject correctly identified. Investigator performance meets standard.'
+                : isDead
+                ? 'Violent robot incident resulted in investigator termination. Determination recorded as N/A.'
+                : `Subject was ${selectedRole?.roleType === 'human' ? 'HUMAN' : selectedRole?.roleType === 'violent-robot' ? 'VIOLENT ROBOT' : 'PATIENT ROBOT'}. Investigator determination was incorrect.`}
             </p>
-            <p className={styles.resultDetails}>
-              <strong>Your determination:</strong> {determination === 'human' ? 'Human (BRAIN)' : 'Robot (COG)'}
-              <br />
-              <strong>Actual:</strong> {selectedRole?.roleType === 'human' ? 'Human' : 'Robot'}
-            </p>
+            <div className={styles.resultDetails}>
+              <div>INVESTIGATOR DETERMINATION: {determination === 'human' ? 'HUMAN (BRAIN)' : 'ROBOT (COG)'}</div>
+              <div>ACTUAL CLASSIFICATION: {selectedRole?.roleType === 'human' ? 'HUMAN' : selectedRole?.roleType === 'violent-robot' ? 'VIOLENT ROBOT' : 'PATIENT ROBOT'}</div>
+            </div>
           </div>
         </div>
       )}

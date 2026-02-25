@@ -10,14 +10,17 @@
   background-color: rgba(255, 255, 255, 0.3);
   font-family: 'Courier New', monospace;
   font-size: 12px;
-  padding: 2px 4px;
+  font-weight: bold;
+  padding: 0 4px;
   box-sizing: border-box;
   color: #000;
+  line-height: 100%;
+  vertical-align: top;
 }
 
 .textField:focus {
-  outline: 2px solid #4CAF50;
-  background-color: rgba(255, 255, 255, 0.6);
+  outline: 2px solid #000;
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
 .textField:read-only {
@@ -28,4 +31,17 @@
 .textField::placeholder {
   color: #999;
   opacity: 0.6;
+}
+
+.textFieldStatic {
+  width: 100%;
+  height: 100%;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 0 4px;
+  box-sizing: border-box;
+  color: #000;
+  display: flex;
+  align-items: center;
 }

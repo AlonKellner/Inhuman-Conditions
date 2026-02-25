@@ -272,3 +272,42 @@ pre code {
     page-break-after: avoid;
   }
 }
+
+/* === Penalty Card Images === */
+/* Match investigator form height (300px) */
+.penalty-card-image {
+  width: auto;
+  height: 300px;
+  object-fit: contain;
+  display: block;
+}
+
+.penalty-card-fallback {
+  width: auto;
+  height: 300px;
+  padding: var(--space-3);
+  background-color: var(--color-bg-secondary);
+  border: 2px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+.penalty-card-fallback .penalty-text {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-3);
+  text-align: center;
+}
+
+.penalty-card-fallback .penalty-examples {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+}
+
+.penalty-card-fallback .penalty-examples ul {
+  margin-top: var(--space-2);
+  padding-left: var(--space-4);
+}

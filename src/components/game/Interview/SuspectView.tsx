@@ -1,5 +1,5 @@
 import { type FC } from 'react';
-import { useGameStore } from '../../../store/gameStore';
+import { useGameStore } from '../../../store/GameStoreContext';
 import { Button } from '../../ui/Button';
 import { Card } from '../../ui/Card';
 import { CountdownTimer } from '../../ui/CountdownTimer';

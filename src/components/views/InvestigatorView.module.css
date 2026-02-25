@@ -1,0 +1,240 @@
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background-color: #2c3e50;
+  color: white;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid #34495e;
+}
+
+.title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.stateIndicator {
+  font-size: 14px;
+  color: #ecf0f1;
+}
+
+.stateIndicator strong {
+  color: #3498db;
+  font-weight: bold;
+}
+
+.formSubtitle {
+  color: #666;
+  font-size: 14px;
+  margin: 4px 0 0 0;
+}
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  align-items: center;
+}
+
+/* Content section below form */
+.contentSection {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Mobile: Adjust padding */
+@media (max-width: 1024px) {
+  .mainContent {
+    padding: 12px;
+  }
+
+  .contentSection {
+    max-width: 100%;
+  }
+}
+
+.waiting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  text-align: center;
+  color: #7f8c8d;
+}
+
+.waitingIcon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.waiting h2 {
+  margin: 0 0 12px 0;
+  color: #2c3e50;
+}
+
+.waiting p {
+  margin: 8px 0;
+  font-size: 16px;
+}
+
+.hint {
+  font-size: 14px !important;
+  font-style: italic;
+  color: #95a5a6 !important;
+  margin-top: 16px !important;
+}
+
+/* Info card styling */
+.infoCard {
+  background-color: #fff;
+  border: 2px solid #ecf0f1;
+  border-radius: 8px;
+  padding: 32px;
+  margin: 0 auto;
+  max-width: 700px;
+}
+
+.infoHeading {
+  margin: 0 0 20px 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: #2c3e50;
+  text-align: center;
+  border-bottom: 2px solid #ecf0f1;
+  padding-bottom: 12px;
+}
+
+.infoText {
+  margin: 16px 0;
+  padding: 16px;
+  font-size: 16px;
+  text-align: center;
+  background-color: rgba(44, 62, 80, 0.05);
+  border: 1px solid #ecf0f1;
+  border-radius: 6px;
+  color: #2c3e50;
+  line-height: 1.6;
+}
+
+.hintText {
+  margin: 12px 0;
+  padding: 12px;
+  font-size: 14px;
+  text-align: center;
+  color: #7f8c8d;
+  font-style: italic;
+  border-left: 3px solid #3498db;
+  background-color: #f8f9fa;
+}
+
+/* Schematic display */
+.schematicDisplay {
+  margin: 24px 0;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border: 2px solid #ecf0f1;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.schematicHeading {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #2c3e50;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.schematicImage {
+  display: block;
+  max-width: 300px;
+  margin: 0 auto;
+  border: 2px solid #34495e;
+  border-radius: 6px;
+}
+
+/* Background display */
+.backgroundDisplay {
+  margin: 24px 0;
+  padding: 24px;
+  background-color: #f8f9fa;
+  border: 2px solid #ecf0f1;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.backgroundName {
+  margin: 0 0 12px 0;
+  font-size: 22px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.backgroundDescription {
+  margin: 0;
+  font-size: 16px;
+  color: #7f8c8d;
+  line-height: 1.6;
+}
+
+/* Mobile: Smaller header */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .stateIndicator {
+    font-size: 12px;
+  }
+
+  .mainContent {
+    padding: 12px;
+  }
+
+  .infoCard {
+    padding: 20px;
+  }
+
+  .infoHeading {
+    font-size: 20px;
+  }
+
+  .schematicImage {
+    max-width: 100%;
+  }
+
+  .backgroundName {
+    font-size: 18px;
+  }
+}

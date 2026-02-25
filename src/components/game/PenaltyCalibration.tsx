@@ -1,10 +1,9 @@
-import { useEffect, useRef } from 'react';
-import { useGameStore } from '../../store/gameStore';
-import { CyclingButtons } from './CyclingButtons';
+import { useGameStore } from '../../store/GameStoreContext';
+import { Button } from '../ui/Button';
+import { Card } from '../ui/Card';
 import type { Penalty } from '../../types/penalty';
 import PenaltyCardImage from '../cards/PenaltyCardImage';
-import '../../styles/cards.css';
-import styles from './PenaltyCalibration.module.css';
+import styles from './PenaltySelection.module.css';
 
 export interface PenaltyCalibrationProps {
   penalty: Penalty;
@@ -30,165 +29,85 @@ export function PenaltyCalibration({
   onComplete,
   currentAttempt: _currentAttempt = 0 // Deprecated: now using store's penaltyCalibration.practiceAttempts
 }: PenaltyCalibrationProps) {
-  // Get cycling state and methods from store
+  // Get calibration state from store
   const {
-    contentIndices,
-    permutationSizes,
     penaltyCalibration,
-    cycleContent,
     incrementCalibration,
   } = useGameStore();
 
   // Use store's practice attempts (synced with engine)
   const attempts = penaltyCalibration.practiceAttempts;
-  const maxAttempts = penaltyCalibration.maxAttempts;
   const isComplete = penaltyCalibration.isComplete;
 
-  // Track previous penalty to detect changes
-  const prevPenaltyRef = useRef(penalty);
-
-  // Reset local UI state when penalty changes (engine already handles this)
-  useEffect(() => {
-    if (prevPenaltyRef.current !== penalty) {
-      prevPenaltyRef.current = penalty;
-      // Attempts reset is handled by engine when cycling penalties
-    }
-  }, [penalty]);
-
-  const handlePractice = () => {
-    incrementCalibration();
-  };
-
-  const handleContinue = () => {
+  const handleButtonClick = () => {
     if (isComplete) {
       onComplete();
+    } else {
+      incrementCalibration();
     }
   };
 
-  const handleCyclePrevious = () => {
-    cycleContent('penalty', 'previous');
-  };
-
-  const handleCycleNext = () => {
-    cycleContent('penalty', 'next');
+  // Get button text based on current attempts
+  const getButtonText = () => {
+    switch (attempts) {
+      case 0:
+        return 'First Practice Done';
+      case 1:
+        return 'Second Practice Done';
+      case 2:
+        return 'Third Practice Done';
+      default:
+        return 'Continue';
+    }
   };
 
   // Spectator view - read-only
   if (role === 'spectator') {
     return (
-      <div className={styles.container}>
-        <div className={styles.card}>
-          <h2 className={styles.heading}>Penalty Calibration</h2>
-
-          <CyclingButtons
-            label="Penalty"
-            currentIndex={contentIndices.penaltyIndex}
-            totalItems={permutationSizes.penalties}
-            onPrevious={handleCyclePrevious}
-            onNext={handleCycleNext}
-          />
-
-          <div className={styles.penaltyBox}>
-            <PenaltyCardImage penalty={penalty} />
-          </div>
-          <p className={styles.waitingMessage}>
-            Calibration in progress...
-          </p>
+      <Card title="Penalty Calibration">
+        <div className={styles.finalPenalty}>
+          <PenaltyCardImage penalty={penalty} />
         </div>
-      </div>
+        <p className={styles.instructions}>
+          Calibration in progress...
+        </p>
+      </Card>
     );
   }
 
-  // Investigator view - waiting for Suspect to complete
+  // Investigator view - confirmation prompt
   if (role === 'investigator') {
     return (
-      <div className={styles.container}>
-        <div className={styles.card}>
-          <h2 className={styles.heading}>Penalty Calibration</h2>
+      <Card title="Penalty Calibration">
+        <p className={styles.instructions}>
+          Has the Suspect finished practicing the penalty 3 times?
+        </p>
 
-          <div className={styles.instructions}>
-            <p className={styles.instructionText}>
-              <strong>Read this aloud to the Suspect:</strong>
-            </p>
-          </div>
-
-          <CyclingButtons
-            label="Penalty"
-            currentIndex={contentIndices.penaltyIndex}
-            totalItems={permutationSizes.penalties}
-            onPrevious={handleCyclePrevious}
-            onNext={handleCycleNext}
-          />
-
-          <div className={styles.penaltyBox}>
-            <PenaltyCardImage penalty={penalty} />
-          </div>
-
-          <p className={styles.waitingMessage}>
-            Waiting for Suspect to complete 3 practice attempts...
-          </p>
+        <div className={styles.finalPenalty}>
+          <PenaltyCardImage penalty={penalty} />
         </div>
-      </div>
+
+        <Button onClick={() => onComplete()} className={styles.continueButton}>
+          Continue
+        </Button>
+      </Card>
     );
   }
 
   // Suspect view - interactive practice
   return (
-    <div className={styles.container}>
-      <div className={styles.card}>
-        <h2 className={styles.heading}>Penalty Calibration</h2>
+    <Card title="Penalty Calibration">
+      <p className={styles.instructions}>
+        Practice performing this penalty 3 times.
+      </p>
 
-        <div className={styles.instructions}>
-          <p className={styles.instructionText}>
-            The Investigator will read your penalty aloud.
-            Practice performing it <strong>3 times</strong> to calibrate.
-          </p>
-        </div>
-
-        <CyclingButtons
-          label="Penalty"
-          currentIndex={contentIndices.penaltyIndex}
-          totalItems={permutationSizes.penalties}
-          onPrevious={handleCyclePrevious}
-          onNext={handleCycleNext}
-        />
-
-        <div className={styles.penaltyBox}>
-          <PenaltyCardImage penalty={penalty} />
-        </div>
-
-        <div className={styles.attemptCounter}>
-          <p className={styles.counterText} aria-live="polite" aria-atomic="true">
-            Practice Attempt {attempts} of {maxAttempts}
-          </p>
-        </div>
-
-        <div className={styles.buttonGroup}>
-          <button
-            className={styles.practiceButton}
-            onClick={handlePractice}
-            disabled={isComplete}
-            aria-label="I Practiced"
-          >
-            I Practiced
-          </button>
-
-          <button
-            className={styles.continueButton}
-            onClick={handleContinue}
-            disabled={!isComplete}
-            aria-label="Continue"
-          >
-            Continue
-          </button>
-        </div>
-
-        {isComplete && (
-          <p className={styles.completeMessage}>
-            ✓ Practice complete. Click "Continue" when ready.
-          </p>
-        )}
+      <div className={styles.finalPenalty}>
+        <PenaltyCardImage penalty={penalty} />
       </div>
-    </div>
+
+      <Button onClick={handleButtonClick} className={styles.continueButton}>
+        {getButtonText()}
+      </Button>
+    </Card>
   );
 }

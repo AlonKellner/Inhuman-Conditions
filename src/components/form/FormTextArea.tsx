@@ -35,14 +35,22 @@ export const FormTextArea: FC<FormTextAreaProps> = ({
         height: `${position.height}px`,
       }}
     >
-      <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        readOnly={readOnly}
-        aria-label={ariaLabel}
-        className={styles.textArea}
-      />
+      {readOnly ? (
+        // Render as simple div for html2canvas (no textarea element)
+        <div className={styles.textAreaStatic} aria-label={ariaLabel}>
+          {value}
+        </div>
+      ) : (
+        // Render as textarea for interactive form
+        <textarea
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          readOnly={readOnly}
+          aria-label={ariaLabel}
+          className={styles.textArea}
+        />
+      )}
     </div>
   );
 };

@@ -84,6 +84,16 @@
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.moduleIcon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  margin-left: auto;
 }
 
 .difficulty {

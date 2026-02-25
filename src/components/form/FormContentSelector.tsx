@@ -1,17 +1,17 @@
 /**
  * FormContentSelector Component
- * Combines cycling buttons (< >) with a dropdown for selecting content
+ * Minimal selector with edge-positioned arrow buttons and clickable text for dropdown
  * Used for Module and Background selection in VK-82(e) form
  */
 
-import type { FC } from 'react';
+import { type FC, useState, useRef, useEffect } from 'react';
 import type { FormWidgetPosition } from '../../types/investigator-form';
 import styles from './FormContentSelector.module.css';
 
 export interface FormContentSelectorProps {
   position: FormWidgetPosition;
   label: string;
-  options: Array<{ id: string; name: string }>;
+  options: Array<{ id: string; name: string; icon?: string }>;
   selectedId: string | null;
   onSelect: (id: string) => void;
   onPrevious: () => void;
@@ -29,12 +29,71 @@ export const FormContentSelector: FC<FormContentSelectorProps> = ({
   onNext,
   disabled = false,
 }) => {
-  const selectedIndex = options.findIndex((opt) => opt.id === selectedId);
-  const displayIndex = selectedIndex >= 0 ? selectedIndex + 1 : 0;
-  const selectedName = options.find((opt) => opt.id === selectedId)?.name || '';
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [fontSize, setFontSize] = useState(11);
+  const textRef = useRef<HTMLDivElement>(null);
+  const nameRef = useRef<HTMLSpanElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const selectedOption = options?.find((opt) => opt.id === selectedId);
+  const selectedName = selectedOption?.name || '';
+  const selectedIcon = selectedOption?.icon;
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!showDropdown) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node) &&
+        textRef.current &&
+        !textRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showDropdown]);
+
+  // Dynamically adjust font size to fit text between arrows
+  useEffect(() => {
+    if (!nameRef.current || !containerRef.current || !textRef.current) return;
+
+    const measureText = () => {
+      const nameElement = nameRef.current!;
+      const textElement = textRef.current!;
+      const containerElement = containerRef.current!;
+
+      // Get available width (container width minus arrow buttons and icon space)
+      const containerWidth = containerElement.offsetWidth;
+      const containerHeight = containerElement.offsetHeight;
+      const arrowWidth = 20; // Each arrow button is 20px
+      // Icon is 1em + 4px gap, so reserve space proportional to current font size
+      const iconSpace = selectedIcon ? (containerHeight + 4) : 0;
+      const availableWidth = containerWidth - (2 * arrowWidth) - iconSpace;
+
+      // Start with font size that fills the container vertically (line-height is 1)
+      let currentFontSize = containerHeight;
+      textElement.style.fontSize = `${currentFontSize}px`;
+
+      // Reduce font size until text (not including icon) fits horizontally
+      while (nameElement.scrollWidth > availableWidth && currentFontSize > 6) {
+        currentFontSize -= 0.5;
+        textElement.style.fontSize = `${currentFontSize}px`;
+      }
+
+      setFontSize(currentFontSize);
+    };
+
+    measureText();
+  }, [selectedName, selectedIcon, position.width, position.height]);
 
   return (
     <div
+      ref={containerRef}
       className={styles.selectorContainer}
       style={{
         position: 'absolute',
@@ -44,52 +103,66 @@ export const FormContentSelector: FC<FormContentSelectorProps> = ({
         height: `${position.height}px`,
       }}
     >
-      <div className={styles.controls}>
-        {/* Previous button */}
-        <button
-          type="button"
-          className={styles.cycleButton}
-          onClick={onPrevious}
-          disabled={disabled}
-          aria-label={`Previous ${label.toLowerCase()}`}
-        >
-          &lt;
-        </button>
+      {/* Previous button (left edge) */}
+      <button
+        type="button"
+        className={styles.arrowButton}
+        onClick={onPrevious}
+        disabled={disabled}
+        aria-label={`Previous ${label.toLowerCase()}`}
+      >
+        ←
+      </button>
 
-        {/* Dropdown for direct selection */}
-        <select
-          value={selectedId || ''}
-          onChange={(e) => onSelect(e.target.value)}
-          disabled={disabled}
-          className={styles.dropdown}
-          aria-label={`Select ${label.toLowerCase()}`}
-        >
+      {/* Selected text (clickable to show dropdown) */}
+      <div
+        ref={textRef}
+        className={styles.selectedText}
+        onClick={() => !disabled && setShowDropdown(!showDropdown)}
+        role="button"
+        tabIndex={disabled ? -1 : 0}
+        aria-label={`Selected ${label.toLowerCase()}: ${selectedName}`}
+        style={{ fontSize: `${fontSize}px` }}
+      >
+        <span ref={nameRef} className={styles.nameText}>{selectedName}</span>
+        {selectedIcon && (
+          <img src={selectedIcon} alt="" className={styles.iconImage} />
+        )}
+      </div>
+
+      {/* Custom dropdown (shown on text click) */}
+      {showDropdown && options && (
+        <div ref={dropdownRef} className={styles.dropdown}>
           {options.map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.name}
-            </option>
+            <div
+              key={option.id}
+              className={`${styles.dropdownOption} ${option.id === selectedId ? styles.selected : ''}`}
+              onClick={() => {
+                onSelect(option.id);
+                setShowDropdown(false);
+              }}
+              role="option"
+              aria-selected={option.id === selectedId}
+            >
+              <span className={styles.optionName}>{option.name}</span>
+              {option.icon && (
+                <img src={option.icon} alt="" className={styles.optionIcon} />
+              )}
+            </div>
           ))}
-        </select>
+        </div>
+      )}
 
-        {/* Next button */}
-        <button
-          type="button"
-          className={styles.cycleButton}
-          onClick={onNext}
-          disabled={disabled}
-          aria-label={`Next ${label.toLowerCase()}`}
-        >
-          &gt;
-        </button>
-      </div>
-
-      {/* Display selected name and position */}
-      <div className={styles.info}>
-        <span className={styles.selectedName}>{selectedName}</span>
-        <span className={styles.counter}>
-          {displayIndex > 0 ? `${displayIndex} / ${options.length}` : '—'}
-        </span>
-      </div>
+      {/* Next button (right edge) */}
+      <button
+        type="button"
+        className={styles.arrowButton}
+        onClick={onNext}
+        disabled={disabled}
+        aria-label={`Next ${label.toLowerCase()}`}
+      >
+        →
+      </button>
     </div>
   );
 };
