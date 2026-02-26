@@ -13,7 +13,7 @@
 
 .checkmark {
   position: absolute;
-  font-family: 'Courier New', monospace;
+  font-family: 'Gautami', 'Courier New', Courier, monospace;
   font-size: 14px;
   font-weight: bold;
   color: #000;
@@ -25,7 +25,7 @@
 
 .text {
   position: absolute;
-  font-family: 'Courier New', monospace;
+  font-family: 'Gautami', 'Courier New', Courier, monospace;
   font-size: 12px;
   font-weight: bold;
   color: #000;
@@ -38,7 +38,7 @@
 
 .letter {
   position: absolute;
-  font-family: 'Courier New', monospace;
+  font-family: 'Gautami', 'Courier New', Courier, monospace;
   font-size: 14px;
   font-weight: bold;
   color: #000;
@@ -50,7 +50,7 @@
 
 .notes {
   position: absolute;
-  font-family: 'Courier New', monospace;
+  font-family: 'Gautami', 'Courier New', Courier, monospace;
   font-size: 11px;
   font-weight: bold;
   color: #000;

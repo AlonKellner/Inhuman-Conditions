@@ -1,8 +1,5 @@
 .container {
   background-color: #fff;
-  border: 2px solid #2c3e50;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   height: fit-content;
@@ -28,7 +25,6 @@
   background-color: #34495e;
   color: white;
   padding: 16px 20px;
-  border-bottom: 2px solid #2c3e50;
 }
 
 .moduleName {
@@ -52,7 +48,6 @@
   align-items: center;
   padding: 12px 20px;
   background-color: #ecf0f1;
-  border-bottom: 1px solid #bdc3c7;
 }
 
 .navButton {
@@ -60,7 +55,6 @@
   background-color: #3498db;
   color: white;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
   font-size: 13px;
   font-weight: 500;
@@ -93,9 +87,6 @@
   width: 100%;
   max-width: 100%;
   height: auto;
-  border: 1px solid #ecf0f1;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .cardStack {
@@ -109,17 +100,12 @@
   width: 100%;
   max-width: 100%;
   height: auto;
-  border: 1px solid #ecf0f1;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .fallbackCard {
   width: 100%;
   padding: 16px;
   background-color: #f8f9fa;
-  border: 1px solid #ecf0f1;
-  border-radius: 4px;
 }
 
 .fallbackCard p {
@@ -165,7 +151,6 @@
   text-align: center;
   font-size: 12px;
   color: #95a5a6;
-  border-top: 1px solid #ecf0f1;
   background-color: #f8f9fa;
 }
 

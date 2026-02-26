@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: center;
   background-color: transparent;
-  font-family: 'Courier New', monospace;
+  font-family: 'Gautami', 'Courier New', Courier, monospace;
   font-weight: bold;
 }
 
@@ -20,7 +20,7 @@
   height: 100%;
   border: none;
   background: transparent;
-  font-family: 'Courier New', monospace;
+  font-family: 'Gautami', 'Courier New', Courier, monospace;
   font-size: 14px;
   font-weight: bold;
   text-align: center;
@@ -35,5 +35,5 @@
 
 .letterInput:focus {
   background-color: rgba(0, 0, 0, 0.05);
-  outline: 1px solid #000;
+  outline: none;
 }

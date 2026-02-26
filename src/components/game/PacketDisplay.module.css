@@ -19,9 +19,6 @@
   width: 100%;
   padding: var(--space-6);
   background-color: var(--color-bg-secondary);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-md);
 }
 
 /* Apply subtle halftone overlay to card */
@@ -34,7 +31,6 @@
   opacity: var(--halftone-opacity-subtle);
   pointer-events: none;
   z-index: 0;
-  border-radius: var(--radius-sm);
 }
 
 /* Ensure content appears above halftone */
@@ -57,8 +53,6 @@
   margin: var(--space-5) 0;
   padding: var(--space-4);
   background-color: var(--color-bg);
-  border: 2px solid var(--color-border-dark);
-  border-radius: var(--radius-sm);
 }
 
 .packetHeader {
@@ -113,8 +107,6 @@
   margin: var(--space-5) 0;
   padding: var(--space-4);
   background-color: var(--color-bg-tertiary);
-  border-left: 4px solid var(--color-primary);
-  border-radius: var(--radius-sm);
 }
 
 .promptLabel {
@@ -138,8 +130,6 @@
   margin: var(--space-5) 0;
   padding: var(--space-4);
   background-color: var(--color-bg);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-sm);
 }
 
 .questionsLabel {
@@ -161,11 +151,9 @@
   display: flex;
   gap: var(--space-2);
   padding: var(--space-3) 0;
-  border-bottom: 1px solid var(--color-border);
 }
 
 .questionItem:last-child {
-  border-bottom: none;
 }
 
 .questionNumber {
@@ -209,8 +197,6 @@
   font-weight: var(--font-weight-medium);
   background-color: var(--color-primary);
   color: var(--color-bg);
-  border: 2px solid var(--color-primary);
-  border-radius: var(--button-border-radius);
   cursor: pointer;
   transition: var(--transition-base);
   font-family: var(--font-family);
@@ -226,8 +212,7 @@
 }
 
 .continueButton:focus-visible {
-  outline: 3px solid var(--color-info);
-  outline-offset: 2px;
+  outline: none;
 }
 
 .waitingMessage {

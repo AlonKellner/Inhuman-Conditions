@@ -22,7 +22,6 @@
   --color-text-muted: #666666;
 
   /* Borders */
-  --color-border: #cccccc;
   --color-border-dark: #999999;
 
   /* Semantic colors */
@@ -32,8 +31,8 @@
   --color-info: #0066cc;
 
   /* === Typography === */
-  --font-family: Arial, sans-serif;
-  --font-family-mono: 'Courier New', Courier, monospace;
+  --font-family: 'Gautami', 'Courier New', Courier, monospace;
+  --font-family-mono: 'Gautami', 'Courier New', Courier, monospace;
 
   /* Font sizes */
   --font-size-xs: 12px;
@@ -90,7 +89,7 @@
   /* === Button Specific (from robots.management) === */
   --button-padding-y: 17px;
   --button-padding-x: 77px;
-  --button-border-radius: var(--radius-lg);
+  --button-border-radius: 0;
 
   /* === Breakpoints (for reference in media queries) === */
   --breakpoint-sm: 640px;

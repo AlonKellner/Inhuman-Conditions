@@ -44,8 +44,6 @@
 
   background-color: var(--color-bg);
   color: var(--color-primary);
-  border: 2px solid var(--color-primary);
-  border-radius: var(--radius-sm);
 
   cursor: pointer;
   transition: var(--transition-base);
@@ -70,13 +68,11 @@
   opacity: 0.4;
   cursor: not-allowed;
   background-color: var(--color-bg-secondary);
-  border-color: var(--color-border);
   color: var(--color-text-muted);
 }
 
 .cycleButton:focus-visible {
-  outline: 3px solid var(--color-info);
-  outline-offset: 2px;
+  outline: none;
 }
 
 .counter {

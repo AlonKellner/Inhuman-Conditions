@@ -19,9 +19,6 @@
   width: 100%;
   padding: var(--space-6);
   background-color: var(--color-bg-secondary);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-md);
 }
 
 /* Apply subtle halftone overlay to card */
@@ -34,7 +31,6 @@
   opacity: var(--halftone-opacity-subtle);
   pointer-events: none;
   z-index: 0;
-  border-radius: var(--radius-sm);
 }
 
 /* Ensure content appears above halftone */
@@ -70,12 +66,24 @@
   font-weight: var(--font-weight-bold);
 }
 
+.cardImageContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: var(--space-5) 0;
+}
+
+.backgroundCardImage {
+  width: 240px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
 .backgroundBox {
   margin: var(--space-5) 0;
   padding: var(--space-6);
   background-color: var(--color-bg);
-  border: 3px solid var(--color-primary);
-  border-radius: var(--radius-sm);
   text-align: center;
 }
 
@@ -101,8 +109,6 @@
   margin: var(--space-4) 0;
   padding: var(--space-4);
   background-color: var(--color-bg-tertiary);
-  border-left: 4px solid var(--color-info);
-  border-radius: var(--radius-sm);
 }
 
 .hintText {
@@ -120,8 +126,6 @@
   font-weight: var(--font-weight-medium);
   background-color: var(--color-primary);
   color: var(--color-bg);
-  border: 2px solid var(--color-primary);
-  border-radius: var(--button-border-radius);
   cursor: pointer;
   transition: var(--transition-base);
   font-family: var(--font-family);
@@ -137,8 +141,7 @@
 }
 
 .continueButton:focus-visible {
-  outline: 3px solid var(--color-info);
-  outline-offset: 2px;
+  outline: none;
 }
 
 .waitingMessage {

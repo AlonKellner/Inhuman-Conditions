@@ -19,9 +19,6 @@
   width: 100%;
   padding: var(--space-6);
   background-color: var(--color-bg-secondary);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-md);
 }
 
 /* Apply subtle halftone overlay to card */
@@ -34,7 +31,6 @@
   opacity: var(--halftone-opacity-subtle);
   pointer-events: none;
   z-index: 0;
-  border-radius: var(--radius-sm);
 }
 
 /* Ensure content appears above halftone */
@@ -73,8 +69,6 @@
   margin: var(--space-5) 0;
   padding: var(--space-5);
   background-color: var(--color-bg);
-  border: 2px solid var(--color-border-dark);
-  border-radius: var(--radius-sm);
 }
 
 .penaltyText {
@@ -131,21 +125,17 @@
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
   font-family: var(--font-family-mono);
-  border: 2px solid var(--color-border-dark);
-  border-radius: var(--radius-sm);
   transition: var(--transition-base);
 }
 
 .attemptComplete {
   background-color: var(--color-primary);
   color: var(--color-bg);
-  border-color: var(--color-primary);
 }
 
 .attemptPending {
   background-color: var(--color-bg);
   color: var(--color-text-muted);
-  border-color: var(--color-border);
 }
 
 .prompt {
@@ -154,8 +144,6 @@
   font-size: var(--font-size-base);
   text-align: center;
   background-color: rgba(0, 0, 0, 0.05);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
   color: var(--color-text-primary);
 }
 
@@ -166,7 +154,6 @@
   text-align: center;
   color: var(--color-text-muted);
   font-style: italic;
-  border-left: 3px solid var(--color-border);
   background-color: var(--color-bg);
 }
 
@@ -182,8 +169,6 @@
   padding: var(--button-padding-y) var(--button-padding-x);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-medium);
-  border: 2px solid var(--color-primary);
-  border-radius: var(--button-border-radius);
   cursor: pointer;
   transition: var(--transition-base);
   font-family: var(--font-family);
@@ -203,7 +188,6 @@
   opacity: 0.5;
   cursor: not-allowed;
   background-color: var(--color-bg-secondary);
-  border-color: var(--color-border);
   color: var(--color-text-muted);
 }
 
@@ -220,7 +204,6 @@
   opacity: 0.5;
   cursor: not-allowed;
   background-color: var(--color-bg-secondary);
-  border-color: var(--color-border);
   color: var(--color-text-muted);
 }
 
@@ -244,8 +227,7 @@
 /* Accessibility: Focus styles */
 .practiceButton:focus-visible,
 .continueButton:focus-visible {
-  outline: 3px solid var(--color-info);
-  outline-offset: 2px;
+  outline: none;
 }
 
 /* Responsive design */

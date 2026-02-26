@@ -44,14 +44,14 @@ export const ViewSwitcher: FC = () => {
             onClick={() => handleViewSwitch('investigator')}
             aria-pressed={effectiveView === 'investigator'}
           >
-            📋 Investigator View
+            Investigator View
           </button>
           <button
             className={`${styles.viewButton} ${effectiveView === 'suspect' ? styles.active : ''}`}
             onClick={() => handleViewSwitch('suspect')}
             aria-pressed={effectiveView === 'suspect'}
           >
-            🎭 Suspect View
+            Suspect View
           </button>
         </div>
       )}
@@ -70,8 +70,8 @@ export const ViewSwitcher: FC = () => {
         <div className={styles.deviceHint}>
           <p>
             {effectiveView === 'investigator'
-              ? '💡 Switch to Suspect View when you need the suspect to perform an action'
-              : '💡 Switch back to Investigator View to continue the interview process'}
+              ? 'Switch to Suspect View when you need the suspect to perform an action'
+              : 'Switch back to Investigator View to continue the interview process'}
           </p>
         </div>
       )}

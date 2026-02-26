@@ -3,10 +3,7 @@
   top: var(--space-5);
   right: var(--space-5);
   background: var(--color-bg);
-  border: 2px solid var(--color-primary);
-  border-radius: var(--radius-md);
   padding: var(--space-4);
-  box-shadow: var(--shadow-lg);
   text-align: center;
   min-width: 120px;
   z-index: var(--z-tooltip);
@@ -32,7 +29,6 @@
 }
 
 .elapsed {
-  border-color: var(--color-error);
   animation: blink 1s infinite;
 }
 

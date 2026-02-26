@@ -15,21 +15,9 @@
   max-width: 600px;
   padding: 24px;
   background: var(--color-background);
-  border: 2px solid var(--color-border);
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-/* Title */
-.title {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--color-text);
-  text-align: center;
-  padding-bottom: 12px;
-  border-bottom: 2px solid var(--color-border);
 }
 
 /* Maze Image */
@@ -39,21 +27,18 @@
   align-items: center;
   padding: 20px;
   background: var(--color-background);
-  border: 1px solid var(--color-border);
   min-height: 200px;
 }
 
 .mazeImage {
   max-width: 100%;
   height: auto;
-  border: 1px solid var(--color-border);
 }
 
 /* Question */
 .question {
   padding: 16px;
   background: var(--color-background);
-  border-left: 4px solid var(--color-primary);
 }
 
 .question p {
@@ -70,7 +55,6 @@
   gap: 12px;
   padding: 16px;
   background: var(--color-background);
-  border: 2px solid var(--color-border);
 }
 
 .label {
@@ -83,7 +67,6 @@
   padding: 12px;
   font-size: 18px;
   font-family: Arial, sans-serif;
-  border: 2px solid var(--color-border);
   background: var(--color-background);
   color: var(--color-text);
   text-transform: uppercase;
@@ -92,7 +75,6 @@
 
 .input:focus {
   outline: none;
-  border-color: var(--color-primary);
 }
 
 .input::placeholder {
@@ -108,19 +90,16 @@
   text-align: center;
   font-size: 18px;
   font-weight: 700;
-  border: 2px solid;
 }
 
 .feedback.correct {
   color: #2d5016;
   background: #e8f5e9;
-  border-color: #4caf50;
 }
 
 .feedback.incorrect {
   color: #5c1a1a;
   background: #ffebee;
-  border-color: #d32f2f;
 }
 
 /* Responsive Design */

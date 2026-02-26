@@ -19,9 +19,6 @@
   width: 100%;
   padding: var(--space-6);
   background-color: var(--color-bg-secondary);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-md);
 }
 
 /* Apply subtle halftone overlay to card */
@@ -34,7 +31,6 @@
   opacity: var(--halftone-opacity-subtle);
   pointer-events: none;
   z-index: 0;
-  border-radius: var(--radius-sm);
 }
 
 /* Ensure content appears above halftone */
@@ -77,8 +73,6 @@
   margin: var(--space-5) 0;
   padding: var(--space-5);
   background-color: var(--color-bg);
-  border: 2px solid var(--color-border-dark);
-  border-radius: var(--radius-sm);
 }
 
 .checklistHeading {
@@ -129,33 +123,26 @@
   font-weight: var(--font-weight-bold);
   background-color: var(--color-primary);
   color: var(--color-bg);
-  border: 3px solid var(--color-primary);
-  border-radius: var(--button-border-radius);
   cursor: pointer;
   transition: var(--transition-base);
   font-family: var(--font-family);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  box-shadow: var(--shadow-md);
 }
 
 .startButton:hover:not(:disabled) {
   background-color: var(--color-primary-hover);
-  border-color: var(--color-primary-hover);
-  box-shadow: var(--shadow-lg);
   transform: translateY(-2px);
 }
 
 .startButton:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: var(--shadow-sm);
 }
 
 .startButton:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   background-color: var(--color-text-muted);
-  border-color: var(--color-text-muted);
   transform: none;
 }
 
@@ -184,8 +171,7 @@
 
 /* Accessibility: Focus styles */
 .startButton:focus-visible {
-  outline: 3px solid var(--color-info);
-  outline-offset: 4px;
+  outline: none;
 }
 
 /* Responsive design */
