@@ -1,0 +1,74 @@
+[
+  {
+    "basename": "UMCSGU+TimesNewRoman,Bold",
+    "extension": "ttf",
+    "filename": "UMCSGU+TimesNewRoman,Bold-1544.ttf",
+    "xref": 1544,
+    "is_subset": true,
+    "pdf_source": "01_small_talk_investigator.pdf"
+  },
+  {
+    "basename": "LBRQKM+Arial",
+    "extension": "ttf",
+    "filename": "LBRQKM+Arial-1545.ttf",
+    "xref": 1545,
+    "is_subset": true,
+    "pdf_source": "01_small_talk_investigator.pdf"
+  },
+  {
+    "basename": "Gautami",
+    "extension": "ttf",
+    "filename": "Gautami-1546.ttf",
+    "xref": 1546,
+    "is_subset": false,
+    "pdf_source": "01_small_talk_investigator.pdf"
+  },
+  {
+    "basename": "YFDQKM+Arial,Bold",
+    "extension": "ttf",
+    "filename": "YFDQKM+Arial,Bold-1547.ttf",
+    "xref": 1547,
+    "is_subset": true,
+    "pdf_source": "01_small_talk_investigator.pdf"
+  },
+  {
+    "basename": "UMCSGU+TimesNewRoman,Bold",
+    "extension": "ttf",
+    "filename": "UMCSGU+TimesNewRoman,Bold-1601.ttf",
+    "xref": 1601,
+    "is_subset": true,
+    "pdf_source": "backgrounds.pdf"
+  },
+  {
+    "basename": "LBRQKM+Arial",
+    "extension": "ttf",
+    "filename": "LBRQKM+Arial-1602.ttf",
+    "xref": 1602,
+    "is_subset": true,
+    "pdf_source": "backgrounds.pdf"
+  },
+  {
+    "basename": "Gautami",
+    "extension": "ttf",
+    "filename": "Gautami-1603.ttf",
+    "xref": 1603,
+    "is_subset": false,
+    "pdf_source": "backgrounds.pdf"
+  },
+  {
+    "basename": "YFDQKM+Arial,Bold",
+    "extension": "ttf",
+    "filename": "YFDQKM+Arial,Bold-1604.ttf",
+    "xref": 1604,
+    "is_subset": true,
+    "pdf_source": "backgrounds.pdf"
+  },
+  {
+    "basename": "LUKNKW+Gautami",
+    "extension": "cff",
+    "filename": "LUKNKW+Gautami-334.cff",
+    "xref": 334,
+    "is_subset": true,
+    "pdf_source": "penalties.pdf"
+  }
+]
