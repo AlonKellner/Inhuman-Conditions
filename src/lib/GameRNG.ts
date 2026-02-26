@@ -84,4 +84,35 @@ export class GameRNG {
   choice<T>(array: T[]): T {
     return array[this.nextInt(0, array.length)];
   }
+
+  /**
+   * Generates a deterministic permutation of an array without mutating the original.
+   *
+   * Unlike shuffle(), this method creates a new array and permutes it,
+   * leaving the original array unchanged. The permutation is deterministic
+   * based on the seed, enabling synchronized content cycling across devices.
+   *
+   * @param array - The array to permute (will NOT be mutated)
+   * @returns A new array containing all elements in permuted order
+   *
+   * @example
+   * ```ts
+   * const rng = new GameRNG('SEED');
+   * const original = [1, 2, 3, 4, 5];
+   * const permuted = rng.permute(original);
+   * // original is unchanged: [1, 2, 3, 4, 5]
+   * // permuted might be: [3, 1, 5, 2, 4]
+   *
+   * // Same seed produces same permutation:
+   * const rng2 = new GameRNG('SEED');
+   * const permuted2 = rng2.permute(original);
+   * // permuted2 === permuted (same order)
+   * ```
+   */
+  permute<T>(array: T[]): T[] {
+    // Create a copy to avoid mutating the original
+    const copy = [...array];
+    // Shuffle the copy and return it
+    return this.shuffle(copy);
+  }
 }

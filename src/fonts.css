@@ -1,0 +1,17 @@
+/**
+ * Authentic Inhuman Conditions Game Fonts
+ * Extracted from official game PDFs
+ */
+
+@font-face {
+  font-family: 'Gautami';
+  src: url('/fonts/Gautami.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  /* Gautami has high ascender metrics (92.4% of em square)
+     This can cause text to appear too high - adjust with CSS if needed */
+  ascent-override: 85%;
+  descent-override: 15%;
+  line-gap-override: 0%;
+}

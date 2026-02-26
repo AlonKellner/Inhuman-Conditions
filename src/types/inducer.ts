@@ -3,12 +3,14 @@
  * Maze-like puzzle with directional connections and letter markers
  */
 
-export enum Direction {
-  North = 1 << 0, // 0001
-  East = 1 << 1, // 0010
-  South = 1 << 2, // 0100
-  West = 1 << 3, // 1000
-}
+export type Direction = 1 | 2 | 4 | 8;
+
+export const Direction = {
+  North: 1 as const, // 1 << 0 = 0001
+  East: 2 as const,  // 1 << 1 = 0010
+  South: 4 as const, // 1 << 2 = 0100
+  West: 8 as const,  // 1 << 3 = 1000
+} as const;
 
 export interface Cell {
   row: number;

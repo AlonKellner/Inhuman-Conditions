@@ -1,0 +1,98 @@
+.container {
+  width: 100%;
+  padding: 8px;
+  user-select: none;
+}
+
+.swiper {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  padding-bottom: 40px; /* Space for pagination */
+}
+
+.swiperSlide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cardContent {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardImageContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.cardImage {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* Swiper navigation buttons - minimalist analog style */
+:global(.swiper-button-prev),
+:global(.swiper-button-next) {
+  color: #000;
+  background-color: #fff;
+  width: 36px;
+  height: 36px;
+}
+
+:global(.swiper-button-prev):after,
+:global(.swiper-button-next):after {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+:global(.swiper-button-prev:hover),
+:global(.swiper-button-next:hover) {
+  background-color: #000;
+  color: #fff;
+}
+
+/* Swiper pagination - typewriter style */
+:global(.swiper-pagination) {
+  bottom: 10px !important;
+}
+
+:global(.swiper-pagination-fraction) {
+  font-size: 13px;
+  font-weight: bold;
+  color: #000;
+  font-family: 'Gautami', 'Courier New', Courier, monospace;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 4px;
+  }
+
+  .swiper {
+    padding-bottom: 35px;
+  }
+
+  :global(.swiper-button-prev),
+  :global(.swiper-button-next) {
+    width: 32px;
+    height: 32px;
+  }
+
+  :global(.swiper-button-prev):after,
+  :global(.swiper-button-next):after {
+    font-size: 14px;
+  }
+
+  :global(.swiper-pagination-fraction) {
+    font-size: 11px;
+  }
+}

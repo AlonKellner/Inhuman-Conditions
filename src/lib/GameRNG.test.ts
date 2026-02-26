@@ -180,6 +180,110 @@ describe('GameRNG', () => {
     });
   });
 
+  describe('permute', () => {
+    it('should produce identical permutations for the same seed', () => {
+      const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+      const rng1 = new GameRNG('PERM');
+      const permuted1 = rng1.permute(arr);
+
+      const rng2 = new GameRNG('PERM');
+      const permuted2 = rng2.permute(arr);
+
+      expect(permuted1).toEqual(permuted2);
+    });
+
+    it('should produce different permutations for different seeds', () => {
+      const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+      const rng1 = new GameRNG('AAAA');
+      const permuted1 = rng1.permute(arr);
+
+      const rng2 = new GameRNG('ZZZZ');
+      const permuted2 = rng2.permute(arr);
+
+      expect(permuted1).not.toEqual(permuted2);
+    });
+
+    it('should NOT mutate the original array', () => {
+      const original = [1, 2, 3, 4, 5];
+      const copy = [...original];
+      const rng = new GameRNG('NOMUT');
+
+      const permuted = rng.permute(original);
+
+      // Original array should be unchanged
+      expect(original).toEqual(copy);
+
+      // Permuted array should be different (unless extremely unlikely same order)
+      // We just verify it's a separate array
+      expect(permuted).not.toBe(original);
+    });
+
+    it('should contain all original elements', () => {
+      const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      const rng = new GameRNG('ELEMS');
+
+      const permuted = rng.permute(arr);
+
+      // Should have same length
+      expect(permuted).toHaveLength(arr.length);
+
+      // Should contain all elements (verify by sorting)
+      expect(permuted.sort((a, b) => a - b)).toEqual(arr);
+    });
+
+    it('should handle empty array', () => {
+      const rng = new GameRNG('EMPTY');
+      const permuted = rng.permute([]);
+      expect(permuted).toEqual([]);
+    });
+
+    it('should handle single-element array', () => {
+      const rng = new GameRNG('ONE');
+      const permuted = rng.permute([42]);
+      expect(permuted).toEqual([42]);
+    });
+
+    it('should work with different types', () => {
+      const rng = new GameRNG('TYPES');
+
+      const strings = ['A', 'B', 'C', 'D'];
+      const permutedStrings = rng.permute(strings);
+      expect(permutedStrings).toHaveLength(4);
+      expect(permutedStrings.sort()).toEqual(['A', 'B', 'C', 'D']);
+
+      const rng2 = new GameRNG('TYPES');
+      const objects = [{ id: 1 }, { id: 2 }, { id: 3 }];
+      const permutedObjects = rng2.permute(objects);
+      expect(permutedObjects).toHaveLength(3);
+      const ids = permutedObjects.map(obj => obj.id).sort();
+      expect(ids).toEqual([1, 2, 3]);
+    });
+
+    it('should enable cycling through content alternatives', () => {
+      // Test the core use case: cycling through penalties/packets/backgrounds
+      const penalties = [
+        'Cannot use the word "yes"',
+        'Cannot say any words that start with "T"',
+        'Must end each sentence with "obviously"'
+      ];
+
+      const rng = new GameRNG('CYCLE');
+      const permuted = rng.permute(penalties);
+
+      // Same seed always produces same permutation
+      const rng2 = new GameRNG('CYCLE');
+      const permuted2 = rng2.permute(penalties);
+      expect(permuted).toEqual(permuted2);
+
+      // Can cycle through by index: permuted[0], permuted[1], permuted[2]
+      // All original penalties are present
+      expect(permuted).toHaveLength(penalties.length);
+      permuted.forEach(p => expect(penalties).toContain(p));
+    });
+  });
+
   describe('edge cases', () => {
     it('should handle very long seeds', () => {
       const longSeed = 'A'.repeat(1000);

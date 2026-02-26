@@ -1,0 +1,149 @@
+/**
+ * Card Image Styles
+ * Feature: 003-pdf-asset-extraction (US5)
+ * Responsive, lazy-loading styles for card images and fallback widgets
+ */
+
+/* ========================================
+   Card Images (Official PDF Assets)
+   ======================================== */
+
+.catalyzer-card-image,
+.question-card-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.2s ease;
+}
+
+.catalyzer-card-image:hover,
+.question-card-image:hover {
+  transform: scale(1.02);
+}
+
+/* Responsive sizing for different screen sizes */
+@media (max-width: 768px) {
+  .catalyzer-card-image,
+  .question-card-image {
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 769px) {
+  .catalyzer-card-image,
+  .question-card-image {
+    max-width: 500px;
+  }
+}
+
+/* Suspect Card Images */
+.suspect-card-image {
+  width: 240px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* Penalty Card Images */
+.penalty-card-image {
+  width: 240px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* ========================================
+   Error States (When No Image Available)
+   ======================================== */
+
+.catalyzer-card-error {
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--color-error);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.catalyzer-card-error p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.catalyzer-card-error .card-id {
+  margin-top: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ========================================
+   Accessibility & Loading States
+   ======================================== */
+
+/* Loading placeholder for lazy-loaded images */
+.catalyzer-card-image[loading="lazy"],
+.question-card-image[loading="lazy"] {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+  min-height: 300px;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Focus states for keyboard navigation */
+.catalyzer-card-image:focus,
+.question-card-image:focus,
+.catalyzer-card-fallback:focus,
+.question-card-fallback:focus {
+  outline: none;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .catalyzer-card-fallback,
+  .question-card-fallback {
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .catalyzer-card-image,
+  .question-card-image {
+    transition: none;
+  }
+
+  .catalyzer-card-image:hover,
+  .question-card-image:hover {
+    transform: none;
+  }
+
+  @keyframes loading {
+    0%, 100% {
+      background-position: 0% 0;
+    }
+  }
+}
+
+/* ========================================
+   Print Styles
+   ======================================== */
+
+@media print {
+  .catalyzer-card-image,
+  .question-card-image {
+    max-width: 100%;
+    page-break-inside: avoid;
+  }
+
+  .catalyzer-card-fallback,
+  .question-card-fallback {
+    page-break-inside: avoid;
+  }
+}

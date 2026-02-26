@@ -1,0 +1,121 @@
+.selectorContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: transparent;
+  position: relative;
+}
+
+.arrowButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  color: #000;
+  padding: 0;
+  width: 20px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.arrowButton:hover:not(:disabled) {
+  opacity: 0.7;
+}
+
+.arrowButton:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.selectedText {
+  flex: 1;
+  text-align: center;
+  font-family: 'Gautami', 'Courier New', Courier, monospace;
+  font-weight: bold;
+  color: #000;
+  cursor: pointer;
+  user-select: none;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 100%;
+  min-width: 0;
+}
+
+.selectedText:hover {
+  text-decoration: underline;
+}
+
+.nameText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.iconImage {
+  width: 1em;
+  height: 1em;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 20px;
+  right: 20px;
+  background-color: #fff;
+  font-size: 11px;
+  font-family: 'Gautami', 'Courier New', Courier, monospace;
+  font-weight: bold;
+  z-index: 100;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dropdown:focus {
+  outline: none;
+}
+
+.dropdownOption {
+  padding: 4px 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  transition: background-color 0.1s;
+}
+
+.dropdownOption:hover {
+  background-color: #f0f0f0;
+}
+
+.dropdownOption.selected {
+  background-color: #e0e0e0;
+  font-weight: bold;
+}
+
+.optionName {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.optionIcon {
+  width: 1em;
+  height: 1em;
+  object-fit: contain;
+  flex-shrink: 0;
+}

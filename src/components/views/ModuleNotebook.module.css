@@ -1,0 +1,171 @@
+.container {
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  max-height: 800px;
+}
+
+.placeholder {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+}
+
+.placeholder p {
+  margin: 8px 0;
+}
+
+.hint {
+  font-size: 12px;
+  font-style: italic;
+}
+
+.header {
+  background-color: #34495e;
+  color: white;
+  padding: 16px 20px;
+}
+
+.moduleName {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.difficulty {
+  font-size: 12px;
+  color: #bdc3c7;
+}
+
+.difficulty strong {
+  color: #3498db;
+}
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: #ecf0f1;
+}
+
+.navButton {
+  padding: 8px 16px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+.navButton:hover:not(:disabled) {
+  background-color: #2980b9;
+}
+
+.navButton:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.pageContent {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: #fff;
+}
+
+.imagePage {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.pageImage {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.cardStack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.cardImage {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.fallbackCard {
+  width: 100%;
+  padding: 16px;
+  background-color: #f8f9fa;
+}
+
+.fallbackCard p {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.fallbackCard ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.fallbackCard li {
+  font-size: 12px;
+  color: #7f8c8d;
+  margin-bottom: 4px;
+}
+
+.fallbackContent {
+  padding: 12px;
+}
+
+.fallbackContent h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  color: #2c3e50;
+}
+
+.fallbackContent ul {
+  margin: 0;
+  padding-left: 24px;
+}
+
+.fallbackContent li {
+  margin-bottom: 12px;
+  line-height: 1.5;
+  color: #34495e;
+}
+
+.pageIndicator {
+  padding: 12px;
+  text-align: center;
+  font-size: 12px;
+  color: #95a5a6;
+  background-color: #f8f9fa;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .tab {
+    font-size: 11px;
+    padding: 10px 8px;
+  }
+
+  .moduleName {
+    font-size: 16px;
+  }
+
+  .pageContent {
+    padding: 12px;
+  }
+}

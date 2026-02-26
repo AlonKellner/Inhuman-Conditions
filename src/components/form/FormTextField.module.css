@@ -1,0 +1,47 @@
+.textFieldContainer {
+  display: flex;
+  align-items: center;
+}
+
+.textField {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.3);
+  font-family: 'Gautami', 'Courier New', Courier, monospace;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 0 4px;
+  box-sizing: border-box;
+  color: #000;
+  line-height: 100%;
+  vertical-align: top;
+}
+
+.textField:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.textField:read-only {
+  background-color: transparent;
+  cursor: default;
+}
+
+.textField::placeholder {
+  color: #999;
+  opacity: 0.6;
+}
+
+.textFieldStatic {
+  width: 100%;
+  height: 100%;
+  font-family: 'Gautami', 'Courier New', Courier, monospace;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 0 4px;
+  box-sizing: border-box;
+  color: #000;
+  display: flex;
+  align-items: center;
+}

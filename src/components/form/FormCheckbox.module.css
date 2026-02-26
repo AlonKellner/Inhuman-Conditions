@@ -1,0 +1,28 @@
+.checkboxContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+.checkboxContainer:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.checkboxContainer:focus {
+  outline: none;
+}
+
+.checkboxContainer[aria-disabled="true"] {
+  cursor: not-allowed;
+  /* Removed opacity to prevent fading in captured form image */
+}
+
+.checkmark {
+  width: 50%;
+  height: 50%;
+  pointer-events: none;
+}

@@ -1,20 +1,18 @@
 /**
- * Zustand Game Store
- * Centralized state management for Inhuman Conditions game
+ * Zustand Game Store (GameEngine Integration)
+ * UI state management layer that delegates game logic to GameEngine
+ * Implements Constitution Principle VII: Separation of Game Logic from UI
  * Implements the API contract from contracts/game-state-api.md
  */
 
 import { create } from 'zustand';
-import { GameRNG } from '../lib/GameRNG';
+import { GameEngine } from '../engine/GameEngine';
+import type { ContentType, CycleDirection } from '../engine/types';
 import {
   validateSeed as validateSeedUtil,
   generateDefaultSeed as generateDefaultSeedUtil,
   generateRandomSeed as generateRandomSeedUtil,
 } from '../lib/seedGeneration';
-import { generateInducerPattern } from '../lib/inducerPattern';
-import { packets } from '../data/packets';
-import { penalties } from '../data/penalties';
-import { backgrounds } from '../data/backgrounds';
 import type {
   Seed,
   SeedValidation,
@@ -24,34 +22,38 @@ import type {
   Packet,
   Question,
   Penalty,
+  PenaltySelectionState,
   Background,
   RoleAssignment,
   InducerPattern,
   Determination,
   GameOutcome,
+  PenaltyCalibrationState,
 } from '../types';
-import { RoleType } from '../types';
 
 interface GameStore {
-  // Seed & Initialization
+  // === Game Engine (Pure Logic) ===
+  _engine: GameEngine;
+
+  // === Seed & Initialization ===
   seed: Seed | null;
   setSeed: (seed: Seed) => void;
   generateDefaultSeed: () => Seed;
   generateRandomSeed: () => Seed;
   validateSeed: (seed: Seed) => SeedValidation;
 
-  // Game Mode & Role
+  // === Game Mode & Role ===
   mode: GameMode;
   setMode: (mode: GameMode) => void;
   playerRole: PlayerRole | null;
   setPlayerRole: (role: PlayerRole) => void;
 
-  // Game State Machine
+  // === Game State Machine ===
   gameState: GameState;
   advanceState: () => void;
   resetGame: () => void;
 
-  // Selected Game Content (initialized by seed)
+  // === Selected Game Content ===
   selectedPacket: Packet | null;
   selectedPenalty: Penalty | null;
   selectedRole: RoleAssignment | null;
@@ -59,262 +61,471 @@ interface GameStore {
   inducerPattern: InducerPattern | null;
   shuffledQuestions: Question[] | null;
 
-  // Game Initialization
+  // === Content Cycling ===
+  contentIndices: {
+    packetIndex: number;
+    penaltyIndex: number;
+    backgroundIndex: number;
+    roleIndex: number;
+  };
+  permutationSizes: {
+    packets: number;
+    penalties: number;
+    backgrounds: number;
+    roles: number;
+  };
+  cycleContent: (contentType: ContentType, direction: CycleDirection) => void;
+  selectContentById: (contentType: 'packet' | 'background', id: string) => void;
+
+  // === Game Initialization ===
   initializeGame: () => void;
 
-  // Interview State
+  // === Interview State ===
   timerStarted: boolean;
   timerElapsed: boolean;
   startTimer: () => void;
   onTimerElapsed: () => void;
 
-  // Penalty Calibration
-  calibrationAttempts: number;
-  incrementCalibration: () => void;
+  // === Penalty Selection ===
+  penaltySelection: PenaltySelectionState | null;
+  initializePenaltySelection: () => void;
+  eliminatePenalty: (penaltyId: string) => void;
+  choosePenalty: (penaltyId: string) => void;
 
-  // Conclusion
+  // === Penalty Calibration ===
+  penaltyCalibration: PenaltyCalibrationState;
+  incrementCalibration: () => void;
+  resetCalibration: () => void;
+
+  // === Conclusion ===
   determination: Determination | null;
   setDetermination: (determination: Determination) => void;
   outcome: GameOutcome | null;
 
-  // UI State
+  // === VK-82(e) Investigator Form ===
+  investigatorForm: {
+    penaltyAttempts: { attempt1: boolean; attempt2: boolean; attempt3: boolean };
+    inducerResult: 'yes' | 'no' | null;
+    suspectName: { first: string; middle: string; last: string };
+    investigatorNotes: string;
+    signature: string;
+    date: string;
+    performanceReview: 'correct' | 'incorrect' | 'na' | null;
+  };
+  updateFormPenaltyAttempt: (attemptNumber: 1 | 2 | 3, checked: boolean) => void;
+  updateFormInducerResult: (result: 'yes' | 'no' | null) => void;
+  updateFormSuspectName: (name: { first: string; middle: string; last: string }) => void;
+  updateFormNotes: (notes: string) => void;
+  updateFormSignature: (signature: string) => void;
+  submitInvestigatorForm: () => void; // Auto-fills performance review and advances state
+  resetInvestigatorForm: () => void;
+
+  // === UI State ===
   roleVisible: boolean;
   toggleRoleVisibility: () => void;
 
-  // Sync Check
+  // === Sync Check ===
   getStateHash: () => string;
+
+  // === Internal Sync Method ===
+  _syncFromEngine: () => void;
 }
 
-export const useGameStore = create<GameStore>((set, get) => ({
-  // === Initial State ===
-  seed: null,
-  mode: 'single-device' as GameMode,
-  playerRole: null,
-  gameState: 'seed-entry' as GameState,
-  selectedPacket: null,
-  selectedPenalty: null,
-  selectedRole: null,
-  selectedBackground: null,
-  inducerPattern: null,
-  shuffledQuestions: null,
-  timerStarted: false,
-  timerElapsed: false,
-  calibrationAttempts: 0,
-  determination: null,
-  outcome: null,
-  roleVisible: false,
+/**
+ * Factory function to create an independent game store instance
+ * Each instance has its own GameEngine and state
+ */
+function createGameStoreInstance() {
+  return create<GameStore>((set, get) => {
+    // Create game engine instance
+    const engine = new GameEngine();
 
-  // === Seed Management ===
-  setSeed: (seed: Seed) => {
-    const validation = validateSeedUtil(seed);
-    if (!validation.isValid) {
-      throw new Error(validation.error || 'Invalid seed');
-    }
-
-    set({ seed });
-    get().initializeGame();
-  },
-
-  generateDefaultSeed: (): Seed => {
-    return generateDefaultSeedUtil();
-  },
-
-  generateRandomSeed: (): Seed => {
-    return generateRandomSeedUtil();
-  },
-
-  validateSeed: (seed: Seed): SeedValidation => {
-    return validateSeedUtil(seed);
-  },
-
-  // === Game Mode & Role ===
-  setMode: (mode: GameMode) => {
-    set({ mode, playerRole: null });
-  },
-
-  setPlayerRole: (role: PlayerRole) => {
-    set({ playerRole: role });
-  },
-
-  // === State Machine ===
-  advanceState: () => {
-    const { gameState } = get();
-    const states: GameState[] = [
-      'seed-entry',
-      'mode-selection',
-      'role-selection',
-      'penalty-calibration',
-      'packet-display',
-      'inducer-puzzle',
-      'background-display',
-      'ready-to-start',
-      'interview',
-      'conclusion',
-    ];
-
-    const currentIndex = states.indexOf(gameState);
-    if (currentIndex < states.length - 1) {
-      set({ gameState: states[currentIndex + 1] });
-    }
-  },
-
-  resetGame: () => {
-    const { seed } = get();
-    set({
-      gameState: 'seed-entry',
-      selectedPacket: null,
-      selectedPenalty: null,
-      selectedRole: null,
-      selectedBackground: null,
-      inducerPattern: null,
-      shuffledQuestions: null,
-      timerStarted: false,
-      timerElapsed: false,
-      calibrationAttempts: 0,
-      determination: null,
-      outcome: null,
-      roleVisible: false,
-      seed, // Preserve seed
+    // Subscribe to engine events and sync to Zustand
+    engine.subscribe((event) => {
+      console.log('[GameEngine Event]', event);
+      // Use requestAnimationFrame to batch state updates and prevent event loop issues
+      requestAnimationFrame(() => {
+        get()._syncFromEngine();
+      });
     });
-  },
 
-  // === Game Initialization ===
-  initializeGame: () => {
-    const { seed } = get();
-    if (!seed) return;
+    return {
+    // === Engine Instance ===
+    _engine: engine,
 
-    const rng = new GameRNG(seed);
+    // === Initial State ===
+    seed: null,
+    mode: 'single-device' as GameMode,
+    playerRole: null,
+    gameState: 'seed-entry' as GameState,
+    selectedPacket: null,
+    selectedPenalty: null,
+    selectedRole: null,
+    selectedBackground: null,
+    inducerPattern: null,
+    shuffledQuestions: null,
+    contentIndices: {
+      packetIndex: 0,
+      penaltyIndex: 0,
+      backgroundIndex: 0,
+      roleIndex: 0,
+    },
+    permutationSizes: {
+      packets: 0,
+      penalties: 0,
+      backgrounds: 0,
+      roles: 0,
+    },
+    timerStarted: false,
+    timerElapsed: false,
+    penaltySelection: null,
+    penaltyCalibration: {
+      penaltyText: '',
+      practiceAttempts: 0,
+      maxAttempts: 3,
+      isComplete: false,
+      lastAttemptTimestamp: null,
+    },
+    determination: null,
+    outcome: null,
+    roleVisible: false,
 
-    // Select packet
-    const packet = rng.choice(packets);
+    // === VK-82(e) Investigator Form ===
+    investigatorForm: {
+      penaltyAttempts: { attempt1: false, attempt2: false, attempt3: false },
+      inducerResult: null,
+      suspectName: { first: '', middle: '', last: '' },
+      investigatorNotes: '',
+      signature: '',
+      date: new Date().toLocaleDateString('en-US'),
+      performanceReview: null,
+    },
 
-    // Select penalty
-    const penalty = rng.choice(penalties);
+    // === Seed Management ===
+    setSeed: (seed: Seed) => {
+      const validation = validateSeedUtil(seed);
+      if (!validation.isValid) {
+        throw new Error(validation.error || 'Invalid seed');
+      }
 
-    // Select background
-    const background = rng.choice(backgrounds);
+      set({ seed });
+      get().initializeGame();
+    },
 
-    // Assign role (Human 33%, Patient Robot 50%, Violent Robot 17%)
-    const roleRoll = rng.nextInt(1, 13); // 1-12 like d12
-    let selectedRole: RoleAssignment;
+    generateDefaultSeed: (): Seed => {
+      return generateDefaultSeedUtil();
+    },
 
-    if (roleRoll <= 4) {
-      // Human (1-4)
-      const humanRole = packet.roles.find((r) => r.roleType === RoleType.Human);
-      selectedRole = {
-        roleType: RoleType.Human,
-        description: humanRole?.description || 'A normal human being',
-        traits: humanRole?.traits || ['Honest', 'Relaxed'],
-      };
-    } else if (roleRoll <= 10) {
-      // Patient Robot (5-10)
-      const patientRoles = packet.roles.filter((r) => r.roleType === RoleType.PatientRobot);
-      const patientRole = rng.choice(patientRoles);
-      selectedRole = {
-        roleType: RoleType.PatientRobot,
-        fault: patientRole.fault as any,
-        description: patientRole.description,
-        traits: patientRole.traits,
-        restrictions: ['Cannot mention certain topics'], // Placeholder
-      };
-    } else {
-      // Violent Robot (11-12)
-      const violentRoles = packet.roles.filter((r) => r.roleType === RoleType.ViolentRobot);
-      const violentRole = rng.choice(violentRoles);
-      selectedRole = {
-        roleType: RoleType.ViolentRobot,
-        fault: violentRole.fault as any,
-        description: violentRole.description,
-        traits: violentRole.traits,
-        tasks: violentRole.tasks || ['Complete assigned tasks'],
-      };
-    }
+    generateRandomSeed: (): Seed => {
+      return generateRandomSeedUtil();
+    },
 
-    // Generate inducer pattern
-    const pattern = generateInducerPattern(rng);
+    validateSeed: (seed: Seed): SeedValidation => {
+      return validateSeedUtil(seed);
+    },
 
-    // Shuffle questions
-    const questions = rng.shuffle([...packet.questions]);
+    // === Game Mode & Role ===
+    setMode: (mode: GameMode) => {
+      const { _engine } = get();
+      _engine.setMode(mode);
+      set({ mode, playerRole: null });
+    },
 
-    set({
-      selectedPacket: packet,
-      selectedPenalty: penalty,
-      selectedRole,
-      selectedBackground: background,
-      inducerPattern: pattern,
-      shuffledQuestions: questions,
-    });
-  },
+    setPlayerRole: (role: PlayerRole) => {
+      const { _engine } = get();
+      _engine.setPlayerRole(role);
+      set({ playerRole: role });
+    },
 
-  // === Interview Timer ===
-  startTimer: () => {
-    set({ timerStarted: true });
-  },
+    // === State Machine (Delegates to Engine) ===
+    advanceState: () => {
+      const { _engine } = get();
+      _engine.advanceState();
+      get()._syncFromEngine();
+    },
 
-  onTimerElapsed: () => {
-    set({ timerElapsed: true });
-  },
+    resetGame: () => {
+      const { _engine, seed } = get();
+      _engine.reset();
 
-  // === Penalty Calibration ===
-  incrementCalibration: () => {
-    const { calibrationAttempts } = get();
-    if (calibrationAttempts < 3) {
-      set({ calibrationAttempts: calibrationAttempts + 1 });
-    }
-  },
+      set({
+        gameState: 'seed-entry',
+        selectedPacket: null,
+        selectedPenalty: null,
+        selectedRole: null,
+        selectedBackground: null,
+        inducerPattern: null,
+        shuffledQuestions: null,
+        contentIndices: {
+          packetIndex: 0,
+          penaltyIndex: 0,
+          backgroundIndex: 0,
+          roleIndex: 0,
+        },
+        permutationSizes: {
+          packets: 0,
+          penalties: 0,
+          backgrounds: 0,
+          roles: 0,
+        },
+        timerStarted: false,
+        timerElapsed: false,
+        penaltyCalibration: {
+          penaltyText: '',
+          practiceAttempts: 0,
+          maxAttempts: 3,
+          isComplete: false,
+          lastAttemptTimestamp: null,
+        },
+        determination: null,
+        outcome: null,
+        roleVisible: false,
+        investigatorForm: {
+          penaltyAttempts: { attempt1: false, attempt2: false, attempt3: false },
+          inducerResult: null,
+          suspectName: { first: '', middle: '', last: '' },
+          investigatorNotes: '',
+          signature: '',
+          date: new Date().toLocaleDateString('en-US'),
+          performanceReview: null,
+        },
+        seed, // Preserve seed
+      });
+    },
 
-  // === Determination & Outcome ===
-  setDetermination: (determination: Determination) => {
-    const { selectedRole } = get();
-    if (!selectedRole) return;
+    // === Game Initialization (Delegates to Engine) ===
+    initializeGame: () => {
+      const { seed, mode, playerRole, _engine } = get();
+      if (!seed) return;
 
-    const actualRole = selectedRole.roleType;
+      _engine.initialize({
+        seed,
+        mode,
+        playerRole,
+      });
 
-    // Calculate correctness
-    let correct = false;
-    if (determination === 'human' && actualRole === RoleType.Human) {
-      correct = true;
-    } else if (
-      determination === 'robot' &&
-      (actualRole === RoleType.PatientRobot || actualRole === RoleType.ViolentRobot)
-    ) {
-      correct = true;
-    }
+      get()._syncFromEngine();
+    },
 
-    set({
-      determination,
-      outcome: {
-        determination,
-        actualRole,
-        correct,
-      },
-    });
-  },
+    // === Interview Timer (Delegates to Engine) ===
+    startTimer: () => {
+      const { _engine } = get();
+      _engine.startTimer();
+      get()._syncFromEngine();
+    },
 
-  // === UI State ===
-  toggleRoleVisibility: () => {
-    set((state) => ({ roleVisible: !state.roleVisible }));
-  },
+    onTimerElapsed: () => {
+      const { _engine } = get();
+      _engine.onTimerElapsed();
+      get()._syncFromEngine();
+    },
 
-  // === Sync Check ===
-  getStateHash: (): string => {
-    const { seed, gameState, selectedPacket, selectedPenalty, selectedRole, selectedBackground } =
-      get();
+    // === Penalty Selection (Delegates to Engine) ===
+    initializePenaltySelection: () => {
+      const { _engine } = get();
+      _engine.initializePenaltySelection();
+      get()._syncFromEngine();
+    },
 
-    const stateData = {
-      seed,
-      gameState,
-      packetId: selectedPacket?.id,
-      penaltyId: selectedPenalty?.id,
-      roleType: selectedRole?.roleType,
-      backgroundId: selectedBackground?.id,
-    };
+    eliminatePenalty: (penaltyId: string) => {
+      const { _engine } = get();
+      _engine.eliminatePenalty(penaltyId);
+      get()._syncFromEngine();
+    },
 
-    // Simple hash (first 8 chars of hex hash)
-    const hash = JSON.stringify(stateData)
-      .split('')
-      .reduce((acc, char) => ((acc << 5) - acc + char.charCodeAt(0)) | 0, 0);
+    choosePenalty: (penaltyId: string) => {
+      const { _engine } = get();
+      _engine.choosePenalty(penaltyId);
+      get()._syncFromEngine();
+    },
 
-    return Math.abs(hash).toString(16).substring(0, 8);
-  },
-}));
+    // === Penalty Calibration (Delegates to Engine) ===
+    incrementCalibration: () => {
+      const { _engine } = get();
+      _engine.incrementCalibration();
+      get()._syncFromEngine();
+    },
+
+    resetCalibration: () => {
+      const { penaltyCalibration } = get();
+      set({
+        penaltyCalibration: {
+          ...penaltyCalibration,
+          practiceAttempts: 0,
+          isComplete: false,
+          lastAttemptTimestamp: null,
+        },
+      });
+    },
+
+    // === Determination & Outcome (Delegates to Engine) ===
+    setDetermination: (determination: Determination) => {
+      const { _engine } = get();
+      _engine.makeDetermination(determination);
+      get()._syncFromEngine();
+    },
+
+    // === Content Cycling (Delegates to Engine) ===
+    cycleContent: (contentType: ContentType, direction: CycleDirection) => {
+      const { _engine } = get();
+      _engine.cycleContent(contentType, direction);
+      get()._syncFromEngine();
+    },
+
+    selectContentById: (contentType: 'packet' | 'background', id: string) => {
+      const { _engine } = get();
+      _engine.selectContentById(contentType, id);
+      get()._syncFromEngine();
+    },
+
+    // === UI State ===
+    // === VK-82(e) Investigator Form Methods ===
+    updateFormPenaltyAttempt: (attemptNumber: 1 | 2 | 3, checked: boolean) => {
+      set((state) => ({
+        investigatorForm: {
+          ...state.investigatorForm,
+          penaltyAttempts: {
+            ...state.investigatorForm.penaltyAttempts,
+            [`attempt${attemptNumber}`]: checked,
+          },
+        },
+      }));
+    },
+
+    updateFormInducerResult: (result: 'yes' | 'no' | null) => {
+      set((state) => ({
+        investigatorForm: {
+          ...state.investigatorForm,
+          inducerResult: result,
+        },
+      }));
+    },
+
+    updateFormSuspectName: (name: { first: string; middle: string; last: string }) => {
+      set((state) => ({
+        investigatorForm: {
+          ...state.investigatorForm,
+          suspectName: {
+            first: name.first.slice(0, 15), // Max 15 characters
+            middle: name.middle.slice(0, 1), // Max 1 character
+            last: name.last.slice(0, 15), // Max 15 characters
+          },
+        },
+      }));
+    },
+
+    updateFormNotes: (notes: string) => {
+      set((state) => ({
+        investigatorForm: {
+          ...state.investigatorForm,
+          investigatorNotes: notes,
+        },
+      }));
+    },
+
+    updateFormSignature: (signature: string) => {
+      set((state) => ({
+        investigatorForm: {
+          ...state.investigatorForm,
+          signature,
+        },
+      }));
+    },
+
+    submitInvestigatorForm: () => {
+      const { selectedRole } = get();
+
+      // Auto-fill performance review based on determination vs actual role
+      let performanceReview: 'correct' | 'incorrect' | 'na' = 'incorrect';
+
+      if (selectedRole) {
+        const actualIsRobot = selectedRole.roleType !== 'human';
+        const investigatorSaidRobot = get().determination === 'robot';
+
+        if (actualIsRobot === investigatorSaidRobot) {
+          // Investigator was correct
+          performanceReview = 'correct';
+        } else {
+          // Investigator was incorrect
+          // If the actual suspect was a violent robot, investigator is dead (N/A)
+          // If the actual suspect was a patient robot or human, investigator is just incorrect
+          if (selectedRole.roleType === 'violent-robot') {
+            performanceReview = 'na';
+          } else {
+            performanceReview = 'incorrect';
+          }
+        }
+      }
+
+      // Update form with performance review
+      set((state) => ({
+        investigatorForm: {
+          ...state.investigatorForm,
+          performanceReview,
+        },
+      }));
+
+      // Advance to conclusion state
+      get().advanceState();
+    },
+
+    resetInvestigatorForm: () => {
+      set({
+        investigatorForm: {
+          penaltyAttempts: { attempt1: false, attempt2: false, attempt3: false },
+          inducerResult: null,
+          suspectName: { first: '', middle: '', last: '' },
+          investigatorNotes: '',
+          signature: '',
+          date: new Date().toLocaleDateString('en-US'),
+          performanceReview: null,
+        },
+      });
+    },
+
+    toggleRoleVisibility: () => {
+      set((state) => ({ roleVisible: !state.roleVisible }));
+    },
+
+    // === Sync Check ===
+    getStateHash: (): string => {
+      const { seed, gameState, selectedPacket, selectedPenalty, selectedRole } = get();
+      const hash = `${seed}-${gameState}-${selectedPacket?.id}-${selectedPenalty?.id}-${selectedRole?.roleType}`;
+      return btoa(hash);
+    },
+
+    // === Internal: Sync Zustand from Engine ===
+    _syncFromEngine: () => {
+      const { _engine } = get();
+      const engineState = _engine.getState();
+
+      set({
+        gameState: engineState.currentState,
+        selectedPacket: engineState.selectedPacket,
+        selectedPenalty: engineState.selectedPenalty,
+        selectedRole: engineState.selectedRole,
+        selectedBackground: engineState.selectedBackground,
+        inducerPattern: engineState.inducerPattern,
+        shuffledQuestions: engineState.shuffledQuestions,
+        contentIndices: engineState.contentIndices,
+        permutationSizes: engineState.permutationSizes,
+        penaltySelection: engineState.penaltySelection,
+        penaltyCalibration: engineState.penaltyCalibration,
+        timerStarted: engineState.timerStarted,
+        timerElapsed: engineState.timerElapsed,
+        determination: engineState.determination,
+        outcome: engineState.outcome,
+        playerRole: engineState.config.playerRole,
+      });
+    },
+  };
+  });
+}
+
+// Create two independent store instances - one for each role
+export const useInvestigatorStore = createGameStoreInstance();
+export const useSuspectStore = createGameStoreInstance();
+
+// Deprecated: This will be replaced by context-aware useGameStore from GameStoreContext
+// For now, it points to investigator store for backwards compatibility during transition
+export const useGameStore = useInvestigatorStore;

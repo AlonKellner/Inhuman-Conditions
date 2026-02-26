@@ -1,10 +1,11 @@
 import { type FC } from 'react';
-import { useGameStore } from '../../store/gameStore';
+import { useGameStore } from '../../store/GameStoreContext';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import styles from './Conclusion.module.css';
 
 export const Conclusion: FC = () => {
+  // Use context-aware store - works for both Investigator and Suspect flows
   const { outcome, selectedRole, resetGame } = useGameStore();
 
   if (!outcome || !selectedRole) {

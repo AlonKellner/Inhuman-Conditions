@@ -7,7 +7,6 @@
   font-family: var(--font-family);
   font-weight: var(--font-weight-medium);
   border: none;
-  border-radius: var(--button-border-radius);
   cursor: pointer;
   transition: all var(--transition-fast);
   text-align: center;
@@ -30,7 +29,6 @@
 .secondary {
   background-color: transparent;
   color: var(--color-primary);
-  border: 2px solid var(--color-primary);
 }
 
 .secondary:hover:not(:disabled) {
@@ -69,6 +67,5 @@
 }
 
 .button:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline: none;
 }

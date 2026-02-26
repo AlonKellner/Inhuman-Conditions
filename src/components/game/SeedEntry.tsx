@@ -1,17 +1,34 @@
-import { type FC, useState } from 'react';
-import { useGameStore } from '../../store/gameStore';
+import { type FC, useState, useRef, useEffect, type KeyboardEvent } from 'react';
+import { useGameStore } from '../../store/GameStoreContext';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import styles from './SeedEntry.module.css';
 
 export const SeedEntry: FC = () => {
-  const [seedInput, setSeedInput] = useState('');
-  const [error, setError] = useState('');
-
   const { setSeed, generateDefaultSeed, generateRandomSeed, validateSeed, advanceState } =
     useGameStore();
 
+  // Initialize with default time-based seed
+  const [seedLetters, setSeedLetters] = useState<string[]>(() => {
+    const defaultSeed = generateDefaultSeed();
+    return defaultSeed.split('');
+  });
+  const [error, setError] = useState('');
+
+  const inputRefs = [
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+  ];
+
+  // Auto-focus first box on mount
+  useEffect(() => {
+    inputRefs[0].current?.focus();
+  }, []);
+
   const handleSubmit = () => {
+    const seedInput = seedLetters.join('');
     const validation = validateSeed(seedInput);
 
     if (!validation.isValid) {
@@ -29,13 +46,53 @@ export const SeedEntry: FC = () => {
 
   const handleUseDefault = () => {
     const seed = generateDefaultSeed();
-    setSeedInput(seed);
+    setSeedLetters(seed.split(''));
+    setError('');
   };
 
   const handleRandomize = () => {
     const seed = generateRandomSeed();
-    setSeedInput(seed);
+    setSeedLetters(seed.split(''));
+    setError('');
   };
+
+  const handleLetterChange = (index: number, value: string) => {
+    const newValue = value.toUpperCase();
+    const lastChar = newValue.charAt(newValue.length - 1);
+
+    // Only allow letters
+    if (lastChar && !/^[A-Z]$/i.test(lastChar)) {
+      return;
+    }
+
+    const newLetters = [...seedLetters];
+    newLetters[index] = lastChar || '';
+    setSeedLetters(newLetters);
+    setError('');
+
+    // Auto-advance to next box
+    if (lastChar && index < 3) {
+      inputRefs[index + 1].current?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace') {
+      if (!seedLetters[index] && index > 0) {
+        // Current box is empty - move to previous box and delete its letter
+        e.preventDefault();
+        const newLetters = [...seedLetters];
+        newLetters[index - 1] = '';
+        setSeedLetters(newLetters);
+        inputRefs[index - 1].current?.focus();
+      }
+    }
+  };
+
+  // Check if current seed differs from time-based seed
+  const currentTimeBasedSeed = generateDefaultSeed();
+  const currentSeedValue = seedLetters.join('');
+  const showTimeBasedButton = currentSeedValue !== currentTimeBasedSeed;
 
   return (
     <div className={styles.container}>
@@ -46,35 +103,42 @@ export const SeedEntry: FC = () => {
         </p>
 
         <div className={styles.inputGroup}>
-          <label htmlFor="seed-input" className={styles.label}>
-            Seed (4 uppercase letters):
-          </label>
-          <input
-            id="seed-input"
-            type="text"
-            value={seedInput}
-            onChange={(e) => {
-              setSeedInput(e.target.value.toUpperCase());
-              setError('');
-            }}
-            maxLength={4}
-            className={styles.input}
-            placeholder="ABCD"
-            autoFocus
-          />
+          <label className={styles.label}>Seed (4 uppercase letters):</label>
+          <div className={styles.letterBoxes}>
+            {[0, 1, 2, 3].map((index) => (
+              <input
+                key={index}
+                ref={inputRefs[index]}
+                type="text"
+                value={seedLetters[index] || ''}
+                onChange={(e) => handleLetterChange(index, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(index, e)}
+                className={styles.letterBox}
+                maxLength={1}
+                autoComplete="off"
+                spellCheck={false}
+              />
+            ))}
+          </div>
           {error && <div className={styles.error}>{error}</div>}
         </div>
 
         <div className={styles.buttons}>
-          <Button onClick={handleUseDefault} variant="secondary" size="small">
-            Use Time-Based Seed
-          </Button>
+          {showTimeBasedButton && (
+            <Button onClick={handleUseDefault} variant="secondary" size="small">
+              Use Time-Based Seed
+            </Button>
+          )}
           <Button onClick={handleRandomize} variant="secondary" size="small">
             Randomize Seed
           </Button>
         </div>
 
-        <Button onClick={handleSubmit} disabled={seedInput.length !== 4} className={styles.submit}>
+        <Button
+          onClick={handleSubmit}
+          disabled={seedLetters.some((letter) => !letter)}
+          className={styles.submit}
+        >
           Start Game
         </Button>
       </Card>

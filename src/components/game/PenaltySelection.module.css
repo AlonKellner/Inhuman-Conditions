@@ -1,0 +1,88 @@
+.instructions {
+  margin-bottom: var(--space-4);
+  font-family: 'Gautami', 'Courier New', Courier, monospace;
+  font-size: 14px;
+  text-align: center;
+  color: #000;
+}
+
+
+/* Side-by-side penalty card layout */
+.penaltyRow {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4);
+  margin: var(--space-4) 0;
+  flex-wrap: nowrap;
+}
+
+/* Clickable penalty card */
+.clickableCard {
+  cursor: pointer;
+  background-color: #fff;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.clickableCard:hover {
+  transform: translateY(-4px);
+}
+
+.clickableCard:active {
+  transform: translateY(-2px);
+}
+
+.clickableCard:focus {
+  outline: none;
+}
+
+
+
+.prompt {
+  margin: var(--space-4) 0;
+  padding: var(--space-3);
+  font-family: 'Gautami', 'Courier New', Courier, monospace;
+  font-size: 13px;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #000;
+}
+
+.success {
+  margin: var(--space-4) 0;
+  padding: var(--space-3);
+  font-family: 'Gautami', 'Courier New', Courier, monospace;
+  font-size: 13px;
+  font-weight: bold;
+  text-align: center;
+  background-color: #000;
+  color: #fff;
+}
+
+.error {
+  margin: var(--space-3) 0;
+  padding: var(--space-3);
+  font-family: 'Gautami', 'Courier New', Courier, monospace;
+  font-size: 13px;
+  text-align: center;
+  background-color: #fff;
+  color: #000;
+}
+
+.finalPenalty {
+  margin: var(--space-4) auto;
+  display: flex;
+  justify-content: center;
+  background-color: #fff;
+  width: fit-content;
+}
+
+.continueButton {
+  width: 100%;
+  margin-top: var(--space-4);
+  font-family: 'Gautami', 'Courier New', Courier, monospace;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+

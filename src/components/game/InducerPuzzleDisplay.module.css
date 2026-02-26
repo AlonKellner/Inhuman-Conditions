@@ -1,0 +1,126 @@
+/**
+ * InducerPuzzleDisplay Component Styles
+ * Matches official Inhuman Conditions design with halftone patterns and monochrome aesthetic
+ */
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+.content {
+  width: 100%;
+  max-width: 600px;
+  padding: 24px;
+  background: var(--color-background);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Maze Image */
+.mazeImageWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: var(--color-background);
+  min-height: 200px;
+}
+
+.mazeImage {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Question */
+.question {
+  padding: 16px;
+  background: var(--color-background);
+}
+
+.question p {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+/* Solution Input */
+.solutionInput {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--color-background);
+}
+
+.label {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.input {
+  padding: 12px;
+  font-size: 18px;
+  font-family: Arial, sans-serif;
+  background: var(--color-background);
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--color-primary);
+  opacity: 0.5;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* Feedback */
+.feedback {
+  padding: 16px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.feedback.correct {
+  color: #2d5016;
+  background: #e8f5e9;
+}
+
+.feedback.incorrect {
+  color: #5c1a1a;
+  background: #ffebee;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  .content {
+    padding: 16px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .question p {
+    font-size: 16px;
+  }
+
+  .input {
+    font-size: 16px;
+  }
+}

@@ -1,0 +1,62 @@
+/**
+ * RoleReveal Component Styles
+ * Matches official Inhuman Conditions design with halftone patterns and monochrome aesthetic
+ */
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+  min-height: 100vh;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Card Image Container */
+.cardImageContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Error State */
+.error {
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--color-error);
+}
+
+.error p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.cardId {
+  margin-top: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* Button Wrapper */
+.buttonWrapper {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0 0 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 10px;
+  }
+
+  .error {
+    padding: var(--space-4);
+  }
+}

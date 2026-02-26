@@ -4,10 +4,12 @@
 
 import type { RoleType } from './role';
 
-export enum Determination {
-  Human = 'human',
-  Robot = 'robot',
-}
+export type Determination = 'human' | 'robot';
+
+export const Determination = {
+  Human: 'human' as const,
+  Robot: 'robot' as const,
+} as const;
 
 export interface GameOutcome {
   determination: Determination;

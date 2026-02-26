@@ -1,0 +1,64 @@
+[project]
+name = "pdf-asset-extraction"
+version = "1.0.0"
+description = "Automated PDF asset extraction for Inhuman Conditions official game content"
+requires-python = ">=3.11"
+readme = "README.md"
+license = {text = "MIT"}
+
+dependencies = [
+    "pymupdf>=1.27.1",
+    "Pillow>=12.1.1",
+    "opencv-python>=4.13.0",
+    "paddleocr>=2.7.0",
+    "Jinja2>=3.0.0",
+    "matplotlib>=3.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "mypy>=1.5.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --cov=src --cov-report=html --cov-report=term-missing"
+
+[tool.black]
+line-length = 100
+target-version = ['py311']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | venv
+  | build
+  | dist
+  | data
+  | reports
+)/
+'''
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+
+[tool.flake8]
+max-line-length = 100
+exclude = [".git", "__pycache__", "venv", ".venv", "build", "dist", "data", "reports"]
+ignore = ["E203", "W503"]

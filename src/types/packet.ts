@@ -1,6 +1,6 @@
 /**
  * Question Packet Types
- * Themed sets of interview questions with role variants
+ * Themed sets of interview questions - content from card image assets
  */
 
 import type { RoleType } from './role';
@@ -8,24 +8,19 @@ import type { RoleType } from './role';
 export interface Question {
   id: string;
   type: 'primary' | 'secondary';
-  text: string;
-  examples: string[];
+  cardImage: string; // Path to question card image PNG - source of truth
 }
 
 export interface PacketRole {
   roleType: RoleType;
-  description: string;
-  fault?: string; // Only for robot roles
-  traits: string[];
-  tasks?: string[]; // Only for violent robots
+  catalyzerCardId?: string; // Links to CatalyzerCard.id for robots
 }
 
 export interface Packet {
   id: string;
   name: string;
-  difficulty: 'intro' | 'easy' | 'intermediate' | 'hard';
-  icon: string; // Unicode emoji or icon identifier
-  prompt: string; // Instructions for Investigator
-  questions: Question[];
-  roles: PacketRole[];
+  icon: string; // Path to module icon SVG
+  coverSheetImage: string; // Path to cover sheet image PNG
+  questions: Question[]; // 6 questions (3 primary, 3 secondary) - IDs and image refs only
+  roles: PacketRole[]; // Role assignments for this packet
 }

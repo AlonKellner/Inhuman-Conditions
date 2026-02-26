@@ -1,0 +1,2099 @@
+{
+  "0": {
+    "filename": "backgrounds_p1_c01_background.png",
+    "extracted_text": [
+      {
+        "text": "(SUSPECTIS)",
+        "confidence": 0.5
+      },
+      {
+        "text": ".",
+        "confidence": 0.5
+      },
+      {
+        "text": "|",
+        "confidence": 0.36
+      },
+      {
+        "text": "Bb.",
+        "confidence": 0.13
+      },
+      {
+        "text": "@.>",
+        "confidence": 0.37
+      },
+      {
+        "text": "(Suspect",
+        "confidence": 0.04
+      },
+      {
+        "text": "4s",
+        "confidence": 0.04
+      },
+      {
+        "text": ")",
+        "confidence": 0.82
+      },
+      {
+        "text": "(g)",
+        "confidence": 0.12
+      },
+      {
+        "text": "Loagsns",
+        "confidence": 0.4
+      },
+      {
+        "text": ")",
+        "confidence": 0.4
+      }
+    ],
+    "page": 1,
+    "card_num": 1
+  },
+  "1": {
+    "filename": "backgrounds_p1_c02_background.png",
+    "extracted_text": [
+      {
+        "text": "e}",
+        "confidence": 0.46
+      },
+      {
+        "text": "(‘SUSPECT",
+        "confidence": 0.45
+      },
+      {
+        "text": "IS",
+        "confidence": 0.71
+      },
+      {
+        "text": ")",
+        "confidence": 0.89
+      },
+      {
+        "text": "_",
+        "confidence": 0.6
+      },
+      {
+        "text": "RENOWNED.",
+        "confidence": 0.72
+      },
+      {
+        "text": "-",
+        "confidence": 0.45
+      },
+      {
+        "text": "PROFESSOR",
+        "confidence": 0.26
+      },
+      {
+        "text": "©",
+        "confidence": 0.4
+      },
+      {
+        "text": "(susPectis)",
+        "confidence": 0.31
+      },
+      {
+        "text": ".",
+        "confidence": 0.21
+      },
+      {
+        "text": "($1",
+        "confidence": 0.6
+      },
+      {
+        "text": "Lo3asns",
+        "confidence": 0.46
+      },
+      {
+        "text": ")",
+        "confidence": 0.86
+      }
+    ],
+    "page": 1,
+    "card_num": 2
+  },
+  "2": {
+    "filename": "backgrounds_p1_c03_background.png",
+    "extracted_text": [
+      {
+        "text": "(",
+        "confidence": 0.89
+      },
+      {
+        "text": "SUSPECT",
+        "confidence": 0.94
+      },
+      {
+        "text": "IS",
+        "confidence": 0.82
+      },
+      {
+        "text": ")",
+        "confidence": 0.89
+      },
+      {
+        "text": "8",
+        "confidence": 0.34
+      },
+      {
+        "text": ".",
+        "confidence": 0.33
+      },
+      {
+        "text": "REALITY",
+        "confidence": 0.95
+      },
+      {
+        "text": "TV",
+        "confidence": 0.87
+      },
+      {
+        "text": "~",
+        "confidence": 0.45
+      },
+      {
+        "text": "CONTESTANT",
+        "confidence": 0.92
+      },
+      {
+        "text": ".",
+        "confidence": 0.63
+      },
+      {
+        "text": "{susPect",
+        "confidence": 0.34
+      },
+      {
+        "text": "1s+)",
+        "confidence": 0.3
+      },
+      {
+        "text": "(1",
+        "confidence": 0.63
+      },
+      {
+        "text": "Loadgns",
+        "confidence": 0.8
+      },
+      {
+        "text": ")",
+        "confidence": 0.86
+      },
+      {
+        "text": "i)",
+        "confidence": 0.3
+      }
+    ],
+    "page": 1,
+    "card_num": 3
+  },
+  "3": {
+    "filename": "backgrounds_p1_c04_background.png",
+    "extracted_text": [
+      {
+        "text": "(",
+        "confidence": 0.91
+      },
+      {
+        "text": "SUSPECT",
+        "confidence": 0.91
+      },
+      {
+        "text": "I8",
+        "confidence": 0.76
+      },
+      {
+        "text": ")",
+        "confidence": 0.77
+      },
+      {
+        "text": "2",
+        "confidence": 0.51
+      },
+      {
+        "text": "BT.",
+        "confidence": 0.31
+      },
+      {
+        "text": "-.",
+        "confidence": 0.52
+      },
+      {
+        "text": "CULT",
+        "confidence": 0.86
+      },
+      {
+        "text": "|",
+        "confidence": 0.38
+      },
+      {
+        "text": "LEADER.",
+        "confidence": 0.77
+      },
+      {
+        "text": "..",
+        "confidence": 0.39
+      },
+      {
+        "text": "@.",
+        "confidence": 0.68
+      },
+      {
+        "text": "a",
+        "confidence": 0.66
+      },
+      {
+        "text": "a",
+        "confidence": 0.65
+      },
+      {
+        "text": "6",
+        "confidence": 0.12
+      },
+      {
+        "text": "=",
+        "confidence": 0.36
+      },
+      {
+        "text": "a",
+        "confidence": 0.54
+      },
+      {
+        "text": "*",
+        "confidence": 0.57
+      },
+      {
+        "text": ")",
+        "confidence": 0.86
+      },
+      {
+        "text": "a",
+        "confidence": 0.6
+      }
+    ],
+    "page": 1,
+    "card_num": 4
+  },
+  "4": {
+    "filename": "backgrounds_p1_c05_background.png",
+    "extracted_text": [
+      {
+        "text": "*",
+        "confidence": 0.43
+      },
+      {
+        "text": "(SUSPECT",
+        "confidence": 0.61
+      },
+      {
+        "text": "IS",
+        "confidence": 0.88
+      },
+      {
+        "text": ")",
+        "confidence": 0.93
+      },
+      {
+        "text": "aw",
+        "confidence": 0.39
+      },
+      {
+        "text": "@",
+        "confidence": 0.2
+      },
+      {
+        "text": "FOREIGN",
+        "confidence": 0.91
+      },
+      {
+        "text": "..",
+        "confidence": 0.53
+      },
+      {
+        "text": "-",
+        "confidence": 0.64
+      },
+      {
+        "text": "AMBASSADOR",
+        "confidence": 0.96
+      },
+      {
+        "text": "Cs",
+        "confidence": 0.22
+      },
+      {
+        "text": ")",
+        "confidence": 0.78
+      },
+      {
+        "text": "*",
+        "confidence": 0.5
+      },
+      {
+        "text": "(",
+        "confidence": 0.88
+      },
+      {
+        "text": "SUSPECT",
+        "confidence": 0.91
+      },
+      {
+        "text": "IS",
+        "confidence": 0.77
+      },
+      {
+        "text": ")",
+        "confidence": 0.89
+      },
+      {
+        "text": "a",
+        "confidence": 0.63
+      }
+    ],
+    "page": 1,
+    "card_num": 5
+  },
+  "5": {
+    "filename": "backgrounds_p1_c06_background.png",
+    "extracted_text": [
+      {
+        "text": "(susPectis)",
+        "confidence": 0.64
+      },
+      {
+        "text": "*",
+        "confidence": 0.46
+      },
+      {
+        "text": "‘ef",
+        "confidence": 0.48
+      },
+      {
+        "text": "8",
+        "confidence": 0.81
+      },
+      {
+        "text": "MOTIVATIONAL",
+        "confidence": 0.94
+      },
+      {
+        "text": "SPEAKER",
+        "confidence": 0.35
+      },
+      {
+        "text": "“(Suspect",
+        "confidence": 0.54
+      },
+      {
+        "text": "is",
+        "confidence": 0.85
+      },
+      {
+        "text": "a",
+        "confidence": 0.09
+      },
+      {
+        "text": ":",
+        "confidence": 0.59
+      },
+      {
+        "text": "*",
+        "confidence": 0.45
+      },
+      {
+        "text": "(81",
+        "confidence": 0.46
+      },
+      {
+        "text": ")",
+        "confidence": 0.89
+      },
+      {
+        "text": "|",
+        "confidence": 0.66
+      },
+      {
+        "text": "a",
+        "confidence": 0.65
+      }
+    ],
+    "page": 1,
+    "card_num": 6
+  },
+  "6": {
+    "filename": "backgrounds_p2_c01_background.png",
+    "extracted_text": [
+      {
+        "text": ">.",
+        "confidence": 0.28
+      },
+      {
+        "text": "(8usPECT",
+        "confidence": 0.13
+      },
+      {
+        "text": "Id)",
+        "confidence": 0.55
+      },
+      {
+        "text": "R",
+        "confidence": 0.71
+      },
+      {
+        "text": "\"B",
+        "confidence": 0.01
+      },
+      {
+        "text": "AMATEUR",
+        "confidence": 0.96
+      },
+      {
+        "text": "_",
+        "confidence": 0.84
+      },
+      {
+        "text": "WRESTLER",
+        "confidence": 0.96
+      },
+      {
+        "text": "(",
+        "confidence": 0.91
+      },
+      {
+        "text": "SUSPECT",
+        "confidence": 0.91
+      },
+      {
+        "text": "I8",
+        "confidence": 0.8
+      },
+      {
+        "text": ")",
+        "confidence": 0.83
+      },
+      {
+        "text": "(si",
+        "confidence": 0.53
+      },
+      {
+        "text": "ioaasis®",
+        "confidence": 0.32
+      },
+      {
+        "text": ",",
+        "confidence": 0.58
+      },
+      {
+        "text": "9",
+        "confidence": 0.86
+      },
+      {
+        "text": "a",
+        "confidence": 0.96
+      }
+    ],
+    "page": 2,
+    "card_num": 1
+  },
+  "7": {
+    "filename": "backgrounds_p2_c02_background.png",
+    "extracted_text": [
+      {
+        "text": "(sUSPECT",
+        "confidence": 0.2
+      },
+      {
+        "text": "IS)",
+        "confidence": 0.57
+      },
+      {
+        "text": "~",
+        "confidence": 0.25
+      },
+      {
+        "text": "8",
+        "confidence": 0.48
+      },
+      {
+        "text": "BUTCHER",
+        "confidence": 0.36
+      },
+      {
+        "text": ".",
+        "confidence": 0.79
+      },
+      {
+        "text": "2",
+        "confidence": 0.64
+      },
+      {
+        "text": "2",
+        "confidence": 0.7
+      },
+      {
+        "text": "a,",
+        "confidence": 0.37
+      },
+      {
+        "text": "a",
+        "confidence": 0.31
+      },
+      {
+        "text": "@.",
+        "confidence": 0.53
+      },
+      {
+        "text": "a",
+        "confidence": 0.83
+      },
+      {
+        "text": "“(",
+        "confidence": 0.05
+      },
+      {
+        "text": "s1",
+        "confidence": 0.05
+      },
+      {
+        "text": "Lozasns",
+        "confidence": 0.48
+      },
+      {
+        "text": ")",
+        "confidence": 0.69
+      },
+      {
+        "text": "a",
+        "confidence": 0.65
+      },
+      {
+        "text": "a:",
+        "confidence": 0.76
+      }
+    ],
+    "page": 2,
+    "card_num": 2
+  },
+  "8": {
+    "filename": "backgrounds_p2_c03_background.png",
+    "extracted_text": [
+      {
+        "text": "*",
+        "confidence": 0.65
+      },
+      {
+        "text": "(SUSPECT",
+        "confidence": 0.65
+      },
+      {
+        "text": "Is",
+        "confidence": 0.68
+      },
+      {
+        "text": ")",
+        "confidence": 0.76
+      },
+      {
+        "text": "“BUILDER.",
+        "confidence": 0.66
+      },
+      {
+        "text": "-",
+        "confidence": 0.66
+      },
+      {
+        "text": "a",
+        "confidence": 0.31
+      },
+      {
+        "text": "2",
+        "confidence": 0.95
+      },
+      {
+        "text": "ak",
+        "confidence": 0.36
+      },
+      {
+        "text": "<0.",
+        "confidence": 0.25
+      },
+      {
+        "text": "iw",
+        "confidence": 0.01
+      },
+      {
+        "text": "a.",
+        "confidence": 0.87
+      },
+      {
+        "text": "3",
+        "confidence": 0.61
+      },
+      {
+        "text": ",",
+        "confidence": 0.46
+      },
+      {
+        "text": "€sl.gadsns",
+        "confidence": 0.25
+      },
+      {
+        "text": ")",
+        "confidence": 0.65
+      }
+    ],
+    "page": 2,
+    "card_num": 3
+  },
+  "9": {
+    "filename": "backgrounds_p2_c04_background.png",
+    "extracted_text": [
+      {
+        "text": "(",
+        "confidence": 0.92
+      },
+      {
+        "text": "SUSPECT",
+        "confidence": 0.65
+      },
+      {
+        "text": "Is",
+        "confidence": 0.89
+      },
+      {
+        "text": ")",
+        "confidence": 0.9
+      },
+      {
+        "text": "_",
+        "confidence": 0.7
+      },
+      {
+        "text": "FREELANCE",
+        "confidence": 0.7
+      },
+      {
+        "text": "ROBOT",
+        "confidence": 0.96
+      },
+      {
+        "text": "HUNTER",
+        "confidence": 0.57
+      },
+      {
+        "text": "ee",
+        "confidence": 0.45
+      },
+      {
+        "text": "BY.",
+        "confidence": 0.26
+      },
+      {
+        "text": "6",
+        "confidence": 0.47
+      },
+      {
+        "text": "ry",
+        "confidence": 0.44
+      },
+      {
+        "text": "a",
+        "confidence": 0.32
+      },
+      {
+        "text": "a",
+        "confidence": 0.11
+      },
+      {
+        "text": "3",
+        "confidence": 0.84
+      },
+      {
+        "text": "“Ds",
+        "confidence": 0.58
+      },
+      {
+        "text": "\"(si",
+        "confidence": 0.26
+      },
+      {
+        "text": "toaasns",
+        "confidence": 0.26
+      },
+      {
+        "text": ")",
+        "confidence": 0.7
+      },
+      {
+        "text": "ia:",
+        "confidence": 0.89
+      }
+    ],
+    "page": 2,
+    "card_num": 4
+  },
+  "10": {
+    "filename": "backgrounds_p2_c05_background.png",
+    "extracted_text": [],
+    "page": 2,
+    "card_num": 5
+  },
+  "11": {
+    "filename": "backgrounds_p2_c06_background.png",
+    "extracted_text": [
+      {
+        "text": "0.",
+        "confidence": 0.18
+      },
+      {
+        "text": "(susrectis)",
+        "confidence": 0.51
+      },
+      {
+        "text": "8",
+        "confidence": 0.62
+      },
+      {
+        "text": "fs",
+        "confidence": 0.35
+      },
+      {
+        "text": ".",
+        "confidence": 0.53
+      },
+      {
+        "text": "(Suspectis)",
+        "confidence": 0.35
+      },
+      {
+        "text": "—",
+        "confidence": 0.51
+      },
+      {
+        "text": "|",
+        "confidence": 0.53
+      },
+      {
+        "text": "SCIENTIST",
+        "confidence": 0.91
+      },
+      {
+        "text": "-",
+        "confidence": 0.78
+      },
+      {
+        "text": ".",
+        "confidence": 0.58
+      },
+      {
+        "text": "($1",
+        "confidence": 0.74
+      },
+      {
+        "text": ")",
+        "confidence": 0.9
+      },
+      {
+        "text": "a",
+        "confidence": 0.87
+      },
+      {
+        "text": "eo:",
+        "confidence": 0.42
+      },
+      {
+        "text": "a.",
+        "confidence": 0.89
+      }
+    ],
+    "page": 2,
+    "card_num": 6
+  },
+  "12": {
+    "filename": "backgrounds_p3_c01_background.png",
+    "extracted_text": [
+      {
+        "text": "(",
+        "confidence": 0.91
+      },
+      {
+        "text": "SUSPECT",
+        "confidence": 0.96
+      },
+      {
+        "text": "IS",
+        "confidence": 0.89
+      },
+      {
+        "text": "Dé",
+        "confidence": 0.81
+      },
+      {
+        "text": "“2",
+        "confidence": 0.46
+      },
+      {
+        "text": "*",
+        "confidence": 0.85
+      },
+      {
+        "text": "8.",
+        "confidence": 0.38
+      },
+      {
+        "text": "CONSPIRACY",
+        "confidence": 0.93
+      },
+      {
+        "text": ".",
+        "confidence": 0.33
+      },
+      {
+        "text": ".",
+        "confidence": 0.53
+      },
+      {
+        "text": "THEORIST",
+        "confidence": 0.96
+      },
+      {
+        "text": "¢",
+        "confidence": 0.8
+      },
+      {
+        "text": "SUSPECT",
+        "confidence": 0.3
+      },
+      {
+        "text": "is",
+        "confidence": 0.75
+      },
+      {
+        "text": ")",
+        "confidence": 0.91
+      },
+      {
+        "text": "(",
+        "confidence": 0.4
+      },
+      {
+        "text": "shuoadene,",
+        "confidence": 0.04
+      },
+      {
+        "text": "a:",
+        "confidence": 0.48
+      }
+    ],
+    "page": 3,
+    "card_num": 1
+  },
+  "13": {
+    "filename": "backgrounds_p3_c02_background.png",
+    "extracted_text": [
+      {
+        "text": "“(SUSPECT",
+        "confidence": 0.55
+      },
+      {
+        "text": "IS)",
+        "confidence": 0.89
+      },
+      {
+        "text": "~",
+        "confidence": 0.35
+      },
+      {
+        "text": "*",
+        "confidence": 0.16
+      },
+      {
+        "text": "a",
+        "confidence": 0.25
+      },
+      {
+        "text": "eo]",
+        "confidence": 0.36
+      },
+      {
+        "text": "PROFESSIONAL",
+        "confidence": 0.96
+      },
+      {
+        "text": "|",
+        "confidence": 0.43
+      },
+      {
+        "text": "2)",
+        "confidence": 0.44
+      },
+      {
+        "text": "5",
+        "confidence": 0.79
+      },
+      {
+        "text": "o",
+        "confidence": 0.03
+      },
+      {
+        "text": "a",
+        "confidence": 0.27
+      },
+      {
+        "text": "a",
+        "confidence": 0.72
+      },
+      {
+        "text": "o",
+        "confidence": 0.32
+      },
+      {
+        "text": "3",
+        "confidence": 0.86
+      },
+      {
+        "text": "a",
+        "confidence": 0.71
+      },
+      {
+        "text": "(81",
+        "confidence": 0.51
+      },
+      {
+        "text": "193dsns,)",
+        "confidence": 0.15
+      }
+    ],
+    "page": 3,
+    "card_num": 2
+  },
+  "14": {
+    "filename": "backgrounds_p3_c03_background.png",
+    "extracted_text": [
+      {
+        "text": "(",
+        "confidence": 0.89
+      },
+      {
+        "text": "SUSPECT",
+        "confidence": 0.92
+      },
+      {
+        "text": "I8",
+        "confidence": 0.86
+      },
+      {
+        "text": ")",
+        "confidence": 0.86
+      },
+      {
+        "text": "USED",
+        "confidence": 0.53
+      },
+      {
+        "text": "VAN",
+        "confidence": 0.53
+      },
+      {
+        "text": "~",
+        "confidence": 0.48
+      },
+      {
+        "text": "DEALER",
+        "confidence": 0.81
+      },
+      {
+        "text": ".",
+        "confidence": 0.65
+      },
+      {
+        "text": "(s1,10aagns",
+        "confidence": 0.07
+      },
+      {
+        "text": "th",
+        "confidence": 0.41
+      },
+      {
+        "text": "g",
+        "confidence": 0.36
+      },
+      {
+        "text": "a",
+        "confidence": 0.47
+      },
+      {
+        "text": "a",
+        "confidence": 0.59
+      },
+      {
+        "text": "o",
+        "confidence": 0.33
+      },
+      {
+        "text": "3",
+        "confidence": 0.55
+      },
+      {
+        "text": "a",
+        "confidence": 0.44
+      }
+    ],
+    "page": 3,
+    "card_num": 3
+  },
+  "15": {
+    "filename": "backgrounds_p3_c04_background.png",
+    "extracted_text": [
+      {
+        "text": "|",
+        "confidence": 0.3
+      },
+      {
+        "text": "(",
+        "confidence": 0.9
+      },
+      {
+        "text": "SUSPECT",
+        "confidence": 0.93
+      },
+      {
+        "text": "I8",
+        "confidence": 0.83
+      },
+      {
+        "text": ")",
+        "confidence": 0.83
+      },
+      {
+        "text": "RV.",
+        "confidence": 0.19
+      },
+      {
+        "text": "-",
+        "confidence": 0.47
+      },
+      {
+        "text": ".POPSTAR",
+        "confidence": 0.74
+      },
+      {
+        "text": "*",
+        "confidence": 0.43
+      },
+      {
+        "text": "a,",
+        "confidence": 0.43
+      },
+      {
+        "text": "re",
+        "confidence": 0.23
+      },
+      {
+        "text": "79°",
+        "confidence": 0.56
+      },
+      {
+        "text": "ry",
+        "confidence": 0.29
+      },
+      {
+        "text": "a",
+        "confidence": 0.45
+      },
+      {
+        "text": "o",
+        "confidence": 0.31
+      },
+      {
+        "text": "D",
+        "confidence": 0.38
+      },
+      {
+        "text": "@",
+        "confidence": 0.2
+      },
+      {
+        "text": "(st",
+        "confidence": 0.32
+      },
+      {
+        "text": "doaasng);,",
+        "confidence": 0.19
+      },
+      {
+        "text": "a",
+        "confidence": 0.8
+      },
+      {
+        "text": "a",
+        "confidence": 0.95
+      }
+    ],
+    "page": 3,
+    "card_num": 4
+  },
+  "16": {
+    "filename": "backgrounds_p3_c05_background.png",
+    "extracted_text": [
+      {
+        "text": "a",
+        "confidence": 0.1
+      },
+      {
+        "text": "*",
+        "confidence": 0.2
+      },
+      {
+        "text": "(",
+        "confidence": 0.2
+      },
+      {
+        "text": "susPEcT",
+        "confidence": 0.47
+      },
+      {
+        "text": "Is",
+        "confidence": 0.7
+      },
+      {
+        "text": ")",
+        "confidence": 0.82
+      },
+      {
+        "text": "2",
+        "confidence": 0.35
+      },
+      {
+        "text": "SRETIRED",
+        "confidence": 0.44
+      },
+      {
+        "text": "|",
+        "confidence": 0.71
+      },
+      {
+        "text": ")",
+        "confidence": 0.31
+      },
+      {
+        "text": "SPORTS:",
+        "confidence": 0.89
+      },
+      {
+        "text": ":",
+        "confidence": 0.3
+      },
+      {
+        "text": "aq",
+        "confidence": 0.32
+      },
+      {
+        "text": "2",
+        "confidence": 0.78
+      },
+      {
+        "text": "Fa",
+        "confidence": 0.44
+      },
+      {
+        "text": "3",
+        "confidence": 0.65
+      },
+      {
+        "text": "a",
+        "confidence": 0.69
+      },
+      {
+        "text": "(si",
+        "confidence": 0.61
+      },
+      {
+        "text": "adaasn",
+        "confidence": 0.29
+      },
+      {
+        "text": "a",
+        "confidence": 0.84
+      }
+    ],
+    "page": 3,
+    "card_num": 5
+  },
+  "17": {
+    "filename": "backgrounds_p3_c06_background.png",
+    "extracted_text": [
+      {
+        "text": "2",
+        "confidence": 0.4
+      },
+      {
+        "text": "m",
+        "confidence": 0.01
+      },
+      {
+        "text": "w",
+        "confidence": 0.52
+      },
+      {
+        "text": "a",
+        "confidence": 0.56
+      },
+      {
+        "text": "3",
+        "confidence": 0.82
+      },
+      {
+        "text": "a",
+        "confidence": 0.45
+      },
+      {
+        "text": "a",
+        "confidence": 0.72
+      },
+      {
+        "text": "\";",
+        "confidence": 0.26
+      },
+      {
+        "text": "(st",
+        "confidence": 0.65
+      },
+      {
+        "text": "Loaasns:)",
+        "confidence": 0.21
+      }
+    ],
+    "page": 3,
+    "card_num": 6
+  },
+  "18": {
+    "filename": "backgrounds_p4_c01_background.png",
+    "extracted_text": [
+      {
+        "text": ")",
+        "confidence": 0.51
+      },
+      {
+        "text": "“al",
+        "confidence": 0.43
+      },
+      {
+        "text": "i",
+        "confidence": 0.37
+      },
+      {
+        "text": "“MAYORAL",
+        "confidence": 0.26
+      },
+      {
+        "text": "_",
+        "confidence": 0.35
+      },
+      {
+        "text": "CANDIDATE",
+        "confidence": 0.31
+      },
+      {
+        "text": "(",
+        "confidence": 0.92
+      },
+      {
+        "text": "SUSPECT",
+        "confidence": 0.96
+      },
+      {
+        "text": "IS",
+        "confidence": 0.82
+      },
+      {
+        "text": ")",
+        "confidence": 0.9
+      },
+      {
+        "text": "(st",
+        "confidence": 0.21
+      },
+      {
+        "text": "yoaasns",
+        "confidence": 0.21
+      },
+      {
+        "text": "J",
+        "confidence": 0.25
+      },
+      {
+        "text": "fa",
+        "confidence": 0.7
+      }
+    ],
+    "page": 4,
+    "card_num": 1
+  },
+  "19": {
+    "filename": "backgrounds_p4_c02_background.png",
+    "extracted_text": [
+      {
+        "text": "C",
+        "confidence": 0.9
+      },
+      {
+        "text": "SUSPECT",
+        "confidence": 0.77
+      },
+      {
+        "text": "IS",
+        "confidence": 0.77
+      },
+      {
+        "text": "Yr",
+        "confidence": 0.21
+      },
+      {
+        "text": "-,",
+        "confidence": 0.47
+      },
+      {
+        "text": "DECORATED",
+        "confidence": 0.95
+      },
+      {
+        "text": "ROBOT",
+        "confidence": 0.96
+      },
+      {
+        "text": ".",
+        "confidence": 0.45
+      },
+      {
+        "text": "VETERAN",
+        "confidence": 0.87
+      },
+      {
+        "text": "|",
+        "confidence": 0.75
+      },
+      {
+        "text": ".",
+        "confidence": 0.55
+      },
+      {
+        "text": "2",
+        "confidence": 0.66
+      },
+      {
+        "text": "8",
+        "confidence": 0.68
+      },
+      {
+        "text": "2.",
+        "confidence": 0.58
+      },
+      {
+        "text": "o",
+        "confidence": 0.33
+      },
+      {
+        "text": "ery",
+        "confidence": 0.29
+      },
+      {
+        "text": "o",
+        "confidence": 0.19
+      },
+      {
+        "text": "g,",
+        "confidence": 0.45
+      },
+      {
+        "text": ">",
+        "confidence": 0.64
+      },
+      {
+        "text": "@",
+        "confidence": 0.52
+      },
+      {
+        "text": "(81",
+        "confidence": 0.46
+      },
+      {
+        "text": "193dsns\")",
+        "confidence": 0.11
+      }
+    ],
+    "page": 4,
+    "card_num": 2
+  },
+  "20": {
+    "filename": "backgrounds_p4_c03_background.png",
+    "extracted_text": [
+      {
+        "text": "of",
+        "confidence": 0.08
+      },
+      {
+        "text": "B.",
+        "confidence": 0.15
+      },
+      {
+        "text": "-",
+        "confidence": 0.78
+      },
+      {
+        "text": "(s1",
+        "confidence": 0.48
+      },
+      {
+        "text": "foaasns",
+        "confidence": 0.47
+      },
+      {
+        "text": ")",
+        "confidence": 0.89
+      },
+      {
+        "text": "2",
+        "confidence": 0.14
+      },
+      {
+        "text": "a",
+        "confidence": 0.63
+      },
+      {
+        "text": "a",
+        "confidence": 0.67
+      },
+      {
+        "text": "o",
+        "confidence": 0.55
+      },
+      {
+        "text": "3",
+        "confidence": 0.66
+      },
+      {
+        "text": "a",
+        "confidence": 0.79
+      },
+      {
+        "text": "a",
+        "confidence": 0.79
+      },
+      {
+        "text": ";a",
+        "confidence": 0.13
+      },
+      {
+        "text": ".",
+        "confidence": 0.14
+      }
+    ],
+    "page": 4,
+    "card_num": 3
+  },
+  "21": {
+    "filename": "backgrounds_p4_c04_background.png",
+    "extracted_text": [
+      {
+        "text": "Sn",
+        "confidence": 0.22
+      },
+      {
+        "text": "(",
+        "confidence": 0.81
+      },
+      {
+        "text": "susPEgT",
+        "confidence": 0.18
+      },
+      {
+        "text": "Is)",
+        "confidence": 0.54
+      },
+      {
+        "text": "e",
+        "confidence": 0.6
+      },
+      {
+        "text": "|",
+        "confidence": 0.8
+      },
+      {
+        "text": "=",
+        "confidence": 0.56
+      },
+      {
+        "text": "DISCHARGED",
+        "confidence": 0.96
+      },
+      {
+        "text": "PROM",
+        "confidence": 0.74
+      },
+      {
+        "text": "(SusPEGT",
+        "confidence": 0.56
+      },
+      {
+        "text": "is",
+        "confidence": 0.8
+      },
+      {
+        "text": "($1",
+        "confidence": 0.25
+      },
+      {
+        "text": "THE",
+        "confidence": 0.96
+      },
+      {
+        "text": "MILITARY",
+        "confidence": 0.23
+      },
+      {
+        "text": "a",
+        "confidence": 0.81
+      },
+      {
+        "text": "7",
+        "confidence": 0.09
+      },
+      {
+        "text": "6",
+        "confidence": 0.22
+      }
+    ],
+    "page": 4,
+    "card_num": 4
+  },
+  "22": {
+    "filename": "backgrounds_p4_c05_background.png",
+    "extracted_text": [
+      {
+        "text": "(",
+        "confidence": 0.87
+      },
+      {
+        "text": "SUSPECT",
+        "confidence": 0.96
+      },
+      {
+        "text": "sy",
+        "confidence": 0.07
+      },
+      {
+        "text": ":",
+        "confidence": 0.45
+      },
+      {
+        "text": "WORLD'S.",
+        "confidence": 0.62
+      },
+      {
+        "text": "SECOND",
+        "confidence": 0.81
+      },
+      {
+        "text": "RICHEST,",
+        "confidence": 0.63
+      },
+      {
+        "text": "-",
+        "confidence": 0.2
+      },
+      {
+        "text": "BY",
+        "confidence": 0.47
+      },
+      {
+        "text": "(",
+        "confidence": 0.89
+      },
+      {
+        "text": "SUSPECT",
+        "confidence": 0.96
+      },
+      {
+        "text": "IS",
+        "confidence": 0.91
+      },
+      {
+        "text": "}",
+        "confidence": 0.35
+      },
+      {
+        "text": "(si",
+        "confidence": 0.14
+      },
+      {
+        "text": "2o3dsns",
+        "confidence": 0.13
+      },
+      {
+        "text": ")",
+        "confidence": 0.88
+      },
+      {
+        "text": "8",
+        "confidence": 0.85
+      }
+    ],
+    "page": 4,
+    "card_num": 5
+  },
+  "23": {
+    "filename": "backgrounds_p4_c06_background.png",
+    "extracted_text": [
+      {
+        "text": "“+:",
+        "confidence": 0.45
+      },
+      {
+        "text": "CANNIBAL",
+        "confidence": 0.95
+      },
+      {
+        "text": "(",
+        "confidence": 0.27
+      },
+      {
+        "text": "SUSPECT.IS",
+        "confidence": 0.27
+      },
+      {
+        "text": ")",
+        "confidence": 0.43
+      },
+      {
+        "text": "+",
+        "confidence": 0.6
+      },
+      {
+        "text": "(st",
+        "confidence": 0.64
+      },
+      {
+        "text": "Loazasngs",
+        "confidence": 0.43
+      },
+      {
+        "text": ")",
+        "confidence": 0.66
+      },
+      {
+        "text": ">",
+        "confidence": 0.41
+      },
+      {
+        "text": "+",
+        "confidence": 0.62
+      }
+    ],
+    "page": 4,
+    "card_num": 6
+  },
+  "24": {
+    "filename": "backgrounds_p5_c01_background.png",
+    "extracted_text": [
+      {
+        "text": "(",
+        "confidence": 0.45
+      },
+      {
+        "text": "1s)",
+        "confidence": 0.49
+      },
+      {
+        "text": ".DEAN",
+        "confidence": 0.73
+      },
+      {
+        "text": "OFA",
+        "confidence": 0.92
+      },
+      {
+        "text": "CLOWN",
+        "confidence": 0.96
+      },
+      {
+        "text": "_.GOLLEGE",
+        "confidence": 0.68
+      },
+      {
+        "text": "BY:",
+        "confidence": 0.44
+      },
+      {
+        "text": "(si",
+        "confidence": 0.83
+      },
+      {
+        "text": "loaagngs\")",
+        "confidence": 0.15
+      },
+      {
+        "text": "8",
+        "confidence": 0.9
+      },
+      {
+        "text": "acy",
+        "confidence": 0.36
+      },
+      {
+        "text": "a",
+        "confidence": 0.59
+      },
+      {
+        "text": "o",
+        "confidence": 0.26
+      },
+      {
+        "text": "Ss.",
+        "confidence": 0.36
+      },
+      {
+        "text": "a",
+        "confidence": 0.42
+      },
+      {
+        "text": "Nae",
+        "confidence": 0.49
+      }
+    ],
+    "page": 5,
+    "card_num": 1
+  },
+  "25": {
+    "filename": "backgrounds_p5_c02_background.png",
+    "extracted_text": [
+      {
+        "text": "3",
+        "confidence": 0.71
+      },
+      {
+        "text": "(SUSPECT",
+        "confidence": 0.48
+      },
+      {
+        "text": "IS",
+        "confidence": 0.5
+      },
+      {
+        "text": "}",
+        "confidence": 0.59
+      },
+      {
+        "text": "ait",
+        "confidence": 0.22
+      },
+      {
+        "text": ".",
+        "confidence": 0.29
+      },
+      {
+        "text": "FORMER.",
+        "confidence": 0.91
+      },
+      {
+        "text": ".",
+        "confidence": 0.88
+      },
+      {
+        "text": "“CHILD",
+        "confidence": 0.55
+      },
+      {
+        "text": "STAR:",
+        "confidence": 0.63
+      },
+      {
+        "text": "{si",
+        "confidence": 0.65
+      },
+      {
+        "text": ")",
+        "confidence": 0.87
+      },
+      {
+        "text": "2",
+        "confidence": 0.86
+      },
+      {
+        "text": "Rs",
+        "confidence": 0.33
+      },
+      {
+        "text": "8",
+        "confidence": 0.28
+      },
+      {
+        "text": "aT]",
+        "confidence": 0.3
+      },
+      {
+        "text": "a",
+        "confidence": 0.19
+      },
+      {
+        "text": "Fp",
+        "confidence": 0.69
+      },
+      {
+        "text": "5",
+        "confidence": 0.52
+      },
+      {
+        "text": "oc",
+        "confidence": 0.3
+      },
+      {
+        "text": "o..",
+        "confidence": 0.26
+      }
+    ],
+    "page": 5,
+    "card_num": 2
+  },
+  "26": {
+    "filename": "backgrounds_p5_c03_background.png",
+    "extracted_text": [
+      {
+        "text": "(SUSPECT",
+        "confidence": 0.57
+      },
+      {
+        "text": "IS)",
+        "confidence": 0.8
+      },
+      {
+        "text": "|",
+        "confidence": 0.73
+      },
+      {
+        "text": "-",
+        "confidence": 0.73
+      },
+      {
+        "text": "BUTLER",
+        "confidence": 0.97
+      },
+      {
+        "text": "TO.",
+        "confidence": 0.32
+      },
+      {
+        "text": "THE",
+        "confidence": 0.79
+      },
+      {
+        "text": "-",
+        "confidence": 0.37
+      },
+      {
+        "text": "STARS",
+        "confidence": 0.91
+      },
+      {
+        "text": "~",
+        "confidence": 0.12
+      },
+      {
+        "text": "5.",
+        "confidence": 0.58
+      },
+      {
+        "text": "(81",
+        "confidence": 0.72
+      },
+      {
+        "text": "Loaasns",
+        "confidence": 0.59
+      },
+      {
+        "text": ")",
+        "confidence": 0.77
+      },
+      {
+        "text": ".8",
+        "confidence": 0.01
+      },
+      {
+        "text": "w",
+        "confidence": 0.4
+      },
+      {
+        "text": "3",
+        "confidence": 0.48
+      },
+      {
+        "text": "a.",
+        "confidence": 0.77
+      },
+      {
+        "text": "3",
+        "confidence": 0.45
+      },
+      {
+        "text": "a.",
+        "confidence": 0.85
+      },
+      {
+        "text": "a",
+        "confidence": 0.88
+      }
+    ],
+    "page": 5,
+    "card_num": 3
+  },
+  "27": {
+    "filename": "backgrounds_p5_c04_background.png",
+    "extracted_text": [
+      {
+        "text": "(",
+        "confidence": 0.77
+      },
+      {
+        "text": "SUSPECT",
+        "confidence": 0.77
+      },
+      {
+        "text": "IS)",
+        "confidence": 0.54
+      },
+      {
+        "text": "INTERNAL",
+        "confidence": 0.96
+      },
+      {
+        "text": "AFFAIRS",
+        "confidence": 0.96
+      },
+      {
+        "text": "AGENT",
+        "confidence": 0.96
+      },
+      {
+        "text": "rs)",
+        "confidence": 0.13
+      },
+      {
+        "text": "ry",
+        "confidence": 0.17
+      },
+      {
+        "text": "(",
+        "confidence": 0.7
+      },
+      {
+        "text": "SUSPECT",
+        "confidence": 0.92
+      },
+      {
+        "text": "18)",
+        "confidence": 0.89
+      },
+      {
+        "text": "(Csr.",
+        "confidence": 0.64
+      }
+    ],
+    "page": 5,
+    "card_num": 4
+  },
+  "28": {
+    "filename": "backgrounds_p5_c05_background.png",
+    "extracted_text": [
+      {
+        "text": "Tac.",
+        "confidence": 0.67
+      },
+      {
+        "text": "(sUsPECTIS)",
+        "confidence": 0.28
+      },
+      {
+        "text": ".",
+        "confidence": 0.65
+      },
+      {
+        "text": "|.",
+        "confidence": 0.35
+      },
+      {
+        "text": "‘=~",
+        "confidence": 0.41
+      },
+      {
+        "text": "popots'",
+        "confidence": 0.56
+      },
+      {
+        "text": "|",
+        "confidence": 0.42
+      },
+      {
+        "text": "sRIGHTS",
+        "confidence": 0.75
+      },
+      {
+        "text": "ACTIVIST:",
+        "confidence": 0.85
+      }
+    ],
+    "page": 5,
+    "card_num": 5
+  },
+  "29": {
+    "filename": "backgrounds_p5_c06_background.png",
+    "extracted_text": [
+      {
+        "text": "(SUSPECT",
+        "confidence": 0.73
+      },
+      {
+        "text": "IS",
+        "confidence": 0.85
+      },
+      {
+        "text": "__",
+        "confidence": 0.32
+      },
+      {
+        "text": "SPONSORED",
+        "confidence": 0.83
+      },
+      {
+        "text": "|",
+        "confidence": 0.39
+      },
+      {
+        "text": ".",
+        "confidence": 0.31
+      },
+      {
+        "text": "ENERGY",
+        "confidence": 0.96
+      },
+      {
+        "text": "DRINK",
+        "confidence": 0.96
+      },
+      {
+        "text": "®.",
+        "confidence": 0.31
+      },
+      {
+        "text": "(8!",
+        "confidence": 0.2
+      },
+      {
+        "text": "loagsns)",
+        "confidence": 0.04
+      }
+    ],
+    "page": 5,
+    "card_num": 6
+  }
+}

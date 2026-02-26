@@ -1,0 +1,67 @@
+/**
+ * Halftone Pattern Utilities
+ * Pure CSS halftone dot patterns for bureaucratic aesthetic
+ * Maintains WCAG AA accessibility (4.5:1 contrast ratios)
+ */
+
+/* Direct background patterns */
+.halftone-bg-subtle {
+  background-image: var(--halftone-subtle);
+  background-size: var(--halftone-spacing-normal);
+}
+
+.halftone-bg-medium {
+  background-image: var(--halftone-medium);
+  background-size: var(--halftone-spacing-normal);
+}
+
+.halftone-bg-dense {
+  background-image: var(--halftone-dense);
+  background-size: var(--halftone-spacing-tight);
+}
+
+/* Overlay patterns (::before pseudo-element) */
+.halftone-overlay-subtle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--halftone-subtle);
+  background-size: var(--halftone-spacing-normal);
+  opacity: var(--halftone-opacity-subtle);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.halftone-overlay-medium::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--halftone-medium);
+  background-size: var(--halftone-spacing-normal);
+  opacity: var(--halftone-opacity-medium);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Angled pattern (45° for headers) */
+.halftone-angled {
+  background-image: var(--halftone-subtle);
+  background-size: var(--halftone-spacing-normal);
+  transform: rotate(45deg);
+}
+
+/* Spacing variants */
+.halftone-spacing-tight {
+  background-size: var(--halftone-spacing-tight);
+}
+
+.halftone-spacing-loose {
+  background-size: var(--halftone-spacing-loose);
+}
+
+/* Ensure content appears above halftone overlay */
+.halftone-overlay-subtle > *,
+.halftone-overlay-medium > * {
+  position: relative;
+  z-index: 1;
+}
