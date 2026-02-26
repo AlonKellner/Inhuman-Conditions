@@ -56,9 +56,7 @@ export const InducerPuzzleDisplay: FC<InducerPuzzleDisplayProps> = ({
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        <h3 className={styles.title}>Inducer Pattern</h3>
-
-        {/* Maze Image */}
+        {/* Maze Image - title removed as it's on the suspect card */}
         <div className={styles.mazeImageWrapper}>
           <img
             src={mazeImage}

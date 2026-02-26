@@ -4,11 +4,14 @@ import { Button } from '../ui/Button';
 import type { RoleAssignment } from '../../types/role';
 import { catalyzerCards } from '../../data/catalyzerCards';
 import CatalyzerCardImage from '../cards/CatalyzerCardImage';
+import { SuspectCardImage } from '../cards/SuspectCardImage';
+import { getSuspectCardImagePath } from '../../utils/getSuspectCardImagePath';
 import '../../styles/cards.css';
 import styles from './RoleReveal.module.css';
 
 export interface RoleRevealProps {
   role: RoleAssignment;
+  packetId?: string; // Optional: packet ID for deriving human suspect card paths
   inducerMazeImage: string;
   onContinue: () => void;
 }
@@ -25,105 +28,73 @@ export interface RoleRevealProps {
  * - Sees preview of inducer maze they'll solve during interview
  * - Confirms understanding before proceeding
  */
-export const RoleReveal: FC<RoleRevealProps> = ({ role, inducerMazeImage, onContinue }) => {
-  // Format fault name for display (e.g., "long-term-memory" -> "Long-Term Memory")
-  const formatFaultName = (fault?: string): string => {
-    if (!fault) return '';
-    return fault
-      .split('-')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join('-');
+export const RoleReveal: FC<RoleRevealProps> = ({ role, packetId, onContinue }) => {
+  // Derive suspect card path from packetId and roleType
+  const getSuspectCardPath = (pId: string, roleType: string): string | null => {
+    const moduleMap: Record<string, string> = {
+      'small-talk': '01',
+      'problem-solving': '02',
+      'imagination': '03',
+      'cooperation': '04',
+      'hopes': '05',
+      'body': '06',
+      'grief': '07',
+      'threat': '08',
+      'moral-failings': '09',
+      'self-image': '10',
+      'intentions': '11',
+    };
+
+    const moduleNum = moduleMap[pId];
+    if (!moduleNum) return null;
+
+    const moduleName = pId.replace(/-/g, '_');
+
+    // Map roleType to page and card type
+    const typeMap: Record<string, { page: number; type: string }> = {
+      'human': { page: 1, type: 'human-card' },
+      'patient-robot': { page: 2, type: 'patient-card' },
+      'violent-robot': { page: 3, type: 'violent-card' },
+    };
+
+    const config = typeMap[roleType];
+    if (!config) return null;
+
+    // Use c01 for all cards (first of the 3 available)
+    return `/assets/cards/suspect/${moduleNum}_${moduleName}_suspect_p${config.page}_c01_${config.type}.png`;
   };
 
-  const isPatientRobot = role.roleType === 'patient-robot';
-  const isViolentRobot = role.roleType === 'violent-robot';
-
-  // Try to find matching catalyzer card with card image
+  // Try to find matching catalyzer card (for fallback to catalyzer image)
   const matchingCard = role.fault
     ? catalyzerCards.find(
         card => card.roleType === role.roleType && card.fault === role.fault
       )
     : undefined;
 
+  // Get suspect card image path - derive from packetId if available
+  const suspectCardPath = packetId
+    ? getSuspectCardPath(packetId, role.roleType)
+    : matchingCard
+    ? getSuspectCardImagePath(matchingCard)
+    : null;
+
   return (
     <div className={styles.container}>
-      <Card title="Robot Catalyzer Card">
+      <Card title="Your Role Card">
         <div className={styles.content}>
-          {/* Use CatalyzerCardImage if available, otherwise fallback to custom widget */}
-          {matchingCard && matchingCard.cardImage ? (
+          {/* Show suspect card image (preferred), or catalyzer card, or error */}
+          {suspectCardPath ? (
+            <div className={styles.cardImageContainer}>
+              <SuspectCardImage roleType={role.roleType} suspectCardPath={suspectCardPath} />
+            </div>
+          ) : matchingCard && matchingCard.cardImage ? (
             <div className={styles.cardImageContainer}>
               <CatalyzerCardImage card={matchingCard} />
             </div>
           ) : (
-            <>
-              {/* Fault Header */}
-              <div className={styles.faultHeader}>
-                <h2 className={styles.faultName}>{formatFaultName(role.fault)}</h2>
-                <p className={styles.roleType}>
-                  {isPatientRobot ? 'Patient Robot' : isViolentRobot ? 'Violent Robot' : 'Robot'}
-                </p>
-              </div>
-
-              {/* Description */}
-              <div className={styles.description}>
-                <p>{role.description}</p>
-              </div>
-
-              {/* Traits */}
-              {role.traits && role.traits.length > 0 && (
-                <div className={styles.traits}>
-                  <h3>Your Traits</h3>
-                  <ul>
-                    {role.traits.map((trait, i) => (
-                      <li key={i}>{trait}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Restrictions (Patient Robots) */}
-              {role.restrictions && role.restrictions.length > 0 && (
-                <div className={styles.restrictions}>
-                  <h3>Your Restrictions</h3>
-                  <ul>
-                    {role.restrictions.map((restriction, i) => (
-                      <li key={i}>{restriction}</li>
-                    ))}
-                  </ul>
-                  <p className={styles.warning}>
-                    <strong>⚠️ Perform your penalty when you break a restriction!</strong>
-                  </p>
-                </div>
-              )}
-
-              {/* Tasks (Violent Robots) */}
-              {role.tasks && role.tasks.length > 0 && (
-                <div className={styles.tasks}>
-                  <h3>Tasks to Complete</h3>
-                  <ul>
-                    {role.tasks.map((task, i) => (
-                      <li key={i}>{task}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </>
-          )}
-
-          {/* Inducer Maze Preview - only show if not using card image (card already includes maze) */}
-          {!(matchingCard && matchingCard.cardImage) && (
-            <div className={styles.mazePreview}>
-              <h3>Inducer Pattern</h3>
-              <div className={styles.mazeImageWrapper}>
-                <img
-                  src={inducerMazeImage}
-                  alt="Inducer Maze Preview"
-                  className={styles.mazeImage}
-                />
-              </div>
-              <p className={styles.mazeHint}>
-                You will solve this maze during the interview
-              </p>
+            <div className={styles.error}>
+              <p>Card image not available</p>
+              {matchingCard && <p className={styles.cardId}>Card: {matchingCard.id}</p>}
             </div>
           )}
 

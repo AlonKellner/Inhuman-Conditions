@@ -7,7 +7,7 @@
 import { type FC, useState } from 'react';
 import { useGameStore } from '../../store/GameStoreContext';
 import { InvestigatorFormInterface } from '../form/InvestigatorFormInterface';
-import { ModuleNotebook } from './ModuleNotebook';
+import { InvestigatorCards } from '../game/InvestigatorCards';
 import { ReadyToStart } from '../game/ReadyToStart';
 import { SeedEntry } from '../game/SeedEntry';
 import { PenaltySelection } from '../game/PenaltySelection';
@@ -20,6 +20,7 @@ export const InvestigatorView: FC = () => {
     gameState,
     mode,
     selectedRole,
+    selectedPacket,
     selectedPenalty,
     selectedBackground,
     inducerPattern,
@@ -32,8 +33,16 @@ export const InvestigatorView: FC = () => {
   } = useGameStore();
   const isSingleDevice = mode === 'single-device';
 
-  // State for notebook page (0-6: cover, primary1-3, secondary1-3)
-  const [notebookPage, setNotebookPage] = useState<number>(0);
+  // Show cards after penalty selection is complete
+  const showCards = selectedPacket && [
+    'penalty-calibration',
+    'packet-display',
+    'role-reveal',
+    'inducer-puzzle',
+    'background-display',
+    'ready-to-start',
+    'interview',
+  ].includes(gameState);
 
   // Helper to render state-specific content
   const renderContent = () => {
@@ -57,7 +66,7 @@ export const InvestigatorView: FC = () => {
         );
 
       case 'packet-display':
-        // Skip packet display - just show form
+        // Skip packet display - just show form and cards
         return (
           <>
             {/* VK-82(e) Form */}
@@ -88,13 +97,13 @@ export const InvestigatorView: FC = () => {
         );
 
       case 'penalty-calibration':
-        // Show penalty calibration with form
+        // Show penalty calibration with form and cards
         return (
           <>
             {/* VK-82(e) Form */}
             <InvestigatorFormInterface />
 
-            {/* Penalty Calibration below form */}
+            {/* Penalty Calibration */}
             <div className={styles.contentSection}>
               {selectedPenalty && (
                 <PenaltyCalibration
@@ -218,20 +227,12 @@ export const InvestigatorView: FC = () => {
 
       case 'interview':
       default:
-        // Standard vertical layout: Form on top, Notebook below
+        // Standard vertical layout: Form on top
         // Form is ALWAYS visible for investigator
         return (
           <>
             {/* VK-82(e) Form */}
             <InvestigatorFormInterface />
-
-            {/* Module Notebook below form */}
-            <div className={styles.contentSection}>
-              <ModuleNotebook
-                currentPage={notebookPage}
-                onPageChange={setNotebookPage}
-              />
-            </div>
           </>
         );
     }
@@ -239,38 +240,17 @@ export const InvestigatorView: FC = () => {
 
   return (
     <div className={styles.container}>
-      {/* Header with game state indicator */}
-      <div className={styles.header}>
-        <h1 className={styles.title}>Investigator</h1>
-        <div className={styles.stateIndicator}>
-          Current Phase: <strong>{formatGameState(gameState)}</strong>
-        </div>
-      </div>
-
       {/* Main Content */}
       <div className={styles.mainContent}>
         {renderContent()}
+
+        {/* Flippable Question Cards - appear below form after penalty selection */}
+        {showCards && (
+          <div className={styles.contentSection}>
+            <InvestigatorCards packet={selectedPacket} />
+          </div>
+        )}
       </div>
     </div>
   );
 };
-
-// Helper to format game state for display
-function formatGameState(state: string): string {
-  const stateMap: Record<string, string> = {
-    'seed-entry': 'Seed Entry',
-    'mode-selection': 'Mode Selection',
-    'penalty-selection': 'Penalty Selection',
-    'penalty-calibration': 'Penalty Calibration',
-    'packet-display': 'Module Selection',
-    'role-selection': 'Role Selection',
-    'role-reveal': 'Role Reveal',
-    'inducer-puzzle': 'Inducer Puzzle',
-    'background-display': 'Background Selection',
-    'ready-to-start': 'Ready to Start',
-    'interview': 'Interview',
-    'conclusion': 'Conclusion',
-  };
-
-  return stateMap[state] || state;
-}

@@ -15,7 +15,7 @@ export interface FormLetterBoxProps {
   nameField: 'first' | 'middle' | 'last';
   readOnly?: boolean;
   onChange?: (nameField: 'first' | 'middle' | 'last', index: number, value: string) => void;
-  onAdvance?: (nameField: 'first' | 'middle' | 'last') => void; // Called when should move to next field
+  onAdvance?: (targetField: 'first' | 'middle' | 'last' | 'notes') => void; // Called when should move to next field
   autoFocus?: boolean;
 }
 
@@ -44,12 +44,12 @@ export const FormLetterBox: FC<FormLetterBoxProps> = ({
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (readOnly) return;
 
-    // Handle spacebar - skip to next name section
-    if (e.key === ' ') {
+    // Handle spacebar, enter, and tab - skip to next name section or notes
+    if (e.key === ' ' || e.key === 'Enter' || e.key === 'Tab') {
       e.preventDefault();
       if (onAdvance) {
         // Determine the next field
-        const nextField = nameField === 'first' ? 'middle' : nameField === 'middle' ? 'last' : 'last';
+        const nextField = nameField === 'first' ? 'middle' : nameField === 'middle' ? 'last' : 'notes';
         onAdvance(nextField);
       }
       return;
@@ -99,9 +99,9 @@ export const FormLetterBox: FC<FormLetterBoxProps> = ({
       const nextBox = getNextBox();
       if (nextBox) {
         nextBox.focus();
-      } else if (nameField !== 'last' && onAdvance) {
-        // Move to next name section
-        const nextField = nameField === 'first' ? 'middle' : 'last';
+      } else if (onAdvance) {
+        // Move to next name section or notes
+        const nextField = nameField === 'first' ? 'middle' : nameField === 'middle' ? 'last' : 'notes';
         onAdvance(nextField);
       }
     }

@@ -93,14 +93,24 @@ export const InvestigatorFormInterface: FC = () => {
     });
   };
 
-  // Handle advancing to next name field (triggered by space or reaching end)
-  const handleAdvanceToField = (targetField: 'first' | 'middle' | 'last') => {
-    // Find the first letter box of the target field and focus it
-    const firstBox = document.querySelector<HTMLInputElement>(
-      `input[data-name-field="${targetField}"][data-index="0"]`
-    );
-    if (firstBox) {
-      firstBox.focus();
+  // Handle advancing to next name field or notes (triggered by space or reaching end)
+  const handleAdvanceToField = (targetField: 'first' | 'middle' | 'last' | 'notes') => {
+    if (targetField === 'notes') {
+      // Focus the notes textarea
+      const notesTextarea = document.querySelector<HTMLTextAreaElement>(
+        'textarea[aria-label="Investigator notes"]'
+      );
+      if (notesTextarea) {
+        notesTextarea.focus();
+      }
+    } else {
+      // Find the first letter box of the target field and focus it
+      const firstBox = document.querySelector<HTMLInputElement>(
+        `input[data-name-field="${targetField}"][data-index="0"]`
+      );
+      if (firstBox) {
+        firstBox.focus();
+      }
     }
   };
 

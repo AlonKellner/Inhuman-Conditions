@@ -4,28 +4,53 @@
  * Shows role information, tasks, and what the suspect needs to do
  */
 
-import { type FC } from 'react';
+import { type FC, useEffect } from 'react';
 import { useGameStore } from '../../store/GameStoreContext';
 import { PenaltyCalibration } from '../game/PenaltyCalibration';
 import { PenaltySelection } from '../game/PenaltySelection';
-import { InducerPuzzleDisplay } from '../game/InducerPuzzleDisplay';
 import { BackgroundDisplay } from '../game/BackgroundDisplay';
 import { PacketDisplay } from '../game/PacketDisplay';
 import { RoleReveal } from '../game/RoleReveal';
 import { SuspectRoleCard } from '../cards/SuspectRoleCard';
 import { SeedEntry } from '../game/SeedEntry';
+import PenaltyCardImage from '../cards/PenaltyCardImage';
+import { backgrounds } from '../../data/backgrounds';
+import type { Background } from '../../types/background';
 import styles from './SuspectView.module.css';
+
+/**
+ * Get the background card image path from a background object
+ * Finds the original index to ensure card images match background names after shuffling
+ */
+function getBackgroundCardPath(background: Background): string {
+  const originalIndex = backgrounds.findIndex(bg => bg.id === background.id);
+  if (originalIndex === -1) {
+    console.error(`Background not found: ${background.id}`);
+    return '/assets/cards/backgrounds/backgrounds_p1_c01_background.png';
+  }
+  const page = Math.floor(originalIndex / 6) + 1;
+  const cardNum = (originalIndex % 6) + 1;
+  const paddedCardNum = cardNum.toString().padStart(2, '0');
+  return `/assets/cards/backgrounds/backgrounds_p${page}_c${paddedCardNum}_background.png`;
+}
 
 export const SuspectView: FC = () => {
   const {
     gameState,
     selectedRole,
+    selectedPacket,
     selectedPenalty,
     selectedBackground,
     penaltyCalibration,
     advanceState,
-    updateFormInducerResult,
   } = useGameStore();
+
+  // Auto-advance from inducer-puzzle phase (maze is shown on suspect card)
+  useEffect(() => {
+    if (gameState === 'inducer-puzzle') {
+      advanceState();
+    }
+  }, [gameState, advanceState]);
 
   // Helper to determine what to show
   const renderContent = () => {
@@ -46,7 +71,7 @@ export const SuspectView: FC = () => {
 
       case 'role-selection':
       case 'role-reveal':
-        if (!selectedRole) {
+        if (!selectedRole || !selectedPacket) {
           return (
             <div className={styles.waiting}>
               <p>Assigning your role...</p>
@@ -54,27 +79,14 @@ export const SuspectView: FC = () => {
           );
         }
 
-        // Show role reveal for robots
-        if (selectedRole.roleType !== 'human') {
-          return (
-            <RoleReveal
-              role={selectedRole}
-              inducerMazeImage={selectedRole.inducerMazeImage || ''}
-              onContinue={advanceState}
-            />
-          );
-        }
-
-        // Humans just see a brief message
+        // Show role reveal for all roles (humans and robots)
         return (
-          <div className={styles.roleCard}>
-            <h2>Your Role: Human</h2>
-            <p>You are a human being interviewed by an investigator.</p>
-            <p>Answer questions naturally and honestly based on your background.</p>
-            <button onClick={advanceState} className={styles.continueButton}>
-              Continue
-            </button>
-          </div>
+          <RoleReveal
+            role={selectedRole}
+            packetId={selectedPacket.id}
+            inducerMazeImage={selectedRole.inducerMazeImage || ''}
+            onContinue={advanceState}
+          />
         );
 
       case 'penalty-calibration':
@@ -84,10 +96,6 @@ export const SuspectView: FC = () => {
 
         return (
           <div>
-            <div className={styles.phaseHeader}>
-              <h2>Practice the Penalty</h2>
-              <p>The investigator will read your penalty aloud. Practice it 3 times.</p>
-            </div>
             <PenaltyCalibration
               penalty={selectedPenalty}
               role="suspect"
@@ -98,45 +106,13 @@ export const SuspectView: FC = () => {
         );
 
       case 'inducer-puzzle':
-        if (!selectedRole || selectedRole.roleType === 'human') {
-          // Humans don't have inducer puzzles
-          advanceState();
-          return null;
-        }
-
-        const mazeImage = selectedRole.inducerMazeImage || '';
-        const solution = selectedRole.inducerSolution || '';
-
-        return (
-          <div>
-            <div className={styles.phaseHeader}>
-              <h2>Inducer Puzzle (Interference Task)</h2>
-              <p>Solve the maze and report your answer to the investigator.</p>
-            </div>
-            <InducerPuzzleDisplay
-              mazeImage={mazeImage}
-              question="Navigate through the maze and report the sequence of letters along your path."
-              expectedSolution={solution}
-              onSolutionSubmit={(submittedSolution, isCorrect) => {
-                console.log(`Inducer puzzle: ${submittedSolution}, correct: ${isCorrect}`);
-                // Update form with result
-                updateFormInducerResult(isCorrect ? 'yes' : 'no');
-                // Allow continuation
-                if (isCorrect) {
-                  advanceState();
-                }
-              }}
-            />
-          </div>
-        );
+        // Inducer maze is shown on the suspect card itself, no separate puzzle phase needed
+        // Auto-advances via useEffect
+        return null;
 
       case 'background-display':
         return (
           <div>
-            <div className={styles.phaseHeader}>
-              <h2>Choose Your Background</h2>
-              <p>Select a character background and provide your name to the investigator.</p>
-            </div>
             <BackgroundDisplay role="suspect" onContinue={advanceState} />
           </div>
         );
@@ -159,52 +135,9 @@ export const SuspectView: FC = () => {
         return (
           <div className={styles.interviewCard}>
             <h2>Interview in Progress</h2>
-
-            {/* Show role reminder */}
-            <div className={styles.roleReminder}>
-              <h3>Your Role</h3>
-              {selectedRole?.roleType === 'human' ? (
-                <p><strong>Human</strong> - Answer questions naturally and honestly.</p>
-              ) : (
-                <>
-                  <p><strong>Robot</strong> ({selectedRole?.fault})</p>
-                  {selectedRole?.restrictions && selectedRole.restrictions.length > 0 && (
-                    <div className={styles.restrictions}>
-                      <h4>Restrictions:</h4>
-                      <ul>
-                        {selectedRole.restrictions.map((restriction, i) => (
-                          <li key={i}>{restriction}</li>
-                        ))}
-                      </ul>
-                      <p className={styles.warning}>
-                        ⚠️ Perform your penalty when you break a restriction!
-                      </p>
-                    </div>
-                  )}
-                  {selectedRole?.tasks && selectedRole.tasks.length > 0 && (
-                    <div className={styles.tasks}>
-                      <h4>Tasks to Complete:</h4>
-                      <ul>
-                        {selectedRole.tasks.map((task, i) => (
-                          <li key={i}>{task}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-
-            {/* Show background */}
-            {selectedBackground && (
-              <div className={styles.backgroundReminder}>
-                <h3>Your Background</h3>
-                <p><strong>{selectedBackground.name}</strong></p>
-                {selectedBackground.description && (
-                  <p>{selectedBackground.description}</p>
-                )}
-              </div>
-            )}
+            <p className={styles.infoText}>
+              Refer to your cards in the sidebar. Answer questions based on your role and background.
+            </p>
           </div>
         );
 
@@ -227,10 +160,10 @@ export const SuspectView: FC = () => {
     }
   };
 
-  // Determine if we should show the role card sidebar
-  const showRoleCard = selectedRole && [
-    'role-reveal',
-    'inducer-puzzle',
+  // Determine if we should show the sidebar with cards
+  // Note: Don't show during 'role-reveal' since RoleReveal component already shows the card
+  // Note: Cards only appear AFTER role reveal (suspect card is not known during penalty calibration)
+  const showCards = selectedRole && selectedPacket && [
     'background-display',
     'ready-to-start',
     'interview',
@@ -238,50 +171,47 @@ export const SuspectView: FC = () => {
 
   return (
     <div className={styles.container}>
-      {/* Header */}
-      <div className={styles.header}>
-        <h1 className={styles.title}>Suspect</h1>
-        <div className={styles.stateIndicator}>
-          Current Phase: <strong>{formatGameState(gameState)}</strong>
-        </div>
+      {/* Main Content */}
+      <div className={styles.mainContent}>
+        {renderContent()}
       </div>
 
-      {/* Layout with optional sidebar */}
-      <div className={showRoleCard ? styles.layoutWithSidebar : styles.layout}>
-        {/* Main Content */}
-        <div className={styles.mainContent}>
-          {renderContent()}
-        </div>
-
-        {/* Persistent Role Card Sidebar */}
-        {showRoleCard && (
-          <div className={styles.roleCardSidebar}>
+      {/* Persistent Cards Below Content */}
+      {showCards && (
+        <div className={styles.cardsContainer}>
+          {/* Left: Suspect Role Card */}
+          <div className={styles.cardLeft}>
             <SuspectRoleCard
               role={selectedRole}
+              packetId={selectedPacket?.id}
               compact={gameState === 'interview'}
             />
           </div>
-        )}
-      </div>
+
+          {/* Right: Penalty (top) and Background (bottom) */}
+          <div className={styles.cardRight}>
+            {/* Penalty Card (shown after calibration is complete) */}
+            {selectedPenalty && ['ready-to-start', 'interview'].includes(gameState) && (
+              <div className={styles.card}>
+                <h3 className={styles.cardTitle}>Penalty</h3>
+                <PenaltyCardImage penalty={selectedPenalty} className={styles.cardImage} />
+              </div>
+            )}
+
+            {/* Background Card (shown after background display is complete) */}
+            {selectedBackground && ['ready-to-start', 'interview'].includes(gameState) && (
+              <div className={styles.card}>
+                <h3 className={styles.cardTitle}>Background</h3>
+                <img
+                  src={getBackgroundCardPath(selectedBackground)}
+                  alt={`Background: ${selectedBackground.name}`}
+                  className={styles.cardImage}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
-
-// Helper to format game state for display
-function formatGameState(state: string): string {
-  const stateMap: Record<string, string> = {
-    'seed-entry': 'Seed Entry',
-    'mode-selection': 'Mode Selection',
-    'penalty-calibration': 'Penalty Calibration',
-    'packet-display': 'Module Selection',
-    'role-selection': 'Role Selection',
-    'role-reveal': 'Role Reveal',
-    'inducer-puzzle': 'Inducer Puzzle',
-    'background-display': 'Background Selection',
-    'ready-to-start': 'Ready to Start',
-    'interview': 'Interview',
-    'conclusion': 'Conclusion',
-  };
-
-  return stateMap[state] || state;
-}

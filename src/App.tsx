@@ -5,11 +5,6 @@ import { ViewSwitcher } from './components/ViewSwitcher';
 function App() {
   return (
     <div className="app">
-      <header>
-        <h1>Inhuman Conditions</h1>
-        <p className="subtitle">A 5-minute interrogation game</p>
-      </header>
-
       <main>
         <ViewSwitcher />
       </main>

@@ -6,7 +6,31 @@
 
 import { useGameStore } from '../../store/GameStoreContext';
 import { CyclingButtons } from './CyclingButtons';
+import { backgrounds } from '../../data/backgrounds';
+import type { Background } from '../../types/background';
 import styles from './BackgroundDisplay.module.css';
+
+/**
+ * Get the background card image path from a background object
+ * Finds the original index in the backgrounds array (not the permuted index)
+ * to ensure card images match background names after shuffling
+ * Pattern: backgrounds_p{page}_c{cardnum}_background.png
+ * 6 cards per page across 5 pages (30 total)
+ */
+function getBackgroundCardPath(background: Background): string {
+  // Find the original index of this background in the backgrounds array
+  const originalIndex = backgrounds.findIndex(bg => bg.id === background.id);
+
+  if (originalIndex === -1) {
+    console.error(`Background not found in backgrounds array: ${background.id}`);
+    return '/assets/cards/backgrounds/backgrounds_p1_c01_background.png'; // Fallback
+  }
+
+  const page = Math.floor(originalIndex / 6) + 1;
+  const cardNum = (originalIndex % 6) + 1;
+  const paddedCardNum = cardNum.toString().padStart(2, '0');
+  return `/assets/cards/backgrounds/backgrounds_p${page}_c${paddedCardNum}_background.png`;
+}
 
 export interface BackgroundDisplayProps {
   /** Player role determines view permissions */
@@ -122,16 +146,12 @@ export function BackgroundDisplay({ role, onContinue }: BackgroundDisplayProps) 
   }
 
   // Suspect view - main interactive view
+  const backgroundCardPath = getBackgroundCardPath(selectedBackground);
+
   return (
     <div className={styles.container}>
       <div className={styles.card}>
         <h2 className={styles.heading}>Your Background</h2>
-
-        <div className={styles.instructions}>
-          <p className={styles.instructionText}>
-            <strong>You are playing the role of:</strong>
-          </p>
-        </div>
 
         <CyclingButtons
           label="Background"
@@ -141,20 +161,12 @@ export function BackgroundDisplay({ role, onContinue }: BackgroundDisplayProps) 
           onNext={handleCycleNext}
         />
 
-        <div className={styles.backgroundBox}>
-          <p className={styles.backgroundName}>{selectedBackground.name}</p>
-          {selectedBackground.description && (
-            <p className={styles.backgroundDescription}>
-              {selectedBackground.description}
-            </p>
-          )}
-        </div>
-
-        <div className={styles.hint}>
-          <p className={styles.hintText}>
-            During the interview, answer questions as if you are this person.
-            Remember your role, penalty, and restrictions.
-          </p>
+        <div className={styles.cardImageContainer}>
+          <img
+            src={backgroundCardPath}
+            alt={`Background: ${selectedBackground.name}`}
+            className={styles.backgroundCardImage}
+          />
         </div>
 
         <button
